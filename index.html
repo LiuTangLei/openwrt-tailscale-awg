@@ -4,6 +4,9 @@
 <head>
     <meta charset="UTF-8">
     <title>Smaller Tailscale for OpenWrt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="A smaller Tailscale repository for OpenWrt, designed to reduce storage usage while maintaining essential functionality.">
+    <meta name="keywords" content="OpenWrt, Tailscale, smaller packages, storage optimization, repository, repo, ipk, installation, usage, packages, smaller ipk, optimized tailscale, upx compression">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -17,19 +20,74 @@
                 <div class="divider"></div>
                 <button id="btn-packages" onclick="showSection('packages')">Packages</button>
             </div>
-            <h1>Smaller Tailscale Repository For OpenWrt</h1>
+            <h1><a href="https://github.com/GuNanOvO/openwrt-tailscale" target="_blank">Smaller Tailscale Repository For OpenWrt</a></h1>
             <hr>
         </header>
 
         <main>
             <section id="usage">
-                <p>Add the following to your <code>/etc/opkg/customfeeds.conf</code>:</p>
-                <pre>src/gz myrepo http://example.com/myrepo</pre>
-                <p>Install using:</p>
-                <pre>
-opkg update
+                <div class="notice">
+                    <p><h3>Note:</h3> These are smaller Tailscale packages for OpenWrt, specifically designed to
+                        reduce storage usage while maintaining essential functionality. </p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;optimized:</p>
+                    <ul>
+                        <li>Combined <code>tailscale</code> and <code>tailscaled</code> into a single binary.</li>
+                        <li>Built with the <code>--extra-small</code> flag to significantly reduce binary size.</li>
+                        <li>UPX compression applied to binaries (except for mips64 architecture) to further reduce storage usage.</li>
+                    </ul>
+                </div>
+
+                <h2>Repository Setup</h2>
+                <section class="part">
+                <p>Add the package feed to your OpenWrt configuration:</p>
+
+                <div class="code-block">
+                    <p>Edit <code>/etc/opkg/customfeeds.conf</code>:</p>
+                    <pre>echo "src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale" >> /etc/opkg/customfeeds.conf</pre>
+
+                    <p>Or manually add this line:</p>
+                    <pre>src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale</pre>
+                </div>
+                </section>
+
+                <h2>Installation Methods</h2>
+                <section class="part">
+                <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                <div class="method">
+                    <h4>Web UI:</h4>
+                    <ol>
+                        <li>Navigate to <strong>System → Software ;</strong></li>
+                        <li>Click <em>Update lists</em> to refresh packages ;</li>
+                        <li>Search for "tailscale" ;</li>
+                        <li>Install the main package and any desired utilities ;</li>
+                    </ol>
+                </div>
+                <div class="method">
+                    <h4>Command Line:</h4>
+                    <pre>opkg update
 opkg install tailscale</pre>
+                    <p class="note">Note: The "failed log upload" message during installation is expected and can be
+                        safely ignored.</p>
+                </div>
+                </section>
+
+                <h2>Post-Installation Steps</h2>
+                <section class="part">
+                <p>After installation, you need to configure Tailscale to connect your device to the Tailscale network.</p>
+                <p>Run the following command to start Tailscale and configure it:</p>
+                <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                </section>
+                <div class="tips">
+                    <h3>Tips:</h3>
+                    <ul>
+                        <li>Consider adding <code>--hostname=your-router-name</code> for easier identification.</li>
+                    </ul>
+                </div>
             </section>
+
 
             <section id="packages" style="display: none;">
                 <table>
@@ -41,7 +99,7 @@ opkg install tailscale</pre>
                         </tr>
                     </thead>
                     <!-- tbody-anchor -->
-          <tbody>
+                    <tbody>
                         <tr>
                             <td><a href="Packages">Packages</a></td>
                             <td>20K</td>
@@ -53,77 +111,104 @@ opkg install tailscale</pre>
                             <td>2025-07-18 Fri 05:23:52 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_aarch64_cortex-a53.ipk">tailscale_v1.84.3_aarch64_cortex-a53.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_aarch64_cortex-a53.ipk">tailscale_v1.84.3_aarch64_cortex-a53.ipk</a>
+                            </td>
                             <td>5.7M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_aarch64_cortex-a72.ipk">tailscale_v1.84.3_aarch64_cortex-a72.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_aarch64_cortex-a72.ipk">tailscale_v1.84.3_aarch64_cortex-a72.ipk</a>
+                            </td>
                             <td>5.7M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_aarch64_cortex-a76.ipk">tailscale_v1.84.3_aarch64_cortex-a76.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_aarch64_cortex-a76.ipk">tailscale_v1.84.3_aarch64_cortex-a76.ipk</a>
+                            </td>
                             <td>5.7M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_aarch64_generic.ipk">tailscale_v1.84.3_aarch64_generic.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_aarch64_generic.ipk">tailscale_v1.84.3_aarch64_generic.ipk</a>
+                            </td>
                             <td>5.7M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_arm1176jzf-s_vfp.ipk">tailscale_v1.84.3_arm_arm1176jzf-s_vfp.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_arm1176jzf-s_vfp.ipk">tailscale_v1.84.3_arm_arm1176jzf-s_vfp.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_arm926ej-s.ipk">tailscale_v1.84.3_arm_arm926ej-s.ipk</a></td>
+                            <td><a href="tailscale_v1.84.3_arm_arm926ej-s.ipk">tailscale_v1.84.3_arm_arm926ej-s.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a15_neon-vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a15_neon-vfpv4.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a15_neon-vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a15_neon-vfpv4.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a5_vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a5_vfpv4.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a5_vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a5_vfpv4.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a7.ipk">tailscale_v1.84.3_arm_cortex-a7.ipk</a></td>
+                            <td><a href="tailscale_v1.84.3_arm_cortex-a7.ipk">tailscale_v1.84.3_arm_cortex-a7.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a7_neon-vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a7_neon-vfpv4.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a7_neon-vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a7_neon-vfpv4.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a7_vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a7_vfpv4.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a7_vfpv4.ipk">tailscale_v1.84.3_arm_cortex-a7_vfpv4.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a8_vfpv3.ipk">tailscale_v1.84.3_arm_cortex-a8_vfpv3.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a8_vfpv3.ipk">tailscale_v1.84.3_arm_cortex-a8_vfpv3.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a9.ipk">tailscale_v1.84.3_arm_cortex-a9.ipk</a></td>
+                            <td><a href="tailscale_v1.84.3_arm_cortex-a9.ipk">tailscale_v1.84.3_arm_cortex-a9.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a9_neon.ipk">tailscale_v1.84.3_arm_cortex-a9_neon.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a9_neon.ipk">tailscale_v1.84.3_arm_cortex-a9_neon.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_arm_cortex-a9_vfpv3-d16.ipk">tailscale_v1.84.3_arm_cortex-a9_vfpv3-d16.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_arm_cortex-a9_vfpv3-d16.ipk">tailscale_v1.84.3_arm_cortex-a9_vfpv3-d16.ipk</a>
+                            </td>
                             <td>5.6M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
@@ -143,27 +228,36 @@ opkg install tailscale</pre>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_i386_pentium-mmx.ipk">tailscale_v1.84.3_i386_pentium-mmx.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_i386_pentium-mmx.ipk">tailscale_v1.84.3_i386_pentium-mmx.ipk</a>
+                            </td>
                             <td>6.5M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_i386_pentium4.ipk">tailscale_v1.84.3_i386_pentium4.ipk</a></td>
+                            <td><a href="tailscale_v1.84.3_i386_pentium4.ipk">tailscale_v1.84.3_i386_pentium4.ipk</a>
+                            </td>
                             <td>6.5M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_mips64_mips64r2_normal.ipk">tailscale_v1.84.3_mips64_mips64r2_normal.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_mips64_mips64r2_normal.ipk">tailscale_v1.84.3_mips64_mips64r2_normal.ipk</a>
+                            </td>
                             <td>8.3M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_mips64_octeonplus_normal.ipk">tailscale_v1.84.3_mips64_octeonplus_normal.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_mips64_octeonplus_normal.ipk">tailscale_v1.84.3_mips64_octeonplus_normal.ipk</a>
+                            </td>
                             <td>8.3M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_mips64el_mips64r2_normal.ipk">tailscale_v1.84.3_mips64el_mips64r2_normal.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_mips64el_mips64r2_normal.ipk">tailscale_v1.84.3_mips64el_mips64r2_normal.ipk</a>
+                            </td>
                             <td>8.1M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
@@ -188,7 +282,9 @@ opkg install tailscale</pre>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_mipsel_24kc_24kf.ipk">tailscale_v1.84.3_mipsel_24kc_24kf.ipk</a></td>
+                            <td><a
+                                    href="tailscale_v1.84.3_mipsel_24kc_24kf.ipk">tailscale_v1.84.3_mipsel_24kc_24kf.ipk</a>
+                            </td>
                             <td>5.5M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
@@ -198,7 +294,8 @@ opkg install tailscale</pre>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
                         <tr>
-                            <td><a href="tailscale_v1.84.3_mipsel_mips32.ipk">tailscale_v1.84.3_mipsel_mips32.ipk</a></td>
+                            <td><a href="tailscale_v1.84.3_mipsel_mips32.ipk">tailscale_v1.84.3_mipsel_mips32.ipk</a>
+                            </td>
                             <td>5.5M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
@@ -207,7 +304,7 @@ opkg install tailscale</pre>
                             <td>6.9M</td>
                             <td>2025-07-18 Fri 05:23:51 UTC</td>
                         </tr>
-          </tbody>
+                    </tbody>
                     <!-- end-tbody-anchor -->
                 </table>
             </section>
@@ -221,13 +318,13 @@ opkg install tailscale</pre>
             <p>
                 <span>Built for OpenWrt compatible devices. </span> <span>Open source on <a
                         href="https://github.com/GuNanOvO/openwrt-tailscale">GitHub</a>.</span>
-                <span>MIT License.</span>
-                <span>Generated on: 
+                <span><a href="https://github.com/GuNanOvO/openwrt-tailscale/blob/main/LICENSE">MIT License</a>.</span>
+                <span>Generated on:
                     <!-- date-anchor -->
                     <span id="date">2025-07-18 05:23:41 UTC</span>
                     <!-- end-date-anchor -->
                 </span>
-                <span>Version: 
+                <span>Version:
                     <!-- version-anchor -->
                     <span id="version">1.84.3</span>
                     <!-- end-version-anchor -->
@@ -241,7 +338,7 @@ opkg install tailscale</pre>
         function showSection(id) {
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
-            
+
 
             const isUsage = id === 'usage';
             document.getElementById('btn-usage').classList.toggle('active', isUsage);

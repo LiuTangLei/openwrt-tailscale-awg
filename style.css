@@ -83,6 +83,46 @@ main {
     margin: 2rem 0;
 }
 
+.notice {
+    background: #eef8ff;
+    border-left: 4px solid #91d1ff;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 10px;
+}
+.notice ul li {
+    margin: 0.5rem 0;
+}
+
+section.part {
+    margin: 0 1.5rem;
+}
+
+.code-block {
+    background: #f7f7f7;
+    padding: 1rem;
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+.method {
+    margin: 1.5rem 0;
+}
+
+.method ol li {
+    margin: 0.5rem 0;
+}
+.note {
+    color: #666;
+    font-style: italic;
+}
+
+.tips {
+    background: #e8fff5;
+    border-left: 4px solid #42b983;
+    padding: 1rem;
+    border-radius: 10px;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
@@ -112,7 +152,7 @@ span {
 }
 
 code {
-    background: #f6f6f6;
+    background: #e7e7e7;
     padding: 0.2rem 0.5rem;
     border-radius: 3px;
     font-family: monospace;
@@ -121,7 +161,7 @@ code {
 
 pre {
     overflow-x: auto;
-    background: #f6f6f6;
+    background: #eaeaea;
     padding: 1em;
     border-radius: 6px;
     font-family: monospace;
@@ -164,7 +204,7 @@ a:hover {
     color: #666;
 }
 
-/* 黑暗模式 */
+/* dark theme */
 body.dark {
     background-color: #1e1e1e;
     color: #ccc;
@@ -226,4 +266,24 @@ body.dark button.inactive:hover {
 
 body.dark button {
     color: #9ecbff;
+}
+
+body.dark .notice {
+    border-left: 4px solid #91d1ff;
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 10px;
+    background: #303030;
+    color: #ccc;
+}
+body.dark .code-block {
+    background: #2f2f2f;
+    color: #9ecbff;
+}
+body.dark .tips {
+    border-left: 4px solid #42b983;
+    background: #303030;
+    color: #ccc;
+    padding: 1rem;
+    border-radius: 10px;
 }
