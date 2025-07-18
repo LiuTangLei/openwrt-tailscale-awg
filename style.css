@@ -27,7 +27,7 @@ body {
 }
 
 .tab-buttons {
-    height: 2rem;
+    height: 2.5rem;
     display: flex;
     align-items: center;
     gap: 0.5rem;
@@ -35,8 +35,8 @@ body {
 }
 
 .tab-buttons .divider {
-    height: 1.5rem;
-    width: 1px;
+    height: 2rem;
+    width: 2px;
     background-color: #000000;
 }
 
@@ -49,7 +49,7 @@ button {
 }
 
 button.active {
-    font-size: 1rem;
+    font-size: 1.5rem;
     color: #333;
     background-color: #d6ebff;
     font-weight: bold;
@@ -63,7 +63,7 @@ button.active:hover {
 button.inactive {
     color: #0066cc;
     opacity: 0.8;
-    font-size: 0.8rem;
+    font-size: 1rem;
 }
 
 button.inactive:hover {

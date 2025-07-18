@@ -18,6 +18,8 @@
             <div class="tab-buttons">
                 <button id="btn-usage" onclick="showSection('usage')">Usage</button>
                 <div class="divider"></div>
+                <button id="btn-usage-chinese" onclick="showSection('usage-chinese')">用法</button>
+                <div class="divider"></div>
                 <button id="btn-packages" onclick="showSection('packages')">Packages</button>
             </div>
             <h1><a href="https://github.com/GuNanOvO/openwrt-tailscale" target="_blank">Smaller Tailscale Repository For OpenWrt</a></h1>
@@ -79,7 +81,7 @@ opkg install tailscale</pre>
     --accept-dns=false \
     --advertise-routes=10.0.0.0/24 \
     --advertise-exit-node</pre>
-                <p>If you're using OpenWrt == 22.03 you will also need to specify `--netfilter-mode=off`. For versions 23+ do NOT include netfilter-mode.  </p>
+                <p>If you're using OpenWrt == 22.03 you will also need to specify <code>--netfilter-mode=off</code>. For versions 23+ do NOT include netfilter-mode.  </p>
                 </section>
                 <div class="tips">
                     <h3>Tips:</h3>
@@ -89,6 +91,67 @@ opkg install tailscale</pre>
                 </div>
             </section>
 
+            <section id="usage-chinese">
+                <div class="notice">
+                    <p><h3>Note:</h3> 这是为 OpenWrt 精简定制的 Tailscale 软件包，旨在在保持核心功能的同时，尽可能降低存储占用。 </p>
+                        <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;优化内容：</p>
+                    <ul>
+                        <li>将 <code>tailscale</code> 和 <code>tailscaled</code> 合并为一个单一的可执行文件。</li>
+                        <li>使用 <code>--extra-small</code> 编译标志以显著减小二进制文件体积。</li>
+                        <li>使用 UPX 对二进制文件进行压缩（mips64 架构除外），进一步降低存储占用。</li>
+                    </ul>
+                </div>
+
+                <h2>软件源设置</h2>
+                <section class="part">
+                <p>将软件源添加到你的 OpenWrt 配置中：</p>
+
+                <div class="code-block">
+                    <p>编辑 <code>/etc/opkg/customfeeds.conf</code> 文件：</p>
+                    <pre>echo "src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale" >> /etc/opkg/customfeeds.conf</pre>
+
+                    <p>或者手动添加以下内容：</p>
+                    <pre>src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale</pre>
+                </div>
+                </section>
+
+                <h2>安装方式</h2>
+                <section class="part">
+                <p>请选择你喜欢的方式安装 Tailscale：</p>
+                <div class="method">
+                    <h4>Web 界面方式：</h4>
+                    <ol>
+                        <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                        <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                        <li>搜索 "tailscale" ;</li>
+                        <li>安装主软件包及其他你需要的工具组件 ;</li>
+                    </ol>
+                </div>
+                <div class="method">
+                    <h4>命令行方式：</h4>
+                    <pre>opkg update
+opkg install tailscale</pre>
+                    <p class="note">Note: 安装过程中出现 "failed log upload" 报错属于预期现象，可放心忽略。</p>
+                </div>
+                </section>
+
+                <h2>安装后步骤</h2>
+                <section class="part">
+                <p>安装完成后，需要配置 Tailscale 以将设备接入 Tailscale 网络。</p>
+                <p>执行以下命令：</p>
+                <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                <p>如果你的OpenWrt版本为22.03，你还需要添加 <code>--netfilter-mode=off</code> 参数， 对于 OpenWrt 23+ 则不应该包含该参数  </p>
+                </section>
+                <div class="tips">
+                    <h3>Tips:</h3>
+                    <ul>
+                        <li>建议添加 <code>--hostname=your-router-name</code> 参数，以便在 Tailscale 网络中更容易识别该设备。</li>
+                    </ul>
+                </div>
+            </section>
 
             <section id="packages" style="display: none;">
                 <table>
@@ -317,8 +380,9 @@ opkg install tailscale</pre>
             <hr>
 
             <p>
-                <span>Built for OpenWrt compatible devices. </span> <span>Open source on <a
-                        href="https://github.com/GuNanOvO/openwrt-tailscale">GitHub</a>.</span>
+                <span>Built for OpenWrt compatible devices. </span> 
+                <span>Open source on <a href="https://github.com/GuNanOvO/openwrt-tailscale">GitHub</a>.</span>
+                <span><a href="https://github.com/GuNanOvO/openwrt-tailscale">⭐Star it!</a></span>
                 <span><a href="https://github.com/GuNanOvO/openwrt-tailscale/blob/main/LICENSE">MIT License</a>.</span>
                 <span>Generated on:
                     <!-- date-anchor -->
@@ -335,22 +399,24 @@ opkg install tailscale</pre>
     </div>
 
     <script>
-
         function showSection(id) {
             document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
             document.getElementById(id).style.display = 'block';
 
+            const buttons = [
+                { id: 'btn-usage', section: 'usage', label: 'Usage' },
+                { id: 'btn-usage-chinese', section: 'usage-chinese', label: '用法' },
+                { id: 'btn-packages', section: 'packages', label: 'Packages' }
+            ];
 
-            const isUsage = id === 'usage';
-            document.getElementById('btn-usage').classList.toggle('active', isUsage);
-            document.getElementById('btn-usage').classList.toggle('inactive', !isUsage);
-            document.getElementById('btn-usage').textContent = isUsage ? '‣ Usage' : 'Usage';
-            document.getElementById('btn-usage').disabled = isUsage;
-
-            document.getElementById('btn-packages').classList.toggle('active', !isUsage);
-            document.getElementById('btn-packages').classList.toggle('inactive', isUsage);
-            document.getElementById('btn-packages').textContent = !isUsage ? '‣ Packages' : 'Packages';
-            document.getElementById('btn-packages').disabled = !isUsage;
+            buttons.forEach(btn => {
+                const isActive = (id === btn.section);
+                const el = document.getElementById(btn.id);
+                el.classList.toggle('active', isActive);
+                el.classList.toggle('inactive', !isActive);
+                el.textContent = isActive ? `‣ ${btn.label}` : btn.label;
+                el.disabled = isActive;
+            });
         }
 
         function toggleTheme() {
