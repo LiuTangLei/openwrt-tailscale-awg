@@ -50,7 +50,7 @@
 
                     <div class="code-block">
                         <p>Run this command on your OpenWrt device:</p>
-                        <pre>wget -O /etc/opkg/keys/0xSmallerTailscale.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub</pre>
+                        <pre>wget -O /tmp/key-build.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
                     </div>
 
                     <p>Add the package feed to your OpenWrt configuration:</p>
@@ -124,7 +124,7 @@ opkg install tailscale</pre>
 
                     <div class="code-block">
                         <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                        <pre>wget -O /etc/opkg/keys/0xSmallerTailscale.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub</pre>
+                        <pre>wget -O /tmp/key-build.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
                     </div>
 
                     <p>将软件源添加到你的 OpenWrt 配置中：</p>
