@@ -41,6 +41,7 @@ body {
 }
 
 button {
+    font-size: 1rem;
     border-top: none;
     border: none;
     border-radius: 3px;
@@ -151,6 +152,7 @@ tr:hover {
 }
 
 span {
+    font-size: 1rem;
     display: inline-block;
     margin-right: 1rem;
 }
@@ -160,7 +162,7 @@ code {
     padding: 0.2rem 0.5rem;
     border-radius: 3px;
     font-family: monospace;
-    font-size: 1em;
+    font-size: 1rem;
 }
 
 pre {
@@ -169,7 +171,7 @@ pre {
     padding: 1em;
     border-radius: 6px;
     font-family: monospace;
-    font-size: 1em;
+    font-size: 1rem;
     scrollbar-color: #bbb #eee;
     scrollbar-width: thin;
     padding: 1rem;
