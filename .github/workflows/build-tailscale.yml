@@ -530,7 +530,7 @@ jobs:
           **Build date 构建日期** : &nbsp;&nbsp;&nbsp;&nbsp;${{ env.BUILD_DATE }}   
           **Changelog 更新日志** : &nbsp;&nbsp;&nbsp;https://github.com/${{ env.REPO }}/releases/tag/${{ env.RELEASE_TAG }}   
 
-          **This release is based on and/or derived from [GuNanOvO/openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Many thanks to the original author.**"
+          **This release is based on and/or derived from [GuNanOvO/openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Many thanks to the original author.**
 
           ---
 
