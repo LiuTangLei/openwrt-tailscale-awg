@@ -1,18 +1,19 @@
-Package: tailscale
+Package: tailscale-awg
 Version: __VERSION__
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
-Source: https://github.com/GuNanOvO/openwrt-tailscale
-SourceName: openwrt-tailscale
+Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
+SourceName: openwrt-tailscale-awg
 License: BSD-3-Clause
 LicenseFiles: LICENSE
 Section: net
 SourceDateEpoch: __EPOCH__
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Maintainer: GuNan <gunanovo@gmail.com>
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
 Architecture: __ARCH__
 Installed-Size: __SIZE__
-Description: A smaller version of Tailscale.Built for OpenWrt. 
- It creates a secure network between your servers, computers,
- and cloud instances. Even when separated by firewalls or subnets.
+Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers, 
+ computers, and cloud instances with enhanced censorship resistance.
+ This package and build are based on https://github.com/GuNanOvO/openwrt-tailscale (many thanks to GuNanOvO).

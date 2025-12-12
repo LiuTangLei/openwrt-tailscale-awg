@@ -4,24 +4,25 @@
 SCRIPT_VERSION="v1.07"
 SCRIPT_DATE="2025/09/29"
 script_info() {
-    echo "#╔╦╗┌─┐ ┬ ┬  ┌─┐┌─┐┌─┐┬  ┌─┐  ┌─┐┌┐┌  ╔═╗┌─┐┌─┐┌┐┌ ╦ ╦ ┬─┐┌┬┐  ╦ ┌┐┌┌─┐┌┬┐┌─┐┬  ┬  ┌─┐┬─┐#"
-    echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
-    echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
+    echo "#╔╦╗┌─┐ ┬ ┬  ┌─┐┌─┐┌─┐┬  ┌─┐  ╔═╗╦ ╦╔═╗  ╔═╗┌┐┌  ╔═╗┌─┐┌─┐┌┐┌ ╦ ╦ ┬─┐┌┬┐  ╦ ┌┐┌┌─┐┌┬┐┌─┐┬  ┬  ┌─┐┬─┐#"
+    echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   ╠═╣║║║║ ╦  ║ ║├─┤  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
+    echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  ╩ ╩╚╩╝╚═╝  ╚═╝┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│ 一个用于在OpenWrt上安装Tailscale或更新Tailscale或...的一个脚本。                       │"
-    echo "│ 项目地址: https://github.com/GuNanOvO/openwrt-tailscale                                │"
+    echo "│ 一个用于在OpenWrt上安装Tailscale-AWG或更新Tailscale-AWG的脚本。                        │"
+    echo "│ 项目仓库 (Fork): https://github.com/LiuTangLei/openwrt-tailscale-awg                     │"
+    echo "│ 基于项目: https://github.com/GuNanOvO/openwrt-tailscale (致谢 GuNanOvO 的开源)            │"
     echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
-    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
+    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │""
     echo "│ 感谢您的使用, 如有帮助, 还请点颗star /<3                                               │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
 # 基本配置
-# https://github.com/gunanovo/openwrt-tailscale/releases/latest
-# https://github.com/gunanovo/openwrt-tailscale/releases/latest/download/info.txt
+# https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest
+# https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/info.txt
 
 # TAILSCALE 文件 URL
-TAILSCALE_URL="gunanovo/openwrt-tailscale/releases/latest"
+TAILSCALE_URL="LiuTangLei/openwrt-tailscale-awg/releases/latest"
 # tailscale 文件 URL头
 URL_PROXYS="https://ghfast.top/https://github.com
 https://cf.ghproxy.cc/https://github.com
@@ -32,7 +33,7 @@ https://ghproxy.cn/https://github.com
 https://www.ghproxy.cn/https://github.com
 https://github.com"
 # init.d/tailscale 文件 URL
-INIT_URL="/gunanovo/openwrt-tailscale/blob/main/etc/init.d/tailscale"
+INIT_URL="/LiuTangLei/openwrt-tailscale-awg/blob/main/etc/init.d/tailscale"
 # OpenWrt 可写存储分区，通常是 /overlay
 MOUNT_POINT="/"
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"
@@ -409,7 +410,8 @@ persistent_install() {
         echo "║ 使用持久安装时, 请您确认您的openwrt的剩余空间至少大于 ║"
         echo "║ "$file_size_mb", 推荐大于$(expr $file_size_mb \* 3)M.                                       ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          ║"
         echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
@@ -441,7 +443,8 @@ temp_to_persistent() {
         echo "║ 使用持久安装时, 请您确认您的openwrt的剩余空间至少大于 ║"
         echo "║ "$file_size_mb", 推荐大于$(expr $file_size_mb \* 3)M.                                       ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          ║"
         echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
@@ -474,7 +477,8 @@ temp_install() {
         echo "║ 务都将失效, 请您明悉并确定该讯息, 以免造成损失. 谢谢! ║"
         echo "║ 如果可以持久安装，推荐您采取持久安装方式!             ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          ║"
         echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
@@ -514,7 +518,7 @@ persistent_to_temp() {
         echo "║ 务都将失效, 请您明悉并确定该讯息, 以免造成损失. 谢谢! ║"
         echo "║ 如果可以持久安装，推荐您采取持久安装方式!             ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
         echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
@@ -592,7 +596,8 @@ tailscale_starter() {
     echo "║ 现在您可以按照您希望的方式开始使用!                   ║"
     echo "║ 直接启动: tailscale up                                ║"
     echo "║ 安装后有任何无法使用的问题, 可以于:                   ║"
-    echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+    echo "║ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+    echo "║ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          ║"
     echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
     echo "║                                                       ║"
     echo "╚═══════════════════════════════════════════════════════╝"
@@ -668,11 +673,12 @@ script_exit() {
         echo "┌───────────────────────────────────────────────────────┐"
         echo "│ THANKS!!!感谢您的信任与使用!!!                        │"
         echo "│                                                       │"
-        echo "│ 如果该脚本对您有帮助, 您可以点一颗Star支持我!         │"
+        echo "│ 如果该脚本对您有帮助, 您可以点一颗Star支持GuNanOvO!         │"
         echo "│ https://github.com/GuNanOvO/openwrt-tailscale/        │"
         echo "│ 安装后产生无法使用等情况, 您可以于:                   │"
-        echo "│ https://github.com/GuNanOvO/openwrt-tailscale/issues  │"
-        echo "│ 提出反馈. 谢谢您的使用! /<3                           │"
+        echo "│ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  │"
+        echo "│ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          │"
+        echo "│ 提出反馈. 谢谢您的使用! /<3                           │"}
         echo "│                                                       │"
         echo "└───────────────────────────────────────────────────────┘"
         exit 0
@@ -823,7 +829,7 @@ option_menu() {
 
 show_help() {
     echo "Tailscale on OpenWrt installer script. $SCRIPT_VERSION"
-    echo "https://github.com/GuNanOvO/openwrt-tailscale"
+    echo "https://github.com/LiuTangLei/openwrt-tailscale-awg"
     echo "  Usage:   "
     echo "      --help: Show this help"
     echo "      --notiny: Use uncompressed version "
@@ -852,7 +858,8 @@ for arg in "$@"; do
             echo "║                                                       ║"
             echo "║ 如果您有可用代理, 您可以提出issues, 我会将该代理加入  ║"
             echo "║ 脚本, 这将帮助大家, 谢谢!!!                           ║"
-            echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+            echo "║ 本项目 issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+            echo "║ 上游 issues: https://github.com/GuNanOvO/openwrt-tailscale/issues          ║"
             echo "║                                                       ║"
             echo "╚═══════════════════════════════════════════════════════╝"
             read -p "请输入您想要使用的代理并按回车: " custom_proxy

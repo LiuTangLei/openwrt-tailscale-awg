@@ -1,15 +1,16 @@
 **简体中文文档** | [English Docs](README_en.md)
 
-![Tailscale & OpenWrt](./banner.png)  
-# 适用于 OpenWrt 的 Tailscale 一键安装脚本
-## 同时提供OPKG软件源 -> [ [Smaller Tailscale Repo](https://gunanovo.github.io/openwrt-tailscale/) ]
+![Tailscale-AWG & OpenWrt](./banner.png)  
+# Tailscale-AWG for OpenWrt 一键安装脚本
+## Tailscale with Amnezia WireGuard 支持
 
-![GitHub release](https://img.shields.io/github/v/release/GuNanOvO/openwrt-tailscale?style=flat)
-![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FGuNanOvO%2Fopenwrt-tailscale&label=Views&countColor=%23b7d079&style=flat)
-![Downloads](https://img.shields.io/github/downloads/GuNanOvO/openwrt-tailscale/total?style=flat)
-![GitHub Stars](https://img.shields.io/github/stars/GuNanOvO/openwrt-tailscale?label=Stars&color=yellow)
+**本项目基于 [openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale)，非常感谢 GuNanOvO 的开源与贡献。**
 
-Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy install & easy update  
+![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat)
+![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat)
+![GitHub Stars](https://img.shields.io/github/stars/LiuTangLei/openwrt-tailscale-awg?label=Stars&color=yellow)
+
+基于 [LiuTangLei/tailscale](https://github.com/LiuTangLei/tailscale) 的 Tailscale-AWG 版本，支持 Amnezia WireGuard 协议，具备更强的抗审查能力。
 
 > [!NOTE]
 > 一个专为 OpenWrt 小存储空间设备设计的 Tailscale 安装工具  
@@ -58,7 +59,7 @@ Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy 
 **一键式命令行脚本:**
 > SSH链接至OpenWrt设备执行:
 > ```bash
-> wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
+> wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
 > ```
 > 仅中国大陆用户，其他地区请见[English README](README_en.md)  
 
@@ -73,19 +74,19 @@ Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy 
 
 #### 不支持中文的终端
 ```bash
-wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install_en_cnproxy.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
+wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install_en_cnproxy.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
 ```
 
 #### 安装未压缩的版本（约25mb）
 使用参数`--notiny`
 ```bash
-wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --notiny
+wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --notiny
 ```
 
 #### 自定义代理
 使用参数`--custom-proxy`
 ```bash
-wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --custom-proxy
+wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --custom-proxy
 ```
 
 </details>
@@ -95,7 +96,7 @@ wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com
 <summary><h3>手动持久安装</h3></summary>
 
 #### 安装二进制文件:
- 1. 于本项目[Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases)下载与您设备对应架构的tailscaled文件  
+ 1. 于本项目[Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)下载与您设备对应架构的tailscaled文件  
  2. 将该二进制可执行文件置于您设备的`/usr/bin`目录下  
  3. 重命名该二进制可执行文件重命名为`tailscaled`  
  4. 使用命令`ln -sv /usr/bin/tailscaled /usr/bin/tailscale`  
@@ -107,7 +108,7 @@ wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com
  10. enjoy～🫰🏻
 
 #### 安装ipk软件包:
- 1. 于本项目[Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases)下载与您设备对应架构的ipk软件包(自由选择压缩版与未压缩版)； 
+ 1. 于本项目[Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)下载与您设备对应架构的ipk软件包(自由选择压缩版与未压缩版)； 
  2. 可以于OpenWrt设备后台网页界面 -> 系统 -> 软件包 -> 上传软件包，选择您下载的软件包进行上传并安装；
 > 注意: 显示安装错误，则先测试 `tailscale up` ，如若正常，则安装成功。
 

@@ -10,12 +10,12 @@ on:
     types: [ build-tailscale ]
 
 env:
-  SOFTWARE_NAME: "Tailscale"
+  SOFTWARE_NAME: "Tailscale-AWG"
   FILE_NAME: "tailscaled"
-  REPO: "tailscale/tailscale"
-  REPO_SMALL: "GuNanOvO/openwrt-tailscale"
-  REPO_SMALL_NAME: "openwrt-tailscale"
-  REPO_SMALL_OWNER: "GuNanOvO"
+  REPO: "LiuTangLei/tailscale"
+  REPO_SMALL: "LiuTangLei/openwrt-tailscale-awg"
+  REPO_SMALL_NAME: "openwrt-tailscale-awg"
+  REPO_SMALL_OWNER: "LiuTangLei"
   ARTIFACT_DIR: "artifacts"
   BUILD_DATE: ""
 
@@ -524,11 +524,13 @@ jobs:
           echo "$table"
 
           # Set release body with table included
-          release_body="## 🚀 Smaller Tailscale / 更小的Tailscale
+          release_body="## 🚀 Smaller Tailscale-AWG / 更小的Tailscale-AWG
 
           **Version 版本** :&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ${{ env.RELEASE_TAG }}   
           **Build date 构建日期** : &nbsp;&nbsp;&nbsp;&nbsp;${{ env.BUILD_DATE }}   
           **Changelog 更新日志** : &nbsp;&nbsp;&nbsp;https://github.com/${{ env.REPO }}/releases/tag/${{ env.RELEASE_TAG }}   
+
+          **This release is based on and/or derived from [GuNanOvO/openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Many thanks to the original author.**"
 
           ---
 
@@ -638,8 +640,8 @@ jobs:
         with:
           script: |
             await github.rest.git.createTag({
-              owner: 'GuNanOvO',
-              repo: 'openwrt-tailscale',
+              owner: 'LiuTangLei',
+              repo: 'openwrt-tailscale-awg',
               tag: '${{ env.RELEASE_TAG }}',
               message: 'Release ${{ env.RELEASE_TAG }}',
               object: '${{ github.sha }}',

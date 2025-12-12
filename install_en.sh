@@ -8,8 +8,9 @@ script_info() {
     echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
     echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│ A script for installing/updating Tailscale on OpenWrt and related operations.          │"
-    echo "│ Project URL: https://github.com/GuNanOvO/openwrt-tailscale                             │"
+    echo "│ A script for installing/updating Tailscale-AWG on OpenWrt and related operations.        │"
+    echo "│ Project (Fork): https://github.com/LiuTangLei/openwrt-tailscale-awg                        │"
+    echo "│ Based on: https://github.com/GuNanOvO/openwrt-tailscale (Thanks to GuNanOvO)               │"
     echo "│ Script Version: "$SCRIPT_VERSION"                                                                  │"
     echo "│ Update Date: "$SCRIPT_DATE"                                                                │"
     echo "│ Thanks for using! If helpful, please give us a star /<3                                │"
@@ -17,8 +18,8 @@ script_info() {
 }
 
 # Basic Configuration
-TAILSCALE_URL="https://github.com/gunanovo/openwrt-tailscale/releases/latest"
-INIT_URL="https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/refs/heads/main/etc/init.d/tailscale"
+TAILSCALE_URL="https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest"
+INIT_URL="https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/refs/heads/main/etc/init.d/tailscale"
 MOUNT_POINT="/"
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"
 # tmp tailscale
@@ -325,7 +326,8 @@ persistent_install() {
         echo "║                                                       ║"
         echo "║ Ensure free space ≥ $file_size_mb MB, recommended ≥ $(expr $file_size_mb \* 3)M.          ║"
         echo "║ Report issues at:                                     ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm persistent install? (y/N): " choice
 
@@ -353,7 +355,8 @@ temp_to_persistent() {
         echo "║                                                       ║"
         echo "║ Ensure free space ≥ $file_size_mb MB, recommended ≥ $(expr $file_size_mb \* 3)M.          ║"
         echo "║ Report issues at:                                     ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm persistent install? (y/N): " choice
 
@@ -382,7 +385,8 @@ temp_install() {
         echo "║ Services may fail if script fails after reboot.       ║"
         echo "║ Recommended to use persistent install if possible.    ║"
         echo "║ Report issues at:                                     ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm temporary install? (y/N): " choice
 
@@ -418,7 +422,8 @@ persistent_to_temp() {
         echo "║ Services may fail if script fails after reboot.       ║"
         echo "║ Recommended to use persistent install if possible.    ║"
         echo "║ Report issues at:                                     ║"
-        echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+        echo "║ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
+        echo "║ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm temporary install? (y/N): " choice
 
@@ -494,7 +499,7 @@ tailscale_starter() {
     echo "║ To start directly: tailscale up                       ║"
     echo "║ If you encounter any issues after installation,       ║"
     echo "║ please submit feedback at:                            ║"
-    echo "║ https://github.com/GuNanOvO/openwrt-tailscale/issues  ║"
+    echo "║ https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
     echo "║ Thank you for using! /<3                              ║"
     echo "║                                                       ║"
     echo "╚═══════════════════════════════════════════════════════╝"
@@ -555,8 +560,9 @@ script_exit() {
         echo "│ Please consider giving a star if helpful:             │"
         echo "│ https://github.com/GuNanOvO/openwrt-tailscale/        │"
         echo "│ Report issues at:                                     │"
-        echo "│ https://github.com/GuNanOvO/openwrt-tailscale/issues  │"
-        echo "└───────────────────────────────────────────────────────┘"
+        echo "│ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  │"
+        echo "│ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   │"
+        echo "└───────────────────────────────────────────────────────┘"}
         exit 0
 }
 
@@ -698,7 +704,7 @@ option_menu() {
 # Function: Show help
 show_help() {
     echo "Tailscale on OpenWrt installer script. $SCRIPT_VERSION"
-    echo "https://github.com/GuNanOvO/openwrt-tailscale"
+    echo "https://github.com/LiuTangLei/openwrt-tailscale-awg"
     echo "  Usage:   "
     echo "      --help: Show this help"
     echo "      --notiny: Use uncompressed version "
