@@ -1,693 +1,693 @@
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: i386_pentium-mmx
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: eb85bcb85ec96a46fccc2e5d2d435610c6badabc238dce862520ed9dbbf1021e
-Size: 6452988
-Filename: tailscale_v1.90.9_i386_pentium-mmx.ipk
+SHA256sum: 5ace6a847f9337fe70cd9a4a1c12c2d01178cea63d11956a8b42563dca59c077
+Size: 6493348
+Filename: tailscale_v1.92.2_i386_pentium-mmx.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536769
+SourceDateEpoch: 1765537435
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 6449550
+Installed-Size: 6489878
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: i386_pentium4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 61556eb55a3ea0087f5ab8fc73fd836e4e03fc90c1905cd22343de1c3b7692d9
-Size: 6452980
-Filename: tailscale_v1.90.9_i386_pentium4.ipk
+SHA256sum: 198ba317149b4f0e935f136af35b383c42c4daf0ad283114bc0d6e470ce9a45f
+Size: 6493339
+Filename: tailscale_v1.92.2_i386_pentium4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536769
+SourceDateEpoch: 1765537435
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 6449550
+Installed-Size: 6489878
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: x86_64
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 72bc8de2528e0ed2960bc1449ce72f6a8582c2e7c830908fa75cf85edd26492e
-Size: 6893059
-Filename: tailscale_v1.90.9_x86_64.ipk
+SHA256sum: 5a3f088189997b682ae2c751ac0cb005684fc3c84c35f13f2ba8e3c60f7399ae
+Size: 6943635
+Filename: tailscale_v1.92.2_x86_64.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536792
+SourceDateEpoch: 1765537456
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 6889874
+Installed-Size: 6940230
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_arm1176jzf-s_vfp
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: f4875457f688cb952fa7ede910caecc3cd268e1fd5b43c76062c7907ee3b0802
-Size: 5544838
-Filename: tailscale_v1.90.9_arm_arm1176jzf-s_vfp.ipk
+SHA256sum: c35a59a2f08c65be758ff6bc49551349eef286cc08bd2985aff39c8bd1f59c9e
+Size: 5582212
+Filename: tailscale_v1.92.2_arm_arm1176jzf-s_vfp.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_arm926ej-s
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: d477acae22cce4c2f0d5e1aa04c73bf36592b0a12508154b7c24a460da449258
-Size: 5544831
-Filename: tailscale_v1.90.9_arm_arm926ej-s.ipk
+SHA256sum: 679307cc0136200cc30409a4e317e56fd1d416994a283af046acd9e3d3bdb803
+Size: 5582209
+Filename: tailscale_v1.92.2_arm_arm926ej-s.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a15_neon-vfpv4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 3bd9ecf16a09663f666c23356db351289934a380fbbcbe9fbde1b06065a1428b
-Size: 5544843
-Filename: tailscale_v1.90.9_arm_cortex-a15_neon-vfpv4.ipk
+SHA256sum: cc10797b7bb84bc9a128f44ce17a019886e317cd4a72d8359b7aa4c69312ce34
+Size: 5582214
+Filename: tailscale_v1.92.2_arm_cortex-a15_neon-vfpv4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a5_vfpv4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: c0ddbeb86dbb322a95705207d641c6af809c449fb856be044421b12c2a8470ab
-Size: 5544842
-Filename: tailscale_v1.90.9_arm_cortex-a5_vfpv4.ipk
+SHA256sum: 5cd2c23541791ad3c14f6fe08573e20e193992a9198c44c55b178ff5f9af6232
+Size: 5582212
+Filename: tailscale_v1.92.2_arm_cortex-a5_vfpv4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a7
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 27dfce3acd4755d22bf5cde5df656467884fbe2f12fda0cec2c0f1b0060717c6
-Size: 5544830
-Filename: tailscale_v1.90.9_arm_cortex-a7.ipk
+SHA256sum: ad26807791be1b8991773efb5c9893f92a1789461d867f5bf8f707f519a0e6f8
+Size: 5582208
+Filename: tailscale_v1.92.2_arm_cortex-a7.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a7_neon-vfpv4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 7b9defa9d26535336c8a65abfbe8926de6651433c0fcb3c251e0c211295776b6
-Size: 5544842
-Filename: tailscale_v1.90.9_arm_cortex-a7_neon-vfpv4.ipk
+SHA256sum: 04de9c384923f1fe76b4bb9c4a6d9d98af882a3e0861d5d43857506be1c893cd
+Size: 5582218
+Filename: tailscale_v1.92.2_arm_cortex-a7_neon-vfpv4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a7_vfpv4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: c2c872b97004b9484857ef25525316cc7c80488590efeef724b9095ceabeb160
-Size: 5544839
-Filename: tailscale_v1.90.9_arm_cortex-a7_vfpv4.ipk
+SHA256sum: 58baf52b5dafb2f475e9127b17a78512657152042e620e0e68629f8fae02afe5
+Size: 5582218
+Filename: tailscale_v1.92.2_arm_cortex-a7_vfpv4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a8_vfpv3
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: bcfaf07e6e2abf43d4ddb0b109bc258e1ecf93e51f46481d0e7b0ecf52153a12
-Size: 5544839
-Filename: tailscale_v1.90.9_arm_cortex-a8_vfpv3.ipk
+SHA256sum: 5c5e600f1f8b3505ac123a07c10c7e7a8052ef8dcf0e74f327a6f64f71d0f428
+Size: 5582217
+Filename: tailscale_v1.92.2_arm_cortex-a8_vfpv3.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a9
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 8fe8af07b4fd88e0e323a21afed945be9b99fb41f1329a74576badd4dcfb74dc
-Size: 5544833
-Filename: tailscale_v1.90.9_arm_cortex-a9.ipk
+SHA256sum: 11e080aca3a2d6ef9d7ed84495dc2e07f64ea7365f10aecbe0970e43feeab547
+Size: 5582213
+Filename: tailscale_v1.92.2_arm_cortex-a9.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a9_neon
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: ebeef9624d7387afffd90f9616250f6b00e127c13487abd2e2929691796d7b92
-Size: 5544837
-Filename: tailscale_v1.90.9_arm_cortex-a9_neon.ipk
+SHA256sum: 239bfc77f00472f3e787f29c4c4d92169c0ea799b3763fddc49b5831732779c0
+Size: 5582209
+Filename: tailscale_v1.92.2_arm_cortex-a9_neon.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_cortex-a9_vfpv3-d16
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 4077505abfa92ed35ddd578d442126d76d24a628bcb39b0693454f49f920c600
-Size: 5544844
-Filename: tailscale_v1.90.9_arm_cortex-a9_vfpv3-d16.ipk
+SHA256sum: 7697e07635f7e54f6705935450fcb735defae8b377e509e676aee63c780c9d02
+Size: 5582216
+Filename: tailscale_v1.92.2_arm_cortex-a9_vfpv3-d16.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_fa526
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 1a8eac271d682237782da2c529bea313e66de2b115be31ab0c1b86e4ba832fe2
-Size: 5544834
-Filename: tailscale_v1.90.9_arm_fa526.ipk
+SHA256sum: b622201982d0d326754bb714cbfb68f673f73495d5d5be0d17a465b3170a23b3
+Size: 5582207
+Filename: tailscale_v1.92.2_arm_fa526.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_mpcore
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 8baa81eeefcae7577d0a7ef65a46d5deebbf19c4eca0074e19ee06c45346f31b
-Size: 5544837
-Filename: tailscale_v1.90.9_arm_mpcore.ipk
+SHA256sum: 661c3d659e48246cae5289b28e0c9349dae6b2e9d1f08968d1a6c02cade216fe
+Size: 5582215
+Filename: tailscale_v1.92.2_arm_mpcore.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: arm_xscale
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: c1ad1b92d1c94ad8766920e4c6c15221b1a0e1273685f3d3dd1e850b1ce5626c
-Size: 5544832
-Filename: tailscale_v1.90.9_arm_xscale.ipk
+SHA256sum: 81c0881ea3084ba4d941165947367bdea3aae6fb10a46b61ad2c805b0375327b
+Size: 5582202
+Filename: tailscale_v1.92.2_arm_xscale.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536781
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5541626
+Installed-Size: 5579086
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: aarch64_cortex-a53
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 94ba3188ff7eabc99e4ae97498d2a63787c18142d85b1c73ded737d4c721c6c4
-Size: 5636550
-Filename: tailscale_v1.90.9_aarch64_cortex-a53.ipk
+SHA256sum: 3b5ca2ef13876d224039df619094da47df95d527faae556ef64c4fe4c0724cca
+Size: 5678764
+Filename: tailscale_v1.92.2_aarch64_cortex-a53.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536779
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5633170
+Installed-Size: 5675390
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: aarch64_cortex-a72
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 4795cf6588234ed636614bc6c35d2768502c023697711cbd01238c2fd224b4f4
-Size: 5636554
-Filename: tailscale_v1.90.9_aarch64_cortex-a72.ipk
+SHA256sum: 11788814f684b7c3a618f9c75e195d577ab21f6878c39853b43bb6819ace00c2
+Size: 5678765
+Filename: tailscale_v1.92.2_aarch64_cortex-a72.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536779
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5633170
+Installed-Size: 5675390
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: aarch64_cortex-a76
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 374b5b13c501995da6b5ca773adbc03ead610a1f391efa8b663488c095c6bfb8
-Size: 5636552
-Filename: tailscale_v1.90.9_aarch64_cortex-a76.ipk
+SHA256sum: 2135f69bdf830e7d91caf8450b697ec0cb67d45eeae1206ed05079205bad4813
+Size: 5678767
+Filename: tailscale_v1.92.2_aarch64_cortex-a76.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536779
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5633170
+Installed-Size: 5675390
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: aarch64_generic
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: ca45c2ff10e312b10aab0e447131270ed3e41ed7791ad2f0eba719f6ccac787f
-Size: 5636548
-Filename: tailscale_v1.90.9_aarch64_generic.ipk
+SHA256sum: 0eb2cb530ae37bd1add4ffd7465e665be262cf33cfce158b3684ecf83708ddf2
+Size: 5678764
+Filename: tailscale_v1.92.2_aarch64_generic.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536779
+SourceDateEpoch: 1765537443
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5633170
+Installed-Size: 5675390
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: i386_pentium-mmx
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 0b3ac69e762e0ad5bf1ba98855c6ad17d079f8c5fb8d3db26b93136d0b6372e8
-Size: 6465936
-Filename: tailscale_v1.90.9_i386_pentium-mmx.ipk
+SHA256sum: eaed3399e11a9707c63779806523c7e06c3c9698c39d13a75dd1af056173d703
+Size: 6504230
+Filename: tailscale_v1.92.2_i386_pentium-mmx.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536774
+SourceDateEpoch: 1765537439
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 6462630
+Installed-Size: 6500910
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: i386_pentium4
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 73905ecc6487206516b2c33c14a3d23267e3bef592dd0d6fe518cafaa6364f0d
-Size: 6465937
-Filename: tailscale_v1.90.9_i386_pentium4.ipk
+SHA256sum: 1259ff079084cd0fac0bd6c10957934257063881b0897fe6db767efae0849422
+Size: 6504226
+Filename: tailscale_v1.92.2_i386_pentium4.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536774
+SourceDateEpoch: 1765537439
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 6462630
+Installed-Size: 6500910
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips_24kc
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 0c414f09c89a9efa3ae021dbbc152f08224e2410b5ab58f9c4becbff21a76aba
-Size: 5393259
-Filename: tailscale_v1.90.9_mips_24kc.ipk
+SHA256sum: bf7f17f6eb9b313dccce2f22a482defcb8d39ed5975a00c691d7a19309ead5a4
+Size: 5432441
+Filename: tailscale_v1.92.2_mips_24kc.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536772
+SourceDateEpoch: 1765537435
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5390706
+Installed-Size: 5429794
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips_4kec
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 308b12b5e401163412fb125e248df56047da91040a6e5d0c82932806ca06125b
-Size: 5393264
-Filename: tailscale_v1.90.9_mips_4kec.ipk
+SHA256sum: 7afdc633fff0ac7b4f91c698b60df569f7783fae185f4f7d2314a3ef0d4e17d2
+Size: 5432435
+Filename: tailscale_v1.92.2_mips_4kec.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536772
+SourceDateEpoch: 1765537435
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5390706
+Installed-Size: 5429794
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips_mips32
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: ca4db8ef21477271d3504178c33181bd2df10b768fe5922d9514d342d2af8de2
-Size: 5393259
-Filename: tailscale_v1.90.9_mips_mips32.ipk
+SHA256sum: b3680c04e3ca766b966ec7674ef78a343ef97eb583ae14eba5f159b3d096a50a
+Size: 5432435
+Filename: tailscale_v1.92.2_mips_mips32.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536772
+SourceDateEpoch: 1765537435
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5390706
+Installed-Size: 5429794
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips64_mips64r2
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 95daba532164f4967daf3a545277e84a945e971b80b58bb370d4c1594796982c
-Size: 8253951
-Filename: tailscale_v1.90.9_mips64_mips64r2_normal.ipk
+SHA256sum: 1bc6b6086a7c884a839624b70fc23db421851ac15119f8f57d0dc6b53e0693d9
+Size: 8321421
+Filename: tailscale_v1.92.2_mips64_mips64r2_normal.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536762
+SourceDateEpoch: 1765537430
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 25952450
+Installed-Size: 26214594
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips64_octeonplus
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: e07fc072dbdbf7302920dc151be693b98542925004de0299587254c3ad986603
-Size: 8253968
-Filename: tailscale_v1.90.9_mips64_octeonplus_normal.ipk
+SHA256sum: 982f7ddb03b13a6d05f0a5ccb38be32ac57e0c071c01915c5e0925cff20fd721
+Size: 8321421
+Filename: tailscale_v1.92.2_mips64_octeonplus_normal.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536762
+SourceDateEpoch: 1765537430
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 25952450
+Installed-Size: 26214594
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mips64el_mips64r2
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: aa268ebe09e6e55548c46a0e625c13b59adf645f2f9f49b122c81ee2b4ac63e5
-Size: 8088125
-Filename: tailscale_v1.90.9_mips64el_mips64r2_normal.ipk
+SHA256sum: f808e1a26577d4a673dfb371c94e617cbd898e44375d9cd95d3c2a94f87bf893
+Size: 8152084
+Filename: tailscale_v1.92.2_mips64el_mips64r2_normal.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536764
+SourceDateEpoch: 1765537428
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 25952450
+Installed-Size: 26214594
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mipsel_24kc
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: f143510be37156c28e2240999a0070909527a90ff1102089d0410516784734c8
-Size: 5496134
-Filename: tailscale_v1.90.9_mipsel_24kc.ipk
+SHA256sum: 77e16a7ac8615617dd59d6a4b0fd0a4a608cf3f1d267e9c9e59488607da92265
+Size: 5537293
+Filename: tailscale_v1.92.2_mipsel_24kc.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536775
+SourceDateEpoch: 1765537450
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5493474
+Installed-Size: 5534590
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mipsel_24kc_24kf
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: 270fa7301c336817714fc22e7183f3b25305d10f22204e6a238baf55bbb65baa
-Size: 5496140
-Filename: tailscale_v1.90.9_mipsel_24kc_24kf.ipk
+SHA256sum: bb83d323abc62c831f53aaafe4907d590a30d63b2789028fd3df54eb9f1b8423
+Size: 5537293
+Filename: tailscale_v1.92.2_mipsel_24kc_24kf.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536775
+SourceDateEpoch: 1765537450
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5493474
+Installed-Size: 5534590
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mipsel_74kc
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: f653c3ec6a984643c466f265c2022e463a196dc719576a8d574e94d4b7a5e170
-Size: 5496132
-Filename: tailscale_v1.90.9_mipsel_74kc.ipk
+SHA256sum: 47b5649db6d2777f01b47fcac056bd80bb8127703fc41f61467fa466c5740ce4
+Size: 5537293
+Filename: tailscale_v1.92.2_mipsel_74kc.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536775
+SourceDateEpoch: 1765537450
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5493474
+Installed-Size: 5534590
 
 
 Package: tailscale-awg
-Version: 1.90.9
+Version: 1.92.2
 Depends: libc, ca-bundle, kmod-tun
 Provides: tailscale tailscaled
 Section: net
 Architecture: mipsel_mips32
 Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
-SHA256sum: edbdcc18a4558af6391786b755dc1be36849fc6d9235659a8980570d2debf51d
-Size: 5496136
-Filename: tailscale_v1.90.9_mipsel_mips32.ipk
+SHA256sum: 174e21ee9ea757742b7dbe26f2a86ffb571b08f56a8f779f799d64a44e8d033c
+Size: 5537299
+Filename: tailscale_v1.92.2_mipsel_mips32.ipk
 Source: https://github.com/LiuTangLei/openwrt-tailscale-awg
 Description: Tailscale-AWG: Tailscale with Amnezia WireGuard support.
 License: BSD-3-Clause
 SourceName: openwrt-tailscale-awg
 LicenseFiles: LICENSE
-SourceDateEpoch: 1765536775
+SourceDateEpoch: 1765537450
 URL: https://tailscale.com
 CPE-ID: cpe:/a:tailscale:tailscale
-Installed-Size: 5493474
+Installed-Size: 5534590
 
 
