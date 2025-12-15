@@ -6,10 +6,9 @@
 
 **This project is based on [openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Thanks to GuNanOvO for the original work.**
 
-![GitHub release](https://img.shields.io/github/v/release/GuNanOvO/openwrt-tailscale?style=flat)
-![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FGuNanOvO%2Fopenwrt-tailscale&label=Views&countColor=%23b7d079&style=flat)
-![Downloads](https://img.shields.io/github/downloads/GuNanOvO/openwrt-tailscale/total?style=flat)
-![GitHub Stars](https://img.shields.io/github/stars/GuNanOvO/openwrt-tailscale?label=Stars&color=yellow)
+![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat)
+![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat)
+![GitHub Stars](https://img.shields.io/github/stars/LiuTangLei/openwrt-tailscale-awg?label=Stars&color=yellow)
 
 Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy install & easy update  
 
@@ -60,7 +59,7 @@ Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy 
 **One-Click Installation Script:**
 > SSH into your OpenWrt device and execute:
 > ```bash
-> wget -O /usr/bin/install.sh https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install_en.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
+> wget -O /usr/bin/install.sh https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install_en.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh
 > ```
 
 **Add opkg Repository:**
@@ -76,7 +75,7 @@ Bring the latest Tailscale to small-storage OpenWrt device. space-saving & easy 
 #### Install uncompressed version (~25MB)
 Use `--notiny` parameter:
 ```bash
-wget -O /usr/bin/install.sh https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install_en.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --notiny
+wget -O /usr/bin/install.sh https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install_en.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --notiny
 ```
 
 </details>
@@ -85,11 +84,11 @@ wget -O /usr/bin/install.sh https://raw.githubusercontent.com/GuNanOvO/openwrt-t
 <summary><h3>Manual Persistent Installation</h3></summary>
 
 #### Install binary files:
- 1. Download the tailscaled file matching your device architecture from [Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases)  
+ 1. Download the tailscaled file matching your device architecture from [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)  
  2. Place the binary in your device's `/usr/bin` directory  
  3. Rename the binary to `tailscaled`  
  4. Create symbolic link: `ln -sv /usr/bin/tailscaled /usr/bin/tailscale`  
- 5. Get the init script from our [directory](https://github.com/GuNanOvO/openwrt-tailscale/tree/main/etc/init.d) or create manually  
+ 5. Get the init script from our [directory](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/main/etc/init.d) or create manually  
  6. Place the file in your device's `/etc/init.d` directory  
  7. Add execute permissions: `chmod +x /etc/init.d/tailscale && chmod +x /usr/bin/tailscale && chmod +x /usr/bin/tailscaled`  
  8. Start service: `/etc/init.d/tailscale start` then run `tailscale up`  
@@ -97,7 +96,7 @@ wget -O /usr/bin/install.sh https://raw.githubusercontent.com/GuNanOvO/openwrt-t
  10. Enjoy～🫰🏻  
 
 #### Install ipk package:
- 1. Download matching ipk package from [Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases) (choose compressed or uncompressed version)  
+ 1. Download matching ipk package from [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases) (choose compressed or uncompressed version)  
  2. Install via OpenWrt web UI: System → Software → Upload Package  
 > Note: Ignore "failed log upload" error when install if `tailscale up` works normally  
 
@@ -169,7 +168,7 @@ Additionally, by applying [UPX](https://upx.github.io/) binary compression, the 
 <details open>
 <summary><h2>Issue Reporting</h2></summary>
 
-Please submit issues at [Issues](https://github.com/GuNanOvO/openwrt-tailscale/issues) with:  
+Please submit issues at [Issues](https://github.com/LiuTangLei/openwrt-tailscale-awg/issues) with:  
 1. Device architecture (`uname -m`)  
 2. Target platform architecture (`opkg print-architecture`)  
 3. Installation mode (persistent/temporary/opkg)  
