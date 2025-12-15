@@ -13,7 +13,6 @@ script_info() {
     echo "│ 基于项目: https://github.com/GuNanOvO/openwrt-tailscale (致谢 GuNanOvO 的开源)            │"
     echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
     echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
-    echo "│ 感谢您的使用, 如有帮助, 还请点颗star /<3                                               │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -546,8 +545,10 @@ downloader() {
     for attempt_times in $attempt_range; do
         wget -cO "/tmp/$TAILSCALE_FILE" "$available_proxy/$TAILSCALE_URL/download/$TAILSCALE_FILE"
         wget -cO /tmp/checksums.txt "$available_proxy/$TAILSCALE_URL/download/checksums.txt"
-        grep -E "  ${TAILSCALE_FILE}\$" checksums.txt > $TAILSCALE_FILE.sha256
-        if ! sha256sum -c $TAILSCALE_FILE.sha256; then
+        grep -E "  ${TAILSCALE_FILE}\$" /tmp/checksums.txt > /tmp/$TAILSCALE_FILE.sha256
+        cd /tmp
+        if ! sha256sum -c /tmp/$TAILSCALE_FILE.sha256; then
+            cd - > /dev/null
             if [ "$attempt_times" == "3" ]; then
                 echo "tailscale 文件三次下载均失败, 即将重启脚本, 请重试!"
                 exit
@@ -555,6 +556,7 @@ downloader() {
                 echo "tailscale 文件校验不通过, 正在尝试重新下载!"
             fi
         else
+            cd - > /dev/null
             echo "tailscale 文件校验通过!"
             mv "/tmp/$TAILSCALE_FILE" "/tmp/tailscaled"
             break

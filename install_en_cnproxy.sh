@@ -13,7 +13,6 @@ script_info() {
     echo "│ Based on: https://github.com/GuNanOvO/openwrt-tailscale (Thanks to GuNanOvO)               │"
     echo "│ Script Version: "$SCRIPT_VERSION"                                                                  │"
     echo "│ Update Date: "$SCRIPT_DATE"                                                                │"
-    echo "│ Thanks for using! If helpful, please give us a star /<3                                │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -488,8 +487,10 @@ downloader() {
     for attempt_times in $attempt_range; do
         wget -cO "/tmp/$TAILSCALE_FILE" "$available_proxy/$TAILSCALE_URL/download/$TAILSCALE_FILE"
         wget -cO /tmp/checksums.txt "$available_proxy/$TAILSCALE_URL/download/checksums.txt"
-        grep -E "  ${TAILSCALE_FILE}\$" checksums.txt > $TAILSCALE_FILE.sha256
-        if ! sha256sum -c $TAILSCALE_FILE.sha256; then
+        grep -E "  ${TAILSCALE_FILE}\$" /tmp/checksums.txt > /tmp/$TAILSCALE_FILE.sha256
+        cd /tmp
+        if ! sha256sum -c /tmp/$TAILSCALE_FILE.sha256; then
+            cd - > /dev/null
             if [ "$attempt_times" == "3" ]; then
                 echo "Tailscale file failed to verify three times. The script will restart soon. Please try again!"
                 exec "$0" "$@"
@@ -497,6 +498,7 @@ downloader() {
                 echo "Tailscale file verification failed, attempting to re-download!"
             fi
         else
+            cd - > /dev/null
             echo "Tailscale file verification passed!"
             mv "/tmp/$TAILSCALE_FILE" "/tmp/tailscaled"
             break
