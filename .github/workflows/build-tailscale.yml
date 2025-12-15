@@ -1,13 +1,13 @@
 name: Smaller Tailscale Build Pipeline
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
   push:
-    branches: [ main ]
+    branches: [main]
     paths:
       - version
   repository_dispatch:
-    types: [ build-tailscale ]
+    types: [build-tailscale]
 
 env:
   SOFTWARE_NAME: "Tailscale-AWG"
@@ -23,109 +23,95 @@ jobs:
   build:
     name: Build for ${{ matrix.platform.id }}
     runs-on: ubuntu-latest
-    outputs: 
+    outputs:
       upstream_commit: ${{ steps.read_commit.outputs.upstream_commit }}
       version_tag: ${{ steps.read_commit.outputs.version_tag }}
     strategy:
       matrix:
-        platform: [
-          {
-            id: 'arm',
-            goarch: 'arm',
-            openwrt_targets: 
-              [
-              'arm_arm1176jzf-s_vfp',
-              'arm_arm926ej-s',
-              'arm_cortex-a15_neon-vfpv4',
-              'arm_cortex-a5_vfpv4',
-              'arm_cortex-a7',
-              'arm_cortex-a7_neon-vfpv4',
-              'arm_cortex-a7_vfpv4',
-              'arm_cortex-a8_vfpv3',
-              'arm_cortex-a9',
-              'arm_cortex-a9_neon',
-              'arm_cortex-a9_vfpv3-d16',
-              'arm_fa526',
-              'arm_xscale',
-              'arm_mpcore'
-            ]
-          },
-          {
-            id: 'arm64',
-            goarch: 'arm64',
-            openwrt_targets: [
-              'aarch64_cortex-a53',
-              'aarch64_cortex-a72',
-              'aarch64_cortex-a76',
-              'aarch64_generic'
-            ]
-          },
-          {
-            id: 'mips',
-            goarch: 'mips',
-            gomips: 'softfloat',
-            openwrt_targets: [
-              'mips_24kc',
-              'mips_4kec',
-              'mips_mips32'
-            ]
-          },
-          {
-            id: 'mipsle',
-            goarch: 'mipsle',
-            gomips: 'softfloat',
-            openwrt_targets: [
-              'mipsel_24kc',
-              'mipsel_24kc_24kf',
-              'mipsel_74kc',
-              'mipsel_mips32'
-            ]
-          },
-          {
-            id: 'mips64',
-            goarch: 'mips64',
-            gomips: 'softfloat',
-            openwrt_targets: [
-              'mips64_mips64r2',
-              'mips64_octeonplus'
-            ]
-          },
-          {
-            id: 'mips64le',
-            goarch: 'mips64le',
-            gomips: 'softfloat',
-            openwrt_targets: [
-              'mips64el_mips64r2'
-            ]
-          },
-          {
-            id: '386',
-            goarch: '386',
-            openwrt_targets: [
-              'i386_pentium-mmx',
-              'i386_pentium4'
-            ]
-          },
-          {
-            id: 'amd64',
-            goarch: 'amd64',
-            cgo_enabled: '1',
-            cc: 'musl-gcc',
-            setup: 'sudo apt-get update && sudo apt-get install -y musl-tools',
-            openwrt_targets: [
-              'x86_64'
-            ]
-          },
-          {
-            id: 'geode',
-            goarch: '386',
-            go386: 'softfloat',
-            openwrt_targets: [
-              'i386_pentium-mmx',
-              'i386_pentium4'
-            ]
-          }
-        ]
+        platform:
+          [
+            {
+              id: "arm",
+              goarch: "arm",
+              openwrt_targets:
+                [
+                  "arm_arm1176jzf-s_vfp",
+                  "arm_arm926ej-s",
+                  "arm_cortex-a15_neon-vfpv4",
+                  "arm_cortex-a5_vfpv4",
+                  "arm_cortex-a7",
+                  "arm_cortex-a7_neon-vfpv4",
+                  "arm_cortex-a7_vfpv4",
+                  "arm_cortex-a8_vfpv3",
+                  "arm_cortex-a9",
+                  "arm_cortex-a9_neon",
+                  "arm_cortex-a9_vfpv3-d16",
+                  "arm_fa526",
+                  "arm_xscale",
+                  "arm_mpcore",
+                ],
+            },
+            {
+              id: "arm64",
+              goarch: "arm64",
+              openwrt_targets:
+                [
+                  "aarch64_cortex-a53",
+                  "aarch64_cortex-a72",
+                  "aarch64_cortex-a76",
+                  "aarch64_generic",
+                ],
+            },
+            {
+              id: "mips",
+              goarch: "mips",
+              gomips: "softfloat",
+              openwrt_targets: ["mips_24kc", "mips_4kec", "mips_mips32"],
+            },
+            {
+              id: "mipsle",
+              goarch: "mipsle",
+              gomips: "softfloat",
+              openwrt_targets:
+                [
+                  "mipsel_24kc",
+                  "mipsel_24kc_24kf",
+                  "mipsel_74kc",
+                  "mipsel_mips32",
+                ],
+            },
+            {
+              id: "mips64",
+              goarch: "mips64",
+              gomips: "softfloat",
+              openwrt_targets: ["mips64_mips64r2", "mips64_octeonplus"],
+            },
+            {
+              id: "mips64le",
+              goarch: "mips64le",
+              gomips: "softfloat",
+              openwrt_targets: ["mips64el_mips64r2"],
+            },
+            {
+              id: "386",
+              goarch: "386",
+              openwrt_targets: ["i386_pentium-mmx", "i386_pentium4"],
+            },
+            {
+              id: "amd64",
+              goarch: "amd64",
+              cgo_enabled: "1",
+              cc: "musl-gcc",
+              setup: "sudo apt-get update && sudo apt-get install -y musl-tools",
+              openwrt_targets: ["x86_64"],
+            },
+            {
+              id: "geode",
+              goarch: "386",
+              go386: "softfloat",
+              openwrt_targets: ["i386_pentium-mmx", "i386_pentium4"],
+            },
+          ]
 
       fail-fast: false
 
@@ -136,7 +122,6 @@ jobs:
           ref: main
           path: main
 
-
       - name: Read commit from version file
         id: read_commit
         working-directory: main
@@ -146,11 +131,10 @@ jobs:
           echo "upstream_commit=$upstream_commit" >> $GITHUB_OUTPUT
           echo "version_tag=$version" >>$GITHUB_OUTPUT
 
-
       - name: Checkout source at specific commit
         uses: actions/checkout@v4
         with:
-          repository: ${{ env.REPO }} 
+          repository: ${{ env.REPO }}
           ref: ${{ steps.read_commit.outputs.upstream_commit }}
           path: src
 
@@ -162,7 +146,7 @@ jobs:
       - name: Setup build environment
         run: |
           ${{ matrix.platform.setup || 'echo "No additional setup required"' }}
-          
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -189,7 +173,7 @@ jobs:
           CC: ${{ matrix.platform.cc || '' }}
         run: |
           output_name="${{ env.FILE_NAME }}-linux-${{ matrix.platform.id }}"
-          
+
           go="go"
           if [ -n "${TS_USE_TOOLCHAIN:-}" ]; then
             go="./tool/go"
@@ -217,7 +201,7 @@ jobs:
             -trimpath \
             -o "../build/${output_name}" \
             ./cmd/${{ env.FILE_NAME }}
-          
+
           # Verify the binary was created
           if [ ! -f "../build/${output_name}" ]; then
             echo "::error::Build failed for ${{ matrix.platform.id }}"
@@ -304,7 +288,7 @@ jobs:
             rm -f ipk/usr/bin/*
 
           done
-          
+
           targets_json='${{ toJson(matrix.platform.openwrt_targets) }}'
           targets=$(echo "${targets_json}" | jq -r '.[]')
 
@@ -387,7 +371,7 @@ jobs:
           # Create checksums
           cd ${{ env.ARTIFACT_DIR }}
           sha256sum * > checksums.txt
-          
+
           # Create info file
           {
             echo "Version: ${{ env.RELEASE_TAG }}"
@@ -400,13 +384,13 @@ jobs:
             done
           } > build-info.txt
           cd ..
-      
+
       - name: Checkout feed branch
         uses: actions/checkout@v4
         with:
           ref: feed
           path: feed
-      
+
       - name: Setup Usign
         run: |
           git clone https://git.openwrt.org/project/usign.git
@@ -416,7 +400,7 @@ jobs:
           cmake ..
           make
           make install
-          
+
       - name: Restore usign private key
         env:
           USIGN_SECRET_KEY_B64: ${{ secrets.USIGN_SECRET_KEY_B64 }}
@@ -424,7 +408,7 @@ jobs:
         run: |
           echo "$USIGN_SECRET_KEY_B64" | base64 -d > key-build.sec
           chmod 600 key-build.sec
-          
+
       - name: Prepare feed files
         run: |
           rm -rf feed/tailscale* feed/Packages* feed/version*
@@ -441,23 +425,59 @@ jobs:
           file feed/Packages
           file key-build.sec
 
+          # Rewrite Filename entries to point to the release assets URL
+          base_url="https://github.com/${{ env.REPO_SMALL_OWNER }}/${{ env.REPO_SMALL_NAME }}/releases/download/${{ env.RELEASE_TAG }}"
+          sed -i "s#^Filename: \(.*\)#Filename: ${base_url}/\1#" feed/Packages
+
+          # (Re)gzip after rewriting URLs
+          gzip -kf feed/Packages
+
+          # Sign the Packages list
           usign -S -m feed/Packages -s key-build.sec -x feed/Packages.sig
 
           cat feed/Packages.sig
-          
+
+          # Remove binary files from feed so they won't be committed and won't bloat the feed branch
+          rm -f feed/*.ipk || true
+
           generate_tbody() {
             echo "          <tbody>"
-            for file in feed/Packages* feed/tailscale*; do
+            for file in feed/Packages*; do
               [ -f "${file}" ] || continue
               fname=$(basename "${file}")
-              fsize=$(du -h "${file}" | cut -f1)
-              fdate=$(date -r "${file}" +"%Y-%m-%d %a %H:%M:%S UTC")
-              echo "                        <tr>"
-              echo "                            <td><a href=\"$fname\">$fname</a></td>"
-              echo "                            <td>$fsize</td>"
-              echo "                            <td>$fdate</td>"
-              echo "                        </tr>"
+              # For Packages files we link directly to the feed Packages files. For package entries we create links to the release assets
+              if [[ "${fname}" == Packages* ]]; then
+                fsize=$(du -h "${file}" | cut -f1)
+                fdate=$(date -r "${file}" +"%Y-%m-%d %a %H:%M:%S UTC")
+                echo "                        <tr>"
+                echo "                            <td><a href=\"$fname\">$fname</a></td>"
+                echo "                            <td>$fsize</td>"
+                echo "                            <td>$fdate</td>"
+                echo "                        </tr>"
+              fi
             done
+
+            # Add entries for packages as links to release assets
+            for pkgfile in ${base_url}/*; do
+              true # placeholder -- we will add package table entries from artifacts.json directly below
+            done
+
+            # Build package table rows from artifacts.json as HTML
+            jq -r --arg base_url "${base_url}" '
+              .[] |
+              "<tr><td>" + .target + "</td>" +
+              "<td>" + (if .binary_compressed != "" then "<a href=\"" + $base_url + "/" + .binary_compressed + "\">" + .binary_compressed + "</a>" else "" end) + "</td>" +
+              "<td>" + (if .ipk_compressed != "" then "<a href=\"" + $base_url + "/" + .ipk_compressed + "\">" + .ipk_compressed + "</a>" else "" end) + "</td>" +
+              "<td>" + (if .binary_normal != "" then "<a href=\"" + $base_url + "/" + .binary_normal + "\">" + .binary_normal + "</a>" else "" end) + "</td>" +
+              "<td>" + (if .ipk_normal != "" then "<a href=\"" + $base_url + "/" + .ipk_normal + "\">" + .ipk_normal + "</a>" else "" end) + "</td></tr>"'
+              ${ARTIFACT_DIR}/artifacts.json > feed/pkgrows.tmp
+
+            cat feed/pkgrows.tmp | while read -r line; do
+              echo "                        ${line}"
+            done
+
+            rm -f feed/pkgrows.tmp
+
             echo "          </tbody>"
           }
 
@@ -488,10 +508,14 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
+          # Create an orphan commit to prevent feed branch history from accumulating large binary blobs
+          git checkout --orphan feed || git checkout -B feed
+          git rm -rf . || true
+          # Recreate new minimal content from the existing working tree
           git add -A
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "Update feed: ${{ env.BUILD_DATE }}"
-          git push origin HEAD:feed
+          git push --force origin feed
         working-directory: feed
 
       - name: Generate release markdown
@@ -499,12 +523,12 @@ jobs:
         run: |
           # Read artifacts.json and generate markdown table
           artifacts_file="${{ env.ARTIFACT_DIR }}/artifacts.json"
-          
+
           if [[ ! -f "${artifacts_file}" ]]; then
             echo "No artifacts.json found, skipping table generation."
             exit 1
           fi
-          
+
           # Generate Markdown table
           owner="${{ env.REPO_SMALL_OWNER }}"
           repo="${{ env.REPO_SMALL_NAME }}"
@@ -615,7 +639,7 @@ jobs:
           <summary>Click to expand  /  点击展开</summary>
 
           ${table}
-          
+
           </details>
           "
 
@@ -633,7 +657,6 @@ jobs:
             ${{ env.ARTIFACT_DIR }}/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
 
       - name: Sync to small repo
         uses: actions/github-script@v6

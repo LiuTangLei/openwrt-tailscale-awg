@@ -12,7 +12,7 @@ script_info() {
     echo "│ 项目仓库 (Fork): https://github.com/LiuTangLei/openwrt-tailscale-awg                     │"
     echo "│ 基于项目: https://github.com/GuNanOvO/openwrt-tailscale (致谢 GuNanOvO 的开源)            │"
     echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
-    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │""
+    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
     echo "│ 感谢您的使用, 如有帮助, 还请点颗star /<3                                               │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
