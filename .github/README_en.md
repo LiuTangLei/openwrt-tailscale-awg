@@ -1,20 +1,22 @@
 **简体中文文档** | [English Docs](README_en.md)
 
-![Tailscale & OpenWrt](./banner.png)
+![Tailscale-AWG & OpenWrt](./banner.png)
 
-# The Latest, Smaller Tailscale for OpenWrt Devices
+# Tailscale-AWG for OpenWrt Devices
+## Tailscale with Amnezia WireGuard Support
 
-![GitHub release](https://img.shields.io/github/v/release/GuNanOvO/openwrt-tailscale?style=flat)
-![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FGuNanOvO%2Fopenwrt-tailscale\&label=Views\&countColor=%23b7d079\&style=flat)
-![Downloads](https://img.shields.io/github/downloads/GuNanOvO/openwrt-tailscale/total?style=flat)
-![GitHub Stars](https://img.shields.io/github/stars/GuNanOvO/openwrt-tailscale?label=Stars\&color=yellow)
+**This project is based on [openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Many thanks to GuNanOvO for their open-source contribution.**
 
-### This repository provides:
+![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat)
+![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat)
+![GitHub Stars](https://img.shields.io/github/stars/LiuTangLei/openwrt-tailscale-awg?label=Stars&color=yellow)
+
+Based on [LiuTangLei/tailscale](https://github.com/LiuTangLei/tailscale) Tailscale-AWG version with Amnezia WireGuard protocol support for enhanced censorship resistance.
 
 * The latest and smaller **Tailscale ipk packages** for multiple architectures
 * One-click installation scripts supporting **persistent installation** and **temporary installation**
 * An **OPKG feed** for easier and continuous updates
-  ➡️ [ [Smaller Tailscale Repo](https://gunanovo.github.io/openwrt-tailscale/) ]
+  ➡️ [ [Smaller Tailscale-AWG Repo](https://liutanglei.github.io/openwrt-tailscale-awg/) ]
 
 ---
 
@@ -92,21 +94,21 @@ The following architectures are **not supported**:
 SSH into your OpenWrt device and run:
 
 ```bash
-wget -O /usr/sbin/install.sh https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install_en.sh && chmod +x /usr/sbin/install.sh && /usr/sbin/install.sh
+wget -O /usr/sbin/install.sh https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install_en.sh && chmod +x /usr/sbin/install.sh && /usr/sbin/install.sh
 ```
 
 #### **Add OPKG Feed**
 
-See the [feed branch README](https://github.com/GuNanOvO/openwrt-tailscale/tree/feed)
+See the [feed branch README](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 or the repository page:
-[Smaller Tailscale Repository For OpenWrt](https://gunanovo.github.io/openwrt-tailscale/)
+[Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg/)
 
 Only ipk packages for supported architectures are included.
 
 #### **Manual ipk Installation**
 
 1. Download the ipk package matching your device architecture from
-   [Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases)
+   [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)
 2. Open OpenWrt Web UI → System → Software → Upload Package
    Upload and install the downloaded ipk
 
@@ -161,7 +163,7 @@ See [Makefile](../package/tailscale/Makefile) for details:
 * **TAGS**
 
 ```
-ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_taildrop,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
+ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
 ```
 
 * **LDFLAGS**
@@ -212,7 +214,7 @@ Feed repository reference
 ### Issue Reporting
 
 Please submit issues via
-[Issues](https://github.com/GuNanOvO/openwrt-tailscale/issues)
+[Issues](https://github.com/LiuTangLei/openwrt-tailscale-awg/issues)
 and include:
 
 1. Device architecture (`uname -m`)
@@ -265,8 +267,8 @@ Timely updates are critical for network security.
 
 * **Open source**: All packaging, build, and install scripts are fully open
 * **Automated builds**: Entirely built by GitHub Actions with public logs
-* **Official source builds**: All binaries are compiled from official
-  [**Tailscale**](https://github.com/tailscale/tailscale) release sources
+* **Source builds**: All binaries are compiled from
+  [**LiuTangLei/tailscale**](https://github.com/LiuTangLei/tailscale) (based on official [Tailscale](https://github.com/tailscale/tailscale), with Amnezia WireGuard support)
 * **Reproducible**: Anyone can reproduce the build locally or via GitHub
 
 **Security Commitment**

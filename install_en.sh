@@ -5,8 +5,8 @@ SCRIPT_VERSION="v1.08"
 SCRIPT_DATE="2025/12/15"
 
 # Basic Configuration
-REPO_URL="https://github.com/GuNanOvO/openwrt-tailscale"
-REPO="gunanovo/openwrt-tailscale"
+REPO_URL="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+REPO="LiuTangLei/openwrt-tailscale-awg"
 TAILSCALE_URL="${REPO_URL}/releases/latest"
 TAILSCALE_FILE="" # Set by get_tailscale_info
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"

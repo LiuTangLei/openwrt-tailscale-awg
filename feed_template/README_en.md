@@ -1,6 +1,6 @@
 [简体中文](README.md) | **English**  
 ![Tailscale & OpenWrt](./banner.png)  
-# [Smaller Tailscale Repository For OpenWrt](https://gunanovo.github.io/openwrt-tailscale)
+# [Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg)
 
 > [!NOTE]
 > These are smaller Tailscale packages for OpenWrt, specifically designed to reduce storage usage while maintaining essential functionality.
@@ -18,7 +18,7 @@ Import the public GPG key used to verify package signatures:
 **Run this command on your OpenWrt device:**
 
 ```sh
-wget -O /tmp/key-build.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub && opkg-key add /tmp/key-build.pub
+wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub
 ```
 
 Add the package feed to your OpenWrt configuration:
@@ -26,13 +26,13 @@ Add the package feed to your OpenWrt configuration:
 **Edit `/etc/opkg/customfeeds.conf`:**
 
 ```sh
-echo "src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale" >> /etc/opkg/customfeeds.conf
+echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg" >> /etc/opkg/customfeeds.conf
 ````
 
 **Or manually add this line:**
 
 ```sh
-src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale
+src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg
 ```
 
 ---

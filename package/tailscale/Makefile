@@ -1,6 +1,7 @@
 #
 # Copyright (C) 2021 CZ.NIC, z. s. p. o. (https://www.nic.cz/)
 # Copyright (C) 2025 GuNan <gunanovo@gmail.com>
+# Copyright (C) 2025 LiuTangLei <liu.tang.lei@gmail.com>
 #
 # This is free software, licensed under the BSD 3-Clause License.
 # See /LICENSE for more information.
@@ -15,10 +16,10 @@ PKG_RELEASE:=1
 PKG_STRIP:=0
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/tailscale/tailscale/tar.gz/v$(PKG_VERSION)?
+PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
 PKG_HASH:=c45975beb4cb7bab8047cfba77ec8b170570d184f3c806258844f3e49c60d7aa
 
-PKG_MAINTAINER:=GuNan <gunanovo@gmail.com>
+PKG_MAINTAINER:=LiuTangLei <liu.tang.lei@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:tailscale:tailscale
@@ -30,7 +31,7 @@ PKG_BUILD_FLAGS:=no-mips16
 GO_PKG:=tailscale.com/cmd/tailscaled
 GO_PKG_LDFLAGS:=-s -w -X 'tailscale.com/version.longStamp=$(PKG_VERSION)-$(PKG_RELEASE) (OpenWrt-UPX)'
 GO_PKG_LDFLAGS_X:=tailscale.com/version.shortStamp=$(PKG_VERSION)
-GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_taildrop,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
+GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
 
 ifneq ($(filter mips64% riscv64% loongarch64%,$(ARCH)),)
   DISABLE_UPX:=1
@@ -43,16 +44,17 @@ define Package/tailscale
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=VPN
-  TITLE:=Zero config VPN (UPX Compressed)
-  URL:=Original(https://tailscale.com);Smaller(https://github.com/GuNanOvO/openwrt-tailscale)
+  TITLE:=Zero config VPN with Amnezia WireGuard (UPX Compressed)
+  URL:=Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
   DEPENDS:=$(GO_ARCH_DEPENDS) ca-bundle kmod-tun
   PROVIDES:=tailscale tailscaled
 endef
 
 define Package/tailscale/description
-  A smaller version of Tailscale. Built for OpenWrt.
-  It creates a secure network between your servers, computers,
-  and cloud instances. Even when separated by firewalls or subnets.
+  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+  Built for OpenWrt. It creates a secure network between your servers,
+  computers, and cloud instances with enhanced censorship resistance.
+  Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
 endef
 
 define Package/tailscale/conffiles

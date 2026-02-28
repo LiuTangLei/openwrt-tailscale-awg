@@ -18,9 +18,9 @@ on:
         required: true
 
 env:
-  REPO_SMALL: "GuNanOvO/openwrt-tailscale"
-  REPO_SMALL_NAME: "openwrt-tailscale"
-  REPO_SMALL_OWNER: "GuNanOvO"
+  REPO_SMALL: "LiuTangLei/openwrt-tailscale-awg"
+  REPO_SMALL_NAME: "openwrt-tailscale-awg"
+  REPO_SMALL_OWNER: "LiuTangLei"
 
 jobs:
   version-check:
@@ -91,7 +91,7 @@ jobs:
         with:
           script: |
             const { data: tags } = await github.rest.repos.listTags({
-              owner: 'tailscale',
+              owner: 'LiuTangLei',
               repo: 'tailscale',
               per_page: 100
             });
@@ -194,7 +194,7 @@ jobs:
             fi
           else
             echo "Getting commit from tag release $version"
-            git ls-remote https://github.com/tailscale/tailscale.git refs/tags/${version} | cut -f1 > tag_commit.txt
+            git ls-remote https://github.com/LiuTangLei/tailscale.git refs/tags/${version} | cut -f1 > tag_commit.txt
             commit=$(cat tag_commit.txt)
             if [ -n "$commit" ]; then
               echo "Commit from tag: $commit"
@@ -214,7 +214,7 @@ jobs:
           NEW_VER=$(echo "$RAW_VER" | sed 's/^v//')
           NEW_COMMIT="${{ steps.get_commit.outputs.commit }}"
           
-          SOURCE_URL="https://codeload.github.com/tailscale/tailscale/tar.gz/v${NEW_VER}?"
+          SOURCE_URL="https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v${NEW_VER}?"
           echo "Downloading from $SOURCE_URL to calculate hash..."
           NEW_HASH=$(curl -L "$SOURCE_URL" | sha256sum | awk '{print $1}')
           echo "New Hash: $NEW_HASH"

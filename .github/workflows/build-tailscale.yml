@@ -1,4 +1,4 @@
-name: Smaller Tailscale Build Pipeline
+name: Smaller Tailscale-AWG Build Pipeline
 
 on:
   workflow_dispatch: 
@@ -9,12 +9,12 @@ permissions:
   contents: read
 
 env:
-  SOFTWARE_NAME: "Tailscale"
+  SOFTWARE_NAME: "Tailscale-AWG"
   FILE_NAME: "tailscaled"
-  REPO: "tailscale/tailscale"
-  REPO_SMALL: "GuNanOvO/openwrt-tailscale"
-  REPO_SMALL_NAME: "openwrt-tailscale"
-  REPO_SMALL_OWNER: "GuNanOvO"
+  REPO: "LiuTangLei/tailscale"
+  REPO_SMALL: "LiuTangLei/openwrt-tailscale-awg"
+  REPO_SMALL_NAME: "openwrt-tailscale-awg"
+  REPO_SMALL_OWNER: "LiuTangLei"
   ARTIFACT_DIR: "artifacts"
   BUILD_DATE: ""
 
@@ -499,18 +499,20 @@ jobs:
 
           # 设置 Release Body
           release_body="
-          ## Smaller Tailscale / 更小的Tailscale  
+          ## Smaller Tailscale-AWG / 更小的Tailscale-AWG  
           #### Version / 版本 : ${{ env.RELEASE_TAG }}
           #### Build Date / 构建日期 : ${{ env.BUILD_DATE }}
           #### Upstream Changelog / 上游更新日志 : [https://tailscale.com/changelog](https://tailscale.com/changelog)
           ---
 
-          #### 本项目是为 OpenWRT 构建的 Tailscale 精简版本，使用官方 SDK 编译，旨在降低存储空间占用。    
+          **This release is based on and/or derived from [GuNanOvO/openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale). Many thanks to the original author.**
+
+          #### 本项目是为 OpenWRT 构建的 Tailscale-AWG (Amnezia WireGuard) 精简版本，使用官方 SDK 编译，旨在降低存储空间占用并增强抗审查能力。    
           - 使用 OpenWRT 官方 SDK 编译。  
           - 采用 UPX 压缩技术大幅缩小二进制体积。  
           - 标准 IPK 格式，支持 opkg 直接安装。  
 
-          #### Minimalistic Tailscale build for OpenWRT using the official SDK.  
+          #### Minimalistic Tailscale-AWG build for OpenWRT using the official SDK with Amnezia WireGuard support.  
           - Compiled with official OpenWRT SDK.  
           - Significant size reduction via UPX compression.  
           - Standard IPK format for direct opkg installation.  

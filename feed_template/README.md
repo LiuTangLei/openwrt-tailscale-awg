@@ -1,6 +1,6 @@
 **简体中文** | [English](README_en.md)  
 ![Tailscale & OpenWrt](./banner.png)  
-# [Smaller Tailscale Repository For OpenWrt](https://gunanovo.github.io/openwrt-tailscale)
+# [Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg)
 
 > [!NOTE]
 > 这是为 OpenWrt 精简定制的 Tailscale 软件包，旨在在保持核心功能的同时，尽可能降低存储占用。
@@ -18,7 +18,7 @@
 **在你的 OpenWrt 设备上执行以下命令：**
 
 ```sh
-wget -O /tmp/key-build.pub https://gunanovo.github.io/openwrt-tailscale/key-build.pub && opkg-key add /tmp/key-build.pub
+wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub
 ```
 
 将软件源添加到你的 OpenWrt 配置中：
@@ -26,13 +26,13 @@ wget -O /tmp/key-build.pub https://gunanovo.github.io/openwrt-tailscale/key-buil
 **编辑 `/etc/opkg/customfeeds.conf` 文件：**
 
 ```sh
-echo "src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale" >> /etc/opkg/customfeeds.conf
+echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg" >> /etc/opkg/customfeeds.conf
 ```
 
 **或者手动添加以下内容：**
 
 ```sh
-src/gz openwrt-tailscale https://gunanovo.github.io/openwrt-tailscale
+src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg
 ```
 
 ---

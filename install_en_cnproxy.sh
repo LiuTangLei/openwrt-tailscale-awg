@@ -26,7 +26,7 @@ https://ghproxy.cc/https://github.com
 https://ghproxy.cn/https://github.com
 https://www.ghproxy.cn/https://github.com
 https://github.com"
-INIT_URL="/LiuTangLei/openwrt-tailscale-awg/blob/main/etc/init.d/tailscale"
+INIT_URL="/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/files/tailscale.init"
 MOUNT_POINT="/"
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"
 # tmp tailscale

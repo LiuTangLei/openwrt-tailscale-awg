@@ -1,19 +1,21 @@
 **简体中文文档** | [English Docs](README_en.md)
 
-![Tailscale & OpenWrt](./banner.png)  
+![Tailscale-AWG & OpenWrt](./banner.png)  
 
-# 适用于 OpenWrt 设备的 最新的、更小的 Tailscale 
+# Tailscale-AWG for OpenWrt 一键安装脚本
+## Tailscale with Amnezia WireGuard 支持
 
-![GitHub release](https://img.shields.io/github/v/release/GuNanOvO/openwrt-tailscale?style=flat)
-![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FGuNanOvO%2Fopenwrt-tailscale&label=Views&countColor=%23b7d079&style=flat)
-![Downloads](https://img.shields.io/github/downloads/GuNanOvO/openwrt-tailscale/total?style=flat)
-![GitHub Stars](https://img.shields.io/github/stars/GuNanOvO/openwrt-tailscale?label=Stars&color=yellow)
+**本项目基于 [openwrt-tailscale](https://github.com/GuNanOvO/openwrt-tailscale)，非常感谢 GuNanOvO 的开源与贡献。**
 
-### 本仓库提供以下内容：
+![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat)
+![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat)
+![GitHub Stars](https://img.shields.io/github/stars/LiuTangLei/openwrt-tailscale-awg?label=Stars&color=yellow)
+
+基于 [LiuTangLei/tailscale](https://github.com/LiuTangLei/tailscale) 的 Tailscale-AWG 版本，支持 Amnezia WireGuard 协议，具备更强的抗审查能力。
 
 * 适用于多种架构的、最新的、更小的 **Tailscale.ipk** 软件包
 * 一键安装脚本，支持 **持久化安装**、**临时安装** Tailscale
-* **OPKG 软件源**，更简单、更加方便持续更新 ➡️ [ [Smaller Tailscale Repo](https://gunanovo.github.io/openwrt-tailscale/) ]
+* **OPKG 软件源**，更简单、更加方便持续更新 ➡️ [ [Smaller Tailscale-AWG Repo](https://liutanglei.github.io/openwrt-tailscale-awg/) ]
 
 ---
 
@@ -86,7 +88,7 @@
 SSH链接至OpenWrt设备执行：
 
 ```bash
-wget -O /usr/sbin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install.sh && chmod +x /usr/sbin/install.sh && /usr/sbin/install.sh
+wget -O /usr/sbin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install.sh && chmod +x /usr/sbin/install.sh && /usr/sbin/install.sh
 ```
 
 For Mainland China users only. 
@@ -97,17 +99,17 @@ For other regions, please refer to [English README](README_en.md)
 使用参数`--custom-proxy`：
 
 ```bash
-wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/GuNanOvO/openwrt-tailscale/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --custom-proxy
+wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/main/install.sh && chmod +x /usr/bin/install.sh && /usr/bin/install.sh --custom-proxy
 ```
 
 #### **添加opkg软件源：**
 
-详见本项目分支 [软件源分支](https://github.com/GuNanOvO/openwrt-tailscale/tree/feed) 或本项目opkg软件源页面 [Smaller Tailscale Repository For OpenWrt](https://gunanovo.github.io/openwrt-tailscale/)
+详见本项目分支 [software feed branch](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) 或本项目opkg软件源页面 [Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg/)
 
 仅包含受支持的架构的ipk包
 
 #### **自行安装ipk软件包：**
-1. 于本仓库[Releases](https://github.com/GuNanOvO/openwrt-tailscale/releases)下载与您设备对应架构的ipk软件包；
+1. 于本仓库[Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)下载与您设备对应架构的ipk软件包；
 2. 可以于OpenWrt设备后台网页界面 -> 系统 -> 软件包
    -> 上传软件包，选择您下载的软件包进行上传并安装；
 
@@ -158,7 +160,7 @@ wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com
 * **TAGS**: 
 
 ```
-ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_taildrop,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
+ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
 ```
 
 * **LDFLAGS**:
@@ -202,7 +204,7 @@ ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_
 
 ### 问题反馈  
 
-遇到问题请至 [Issues](https://github.com/GuNanOvO/openwrt-tailscale/issues) 提交，请附上：
+遇到问题请至 [Issues](https://github.com/LiuTangLei/openwrt-tailscale-awg/issues) 提交，请附上：
 
 1. 设备架构信息（`uname -m`）
 2. 目标平台架构信息（`opkg print-architecture`）
@@ -246,7 +248,7 @@ ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_
 **透明与可验证**：  
  * **源代码公开**：所有打包、构建与安装脚本完全开源，任何人均可审查、复现整个构建、安装流程。
  * **自动化构建**：构建与打包过程完全由 GitHub Actions 自动执行，构建日志和产物对外公开，确保无人工干预。
- * **官方源码构建**：所有二进制文件均直接从 [**Tailscale**](https://github.com/tailscale/tailscale) 官方项目 的发布版本源码编译，无任何功能性修改或隐藏代码。
+ * **源码构建**：所有二进制文件均从 [**LiuTangLei/tailscale**](https://github.com/LiuTangLei/tailscale) (基于 [Tailscale](https://github.com/tailscale/tailscale) 官方项目, 添加 Amnezia WireGuard 支持) 的发布版本源码编译。
  * **可重复构建**：任何人可使用本项目的脚本在自己的 GitHub 或本地环境中重现构建结果，以验证一致性。  
 **安全承诺**：  
  * 本项目 **不植入任何恶意代码**，不收集、不上传用户的任何数据。
