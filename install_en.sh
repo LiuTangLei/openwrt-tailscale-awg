@@ -2,7 +2,7 @@
 
 # Script Information
 SCRIPT_VERSION="v1.08"
-SCRIPT_DATE="2025/12/15"
+SCRIPT_DATE="2026/02/28"
 
 # Basic Configuration
 REPO_URL="https://github.com/LiuTangLei/openwrt-tailscale-awg"
@@ -46,6 +46,50 @@ TAILSCALE_TEMP_INSTALLABLE=""
 
 ENABLE_INIT_PROGRESS_BAR="true"
 
+# Function: Download helper (uclient-fetch > curl > wget)
+# Usage: _download_to_file <url> <output_file> [timeout]
+_download_to_file() {
+    local url="$1"
+    local output="$2"
+    local timeout="${3:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -q --timeout="$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# Usage: _download_to_stdout <url> [timeout]
+_download_to_stdout() {
+    local url="$1"
+    local timeout="${2:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O - "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" "$url" 2>/dev/null && return 0
+    fi
+    wget -qO- --timeout="$timeout" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# Usage: _download_resume <url> <output_file>
+_download_resume() {
+    local url="$1"
+    local output="$2"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL -C - -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -cO "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
+
 
 # Function: Script Information
 script_info() {
@@ -57,7 +101,6 @@ script_info() {
     echo "│ Project URL: $REPO_URL                                │"
     echo "│ Script Version: $SCRIPT_VERSION                                                                        │"
     echo "│ Update Date: $SCRIPT_DATE                                                                   │"
-    echo "│ Thank you for using, if it helps, please give a star /<3                                 │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -203,17 +246,19 @@ get_tailscale_info() {
     local attempt_timeout=10
 
     for attempt_times in $attempt_range; do
-        version=$(wget -qO- --timeout=$attempt_timeout "${TAILSCALE_URL}/download/version" | tr -d ' \n\r')
+        version=$(_download_to_stdout "${TAILSCALE_URL}/download/version" "$attempt_timeout" | tr -d ' \n\r')
         file="tailscale_${version}_${DEVICE_TARGET}"
 
-        wget -q --timeout=$attempt_timeout "${TAILSCALE_URL}/download/Packages" -O "$tmp_packages"
-        file_size=$(awk -v ipk="${file}.ipk" '
-        BEGIN { RS=""; FS="\n" }
-        $0 ~ ipk {
-            for(i=1;i<=NF;i++) if($i ~ /^Installed-Size:/) {
-                print $i; exit
-            }
-        }' "$tmp_packages" | awk '{print $2}')
+        _download_to_file "${TAILSCALE_URL}/download/Packages" "$tmp_packages" "$attempt_timeout"
+        if [ -f "$tmp_packages" ]; then
+            file_size=$(awk -v ipk="${file}.ipk" '
+            BEGIN { RS=""; FS="\n" }
+            $0 ~ ipk {
+                for(i=1;i<=NF;i++) if($i ~ /^Installed-Size:/) {
+                    print $i; exit
+                }
+            }' "$tmp_packages" | awk '{print $2}')
+        fi
             
         if [ -n "$version" ] && [ -n "$file_size" ]; then
             break
@@ -407,7 +452,6 @@ persistent_install() {
         echo "║ recommended more than $(expr $TAILSCALE_FILE_SIZE \* 3)M.                            ║"
         echo "║ If any error occurs during installation, you can      ║"
         echo "║ report at: $REPO_URL/issues  ║"
-        echo "║ Provide feedback. Thank you for using! /<3            ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm using persistent installation method to install tailscale? (y/N): " choice
@@ -445,7 +489,6 @@ persistent_install() {
         echo "║ Direct startup: tailscale up                          ║"
         echo "║ If any problems occur after installation, you can     ║"
         echo "║ report at: $REPO_URL/issues  ║"
-        echo "║ Provide feedback. Thank you for using! /<3            ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         echo ""
@@ -478,7 +521,6 @@ temp_install() {
         echo "║ is possible, we recommend you use persistent method!  ║"
         echo "║ If any error occurs during installation, you can      ║"
         echo "║ report at: $REPO_URL/issues  ║"
-        echo "║ Provide feedback. Thank you for using! /<3            ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "Confirm using temporary installation method to install tailscale? (y/N): " choice
@@ -549,7 +591,6 @@ temp_install() {
     echo "║ Direct startup: tailscale up                          ║"
     echo "║ If any problems occur after installation, you can     ║"
     echo "║ report at: $REPO_URL/issues  ║"
-    echo "║ Provide feedback. Thank you for using! /<3            ║"
     echo "║                                                       ║"
     echo "╚═══════════════════════════════════════════════════════╝"
     echo ""
@@ -575,7 +616,7 @@ downloader() {
     local download_url="${TAILSCALE_URL}/download"
 
     for attempt_times in $attempt_range; do
-        if ! wget -cO "$file_path" "$download_url/$target_ipk"; then
+        if ! _download_resume "$download_url/$target_ipk" "$file_path"; then
             if [ "$attempt_times" == "3" ]; then
                 echo "[ERROR]: Tailscale file failed to download three times, restarting script!"
                 sleep 3
@@ -584,7 +625,8 @@ downloader() {
             continue
         fi
 
-        wget -q --timeout=$attempt_timeout "$download_url/Packages" -O "$tmp_packages"
+        _download_to_file "$download_url/Packages" "$tmp_packages" "$attempt_timeout"
+        [ ! -f "$tmp_packages" ] && continue
         awk -v ipk="$target_ipk" -v path="$file_path" '
         BEGIN { RS=""; FS="\n" }
         $0 ~ "Filename: " ipk {
@@ -667,14 +709,10 @@ init() {
 # Function: Exit
 script_exit() {
         echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ THANKS!!! Thank you for your trust and use!!!         │"
+        echo "│ Thank you for using!                                  │"
         echo "│                                                       │"
-        echo "│ If this script helps you, you can give a Star to      │"
-        echo "│ support me!                                           │"
-        echo "│ $REPO_URL/        │"
         echo "│ If any problems occur after installation, you can     │"
         echo "│ report at: $REPO_URL/issues  │"
-        echo "│ Provide feedback. Thank you for using! /<3            │"
         echo "│                                                       │"
         echo "└───────────────────────────────────────────────────────┘"
         exit 0

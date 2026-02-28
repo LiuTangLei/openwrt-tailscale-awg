@@ -2,7 +2,7 @@
 
 # Script Information
 SCRIPT_VERSION="v1.07"
-SCRIPT_DATE="2025/09/29"
+SCRIPT_DATE="2026/02/28"
 script_info() {
     echo "#╔╦╗┌─┐ ┬ ┬  ┌─┐┌─┐┌─┐┬  ┌─┐  ┌─┐┌┐┌  ╔═╗┌─┐┌─┐┌┐┌ ╦ ╦ ┬─┐┌┬┐  ╦ ┌┐┌┌─┐┌┬┐┌─┐┬  ┬  ┌─┐┬─┐#"
     echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
@@ -75,6 +75,50 @@ file_size_mb=""
 tailscale_persistent_installable=""
 
 show_init_progress_bar="true"
+
+# Function: Download helper (uclient-fetch > curl > wget)
+# Usage: _download_to_file <url> <output_file> [timeout]
+_download_to_file() {
+    local url="$1"
+    local output="$2"
+    local timeout="${3:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -q --timeout="$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# Usage: _download_to_stdout <url> [timeout]
+_download_to_stdout() {
+    local url="$1"
+    local timeout="${2:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O - "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" "$url" 2>/dev/null && return 0
+    fi
+    wget -qO- --timeout="$timeout" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# Usage: _download_resume <url> <output_file>
+_download_resume() {
+    local url="$1"
+    local output="$2"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL -C - -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -cO "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
 
 # Function: Set DNS
 set_system_dns() {
@@ -186,8 +230,8 @@ get_tailscale_info() {
 
     if [ "$USE_CUSTOM_PROXY" == "true" ]; then
         attempt_url="$available_proxy/$TAILSCALE_URL/download/build-info.txt"
-        tailscale_latest_version=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | grep "Version: " | awk '{print $2}')
-        file_size=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | grep "$TAILSCALE_FILE " | awk '{print $2}')
+        tailscale_latest_version=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | grep "Version: " | awk '{print $2}')
+        file_size=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | grep "$TAILSCALE_FILE " | awk '{print $2}')
 
         if [ -z "$tailscale_latest_version" ] && [ -z "$file_size" ]; then
             echo ""
@@ -198,8 +242,8 @@ get_tailscale_info() {
         for attempt_times in $attempt_range; do
             for attempt_proxy in $URL_PROXYS; do
                 attempt_url="$attempt_proxy/$TAILSCALE_URL/download/build-info.txt"
-                tailscale_latest_version=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | grep "Version: " | awk '{print $2}')
-                file_size=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | grep "$TAILSCALE_FILE " | awk '{print $2}')
+                tailscale_latest_version=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | grep "Version: " | awk '{print $2}')
+                file_size=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | grep "$TAILSCALE_FILE " | awk '{print $2}')
 
                 if [ -n "$tailscale_latest_version" ] && [ -n "$file_size" ]; then
                     available_proxy="$attempt_proxy"
@@ -485,8 +529,8 @@ downloader() {
     attempt_timeout=20
 
     for attempt_times in $attempt_range; do
-        wget -cO "/tmp/$TAILSCALE_FILE" "$available_proxy/$TAILSCALE_URL/download/$TAILSCALE_FILE"
-        wget -cO /tmp/checksums.txt "$available_proxy/$TAILSCALE_URL/download/checksums.txt"
+        _download_resume "$available_proxy/$TAILSCALE_URL/download/$TAILSCALE_FILE" "/tmp/$TAILSCALE_FILE"
+        _download_resume "$available_proxy/$TAILSCALE_URL/download/checksums.txt" "/tmp/checksums.txt"
         grep -E "  ${TAILSCALE_FILE}\$" /tmp/checksums.txt > /tmp/$TAILSCALE_FILE.sha256
         cd /tmp
         if ! sha256sum -c /tmp/$TAILSCALE_FILE.sha256; then
@@ -505,7 +549,7 @@ downloader() {
         fi
     done
 
-    wget -cO /etc/init.d/tailscale "$available_proxy/$INIT_URL"
+    _download_resume "$available_proxy/$INIT_URL" "/etc/init.d/tailscale"
 }
 
 # Function: Start Tailscale
@@ -544,7 +588,6 @@ tailscale_starter() {
     echo "║ please submit feedback at:                            ║"
     echo "║ Report issues: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  ║"
     echo "║ Upstream issues: https://github.com/GuNanOvO/openwrt-tailscale/issues    ║"
-    echo "║ Thank you for using! /<3                              ║"
     echo "║                                                       ║"
     echo "╚═══════════════════════════════════════════════════════╝"
     echo ""
@@ -612,10 +655,8 @@ init() {
 # Function: Exit message
 script_exit() {
         echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ THANKS!!! Appreciate your trust and usage!            │"
+        echo "│ Thank you for using!                                  │"
         echo "│                                                       │"
-        echo "│ Please consider giving a star if helpful:             │"
-        echo "│ https://github.com/GuNanOvO/openwrt-tailscale/        │"
         echo "│ Report issues at:                                     │"
         echo "│ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  │"
         echo "│ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   │"

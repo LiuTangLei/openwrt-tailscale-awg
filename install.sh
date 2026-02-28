@@ -2,7 +2,7 @@
 
 # 脚本信息
 SCRIPT_VERSION="v1.08"
-SCRIPT_DATE="2025/12/15"
+SCRIPT_DATE="2026/02/28"
 
 # 基本配置
 REPO_URL="https://github.com/LiuTangLei/openwrt-tailscale-awg"
@@ -60,6 +60,50 @@ TAILSCALE_TEMP_INSTALLABLE=""
 
 ENABLE_INIT_PROGRESS_BAR="true"
 
+# 函数：下载辅助 (uclient-fetch > curl > wget)
+# 用法: _download_to_file <url> <output_file> [timeout]
+_download_to_file() {
+    local url="$1"
+    local output="$2"
+    local timeout="${3:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -q --timeout="$timeout" -O "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# 用法: _download_to_stdout <url> [timeout]
+_download_to_stdout() {
+    local url="$1"
+    local timeout="${2:-10}"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -T "$timeout" -O - "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL --connect-timeout "$timeout" "$url" 2>/dev/null && return 0
+    fi
+    wget -qO- --timeout="$timeout" "$url" 2>/dev/null && return 0
+    return 1
+}
+
+# 用法: _download_resume <url> <output_file>
+_download_resume() {
+    local url="$1"
+    local output="$2"
+    if command -v uclient-fetch >/dev/null 2>&1; then
+        uclient-fetch -q -O "$output" "$url" 2>/dev/null && return 0
+    fi
+    if command -v curl >/dev/null 2>&1; then
+        curl -fsSL -C - -o "$output" "$url" 2>/dev/null && return 0
+    fi
+    wget -cO "$output" "$url" 2>/dev/null && return 0
+    return 1
+}
+
 
 # 函数：脚本信息
 script_info() {
@@ -71,7 +115,6 @@ script_info() {
     echo "│ 项目地址: "$REPO_URL"                                │"
     echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
     echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
-    echo "│ 感谢您的使用, 如有帮助, 还请点颗star /<3                                               │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -224,7 +267,7 @@ test_proxy() {
     for attempt_times in $attempt_range; do
         for attempt_proxy in $URL_PROXYS; do
             attempt_url="$attempt_proxy/$TAILSCALE_URL/download/version"
-            version=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | tr -d ' \n\r')
+            version=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | tr -d ' \n\r')
 
             if [ -n "$version" ] && [[ "$version" =~ ^[0-9] ]]; then
                 AVAILABLE_PROXY="$attempt_proxy"
@@ -260,17 +303,19 @@ get_tailscale_info() {
     local attempt_timeout=10
 
     for attempt_times in $attempt_range; do
-        version=$(wget -qO- --timeout=$attempt_timeout "$AVAILABLE_PROXY/$TAILSCALE_URL/download/version" | tr -d ' \n\r')
+        version=$(_download_to_stdout "$AVAILABLE_PROXY/$TAILSCALE_URL/download/version" "$attempt_timeout" | tr -d ' \n\r')
         file="tailscale_${version}_${DEVICE_TARGET}"
 
-        wget -q --timeout=$attempt_timeout "$AVAILABLE_PROXY/$TAILSCALE_URL/download/Packages" -O "$tmp_packages"
-        file_size=$(awk -v ipk="${file}.ipk" '
-        BEGIN { RS=""; FS="\n" }
-        $0 ~ ipk {
-            for(i=1;i<=NF;i++) if($i ~ /^Installed-Size:/) {
-                print $i; exit
-            }
-        }' "$tmp_packages" | awk '{print $2}')
+        _download_to_file "$AVAILABLE_PROXY/$TAILSCALE_URL/download/Packages" "$tmp_packages" "$attempt_timeout"
+        if [ -f "$tmp_packages" ]; then
+            file_size=$(awk -v ipk="${file}.ipk" '
+            BEGIN { RS=""; FS="\n" }
+            $0 ~ ipk {
+                for(i=1;i<=NF;i++) if($i ~ /^Installed-Size:/) {
+                    print $i; exit
+                }
+            }' "$tmp_packages" | awk '{print $2}')
+        fi
 
         if [ -n "$version" ] && [ -n "$file_size" ]; then
             break
@@ -462,7 +507,6 @@ persistent_install() {
         echo "║ "$TAILSCALE_FILE_SIZE", 推荐大于$(expr $TAILSCALE_FILE_SIZE \* 3)M.                                       ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
         echo "║ "$REPO_URL"/issues  ║"
-        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "确认采用持久安装方式安装tailscale吗? (y/N): " choice
@@ -500,7 +544,6 @@ persistent_install() {
         echo "║ 直接启动: tailscale up                                ║"
         echo "║ 安装后有任何无法使用的问题, 可以于:                   ║"
         echo "║ "$REPO_URL"/issues  ║"
-        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         echo ""
@@ -530,7 +573,6 @@ temp_install() {
         echo "║ 如果可以持久安装，推荐您采取持久安装方式!             ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
         echo "║ "$REPO_URL"/issues  ║"
-        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "确认采用临时安装方式安装tailscale吗? (y/N): " choice
@@ -602,7 +644,6 @@ temp_install() {
         echo "║ 直接启动: tailscale up                                ║"
         echo "║ 安装后有任何无法使用的问题, 可以于:                   ║"
         echo "║ "$REPO_URL"/issues  ║"
-        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         echo ""
@@ -628,12 +669,13 @@ downloader() {
     local target_ipk="${TAILSCALE_FILE}.ipk"
     local download_url="${AVAILABLE_PROXY}/${TAILSCALE_URL}/download"
     for attempt_times in $attempt_range; do
-        if ! wget -cO "$file_path" "$download_url/$target_ipk"; then
+        if ! _download_resume "$download_url/$target_ipk" "$file_path"; then
             [ "$attempt_times" == "3" ] && { echo "[ERROR]: tailscale 文件三次下载均失败, 即将重启脚本!"; sleep 3; init; }
             continue
         fi
 
-        wget -q --timeout="$attempt_timeout" "$download_url/Packages" -O "$tmp_packages"
+        _download_to_file "$download_url/Packages" "$tmp_packages" "$attempt_timeout"
+        [ ! -f "$tmp_packages" ] && continue
         awk -v ipk="$target_ipk" -v path="$file_path" '
         BEGIN { RS=""; FS="\n" }
         $0 ~ "Filename: " ipk {
@@ -729,13 +771,10 @@ init() {
 # 函数：退出
 script_exit() {
         echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ THANKS!!!感谢您的信任与使用!!!                        │"
+        echo "│ 感谢您的使用!                                        │"
         echo "│                                                       │"
-        echo "│ 如果该脚本对您有帮助, 您可以点一颗Star支持我!         │"
-        echo "│ "$REPO_URL"/        │"
         echo "│ 安装后产生无法使用等情况, 您可以于:                   │"
         echo "│ "$REPO_URL"/issues  │"
-        echo "│ 提出反馈. 谢谢您的使用! /<3                           │"
         echo "│                                                       │"
         echo "└───────────────────────────────────────────────────────┘"
         exit 0
