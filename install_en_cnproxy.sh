@@ -8,11 +8,11 @@ script_info() {
     echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
     echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│ A script for installing/updating Tailscale-AWG on OpenWrt and related operations.        │"
-    echo "│ Project (Fork): https://github.com/LiuTangLei/openwrt-tailscale-awg                        │"
-    echo "│ Based on: https://github.com/GuNanOvO/openwrt-tailscale (Thanks to GuNanOvO)               │"
-    echo "│ Script Version: "$SCRIPT_VERSION"                                                                  │"
-    echo "│ Update Date: "$SCRIPT_DATE"                                                                │"
+    printf "│ %-87s│\n" "A script for installing/updating Tailscale-AWG on OpenWrt and related operations."
+    printf "│ %-87s│\n" "Project (Fork): https://github.com/LiuTangLei/openwrt-tailscale-awg"
+    printf "│ %-87s│\n" "Based on: https://github.com/GuNanOvO/openwrt-tailscale (Thanks to GuNanOvO)"
+    printf "│ %-87s│\n" "Script Version: $SCRIPT_VERSION"
+    printf "│ %-87s│\n" "Update Date: $SCRIPT_DATE"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -633,17 +633,17 @@ init() {
 
         echo ""
 
-        printf "\rInitializing: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
+        printf "\r[INFO] Initializing: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
         
         for function in $functions; do
             eval "$function"
             progress=$((progress + 1))
             percent=$((progress * 100 / function_count))
             bars=$((percent / 2))
-            printf "\rInitializing: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
+            printf "\r[INFO] Initializing: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
         done
     
-        printf "\r    Done    : [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$bars"))" "$percent"
+        printf "\r[INFO]   Complete  : [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 50))" 100
     else
         for function in $functions; do
             eval "$function"
@@ -654,13 +654,13 @@ init() {
 
 # Function: Exit message
 script_exit() {
-        echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ Thank you for using!                                  │"
-        echo "│                                                       │"
-        echo "│ Report issues at:                                     │"
-        echo "│ Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues  │"
-        echo "│ Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues   │"
-        echo "└───────────────────────────────────────────────────────┘"
+        echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
+        printf "│ %-87s│\n" "Thank you for using!"
+        printf "│ %-87s│\n" ""
+        printf "│ %-87s│\n" "Report issues at:"
+        printf "│ %-87s│\n" "Fork: https://github.com/LiuTangLei/openwrt-tailscale-awg/issues"
+        printf "│ %-87s│\n" "Upstream: https://github.com/GuNanOvO/openwrt-tailscale/issues"
+        echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
         exit 0
 }
 
@@ -786,6 +786,7 @@ option_menu() {
 
         read -n 1 -p "│ Enter option (0 ~ $option_index): " choice
         echo ""
+        echo "└───────────────────────────────────────────────────────┘"
         echo ""
 
         if [ "$choice" -ge 0 ] && [ "$choice" -le "$option_index" ]; then

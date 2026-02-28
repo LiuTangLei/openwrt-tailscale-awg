@@ -68,10 +68,21 @@ jobs:
                 } 
               }
             );
+
+            if (!res.ok) {
+              const body = await res.text();
+              throw new Error(`GHCR API returned ${res.status}: ${body}`);
+            }
+
             const versions = await res.json();
 
+            if (!Array.isArray(versions)) {
+              console.log('Unexpected API response:', JSON.stringify(versions).slice(0, 500));
+              throw new Error('GHCR API did not return an array. Token may be expired or lack read:packages scope.');
+            }
+
             const latestStableObj = versions.find(v => {
-              const tags = v.metadata.container.tags || [];
+              const tags = v.metadata?.container?.tags || [];
               return tags.includes('stable') && tags.includes('latest');
             });
 

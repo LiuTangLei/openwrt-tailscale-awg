@@ -97,10 +97,10 @@ script_info() {
     echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
     echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│ A script for installing Tailscale on OpenWrt, updating Tailscale, or...                │"
-    echo "│ Project URL: $REPO_URL                                │"
-    echo "│ Script Version: $SCRIPT_VERSION                                                                        │"
-    echo "│ Update Date: $SCRIPT_DATE                                                                   │"
+    printf "│ %-87s│\n" "A script for installing Tailscale on OpenWrt, updating Tailscale, or..."
+    printf "│ %-87s│\n" "Project URL: $REPO_URL"
+    printf "│ %-87s│\n" "Script Version: $SCRIPT_VERSION"
+    printf "│ %-87s│\n" "Update Date: $SCRIPT_DATE"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -697,7 +697,7 @@ init() {
             printf "\r[INFO] Initializing: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
         done
     
-        printf "\r[INFO]   Complete  : [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$bars"))" "$percent"
+        printf "\r[INFO]   Complete  : [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 50))" 100
     else
         for function in $functions; do
             eval "$function"
@@ -708,13 +708,13 @@ init() {
 
 # Function: Exit
 script_exit() {
-        echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ Thank you for using!                                  │"
-        echo "│                                                       │"
-        echo "│ If any problems occur after installation, you can     │"
-        echo "│ report at: $REPO_URL/issues  │"
-        echo "│                                                       │"
-        echo "└───────────────────────────────────────────────────────┘"
+        echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
+        printf "│ %-87s│\n" "Thank you for using!"
+        printf "│ %-87s│\n" ""
+        printf "│ %-87s│\n" "If any problems occur after installation, you can report at:"
+        printf "│ %-87s│\n" "$REPO_URL/issues"
+        printf "│ %-87s│\n" ""
+        echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
         exit 0
 }
 
@@ -850,6 +850,7 @@ option_menu() {
 
         read -n 1 -p "│ Please enter option (1 ~ $option_index): " choice
         echo ""
+        echo "└────────────────────────────────────────────────────────┘"
         echo ""
 
         # Determine if input is legal

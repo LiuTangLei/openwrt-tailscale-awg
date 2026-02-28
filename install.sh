@@ -112,9 +112,9 @@ script_info() {
     echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
     echo "│ 一个用于在OpenWrt上安装Tailscale或更新Tailscale或...的一个脚本。                       │"
-    echo "│ 项目地址: "$REPO_URL"                                │"
-    echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
-    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
+    printf "│ 项目地址: %-77s│\n" "$REPO_URL"
+    printf "│ 脚本版本: %-77s│\n" "$SCRIPT_VERSION"
+    printf "│ 更新日期: %-77s│\n" "$SCRIPT_DATE"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -749,17 +749,17 @@ init() {
 
         echo ""
 
-        printf "\r[INFO]初始化中: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
+        printf "\r[INFO] 初始化中: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
         
         for function in $functions; do
             eval "$function"
             progress=$((progress + 1))
             percent=$((progress * 100 / function_count))
             bars=$((percent / 2))
-            printf "\r[INFO]初始化中: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
+            printf "\r[INFO] 初始化中: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
         done
     
-        printf "\r[INFO]  完成  : [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$bars"))" "$percent"
+        printf "\r[INFO]   完成  : [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 50))" 100
     else
         for function in $functions; do
             eval "$function"
@@ -770,13 +770,13 @@ init() {
 
 # 函数：退出
 script_exit() {
-        echo "┌───────────────────────────────────────────────────────┐"
-        echo "│ 感谢您的使用!                                        │"
-        echo "│                                                       │"
-        echo "│ 安装后产生无法使用等情况, 您可以于:                   │"
-        echo "│ "$REPO_URL"/issues  │"
-        echo "│                                                       │"
-        echo "└───────────────────────────────────────────────────────┘"
+        echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
+        echo "│ 感谢您的使用!                                                                          │"
+        echo "│                                                                                        │"
+        echo "│ 安装后产生无法使用等情况, 您可以于:                                                    │"
+        printf "│ %-87s│\n" "$REPO_URL/issues"
+        echo "│                                                                                        │"
+        echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
         exit 0
 }
 
@@ -920,6 +920,7 @@ option_menu() {
 
         read -n 1 -p "│ 请输入选项(0 ~ $option_index): " choice
         echo ""
+        echo "└───────────────────────────────────────────────────────┘"
         echo ""
 
         # 判断输入是否合法
