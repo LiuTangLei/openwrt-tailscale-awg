@@ -1,0 +1,736 @@
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: aarch64_cortex-a53
+Installed-Size: 6389760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_aarch64_cortex-a53.ipk
+Size: 6381514
+SHA256sum: a74c1de53da09f606c5a6eeb52a1f3435607bc245f8f3ea13df2663e9136ff9a
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: aarch64_cortex-a72
+Installed-Size: 6389760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_aarch64_cortex-a72.ipk
+Size: 6378905
+SHA256sum: 1019dddb30640154afd6cac6ef5e11cd0f727948472bde92c494f2a22d9e2387
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: aarch64_cortex-a76
+Installed-Size: 6389760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_aarch64_cortex-a76.ipk
+Size: 6378906
+SHA256sum: 324e22c2f8004fa113713dba70d4b83b9e22f51ccd4c943b11131c1d2693edb1
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: aarch64_generic
+Installed-Size: 6389760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_aarch64_generic.ipk
+Size: 6378903
+SHA256sum: 85f0d6579225f01f7e8d3cdfa20f9ec4b36d406761a0bee9537f886413372dd9
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_arm1176jzf-s_vfp
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_arm1176jzf-s_vfp.ipk
+Size: 6349642
+SHA256sum: a47323d1371fd8dc5bbb07bbc74aed621ac66a865526b582b207f50c4f942c95
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_arm926ej-s
+Installed-Size: 6369280
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_arm926ej-s.ipk
+Size: 6355392
+SHA256sum: fdc42c9becc8c1d1ddd56e17f24d38842bb5f1f25aac3fd4e8aa1577720a9819
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a15_neon-vfpv4
+Installed-Size: 6348800
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a15_neon-vfpv4.ipk
+Size: 6340885
+SHA256sum: a0b2a8abb503ac8fa427828677026825abd42cba7d3812606b088430092b4b17
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a5_vfpv4
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a5_vfpv4.ipk
+Size: 6342281
+SHA256sum: ed9e7e3f75eedcbca6d7987e9b9d7ac98d317946d9d411b1e85f192bdbc942e5
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a7
+Installed-Size: 6369280
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a7.ipk
+Size: 6353289
+SHA256sum: e8d7d7d3c2a882c55ae7b23a9debc640e54071e5a97c56045afe710ae516a8e9
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a7_neon-vfpv4
+Installed-Size: 6348800
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a7_neon-vfpv4.ipk
+Size: 6341379
+SHA256sum: 36dfbbdf9df4eb3c3f893c73f8ec7a639497021609bec92e109facaaba8d5f82
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a7_vfpv4
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a7_vfpv4.ipk
+Size: 6342534
+SHA256sum: ffc74499aaeb55663a7b49f8fb4e8b3988871a421dcb94bd0fa410c1da19e6f5
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a8_vfpv3
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a8_vfpv3.ipk
+Size: 6342075
+SHA256sum: 6e626ddf45aa5dbee0aaed17d62149845b59af8784e7f1e06a3728b027ff8b21
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a9
+Installed-Size: 6369280
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a9.ipk
+Size: 6353644
+SHA256sum: 62e41db590c46603009bddd457a6e4c94c062c0d972bc58903485e99acb99fc2
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a9_neon
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a9_neon.ipk
+Size: 6342764
+SHA256sum: bdb05db087c34524f021962c47b258442c870d6279c0eef08adef16c51995f3c
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_cortex-a9_vfpv3-d16
+Installed-Size: 6359040
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_cortex-a9_vfpv3-d16.ipk
+Size: 6342242
+SHA256sum: c77c0b26f86def06f491051e7602fc0bfb3b392bd2bdc4b2c779fdce7a98c27c
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_fa526
+Installed-Size: 6369280
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_fa526.ipk
+Size: 6356060
+SHA256sum: f1fe750ef03a18c5304c531b3b8fe8aa046f80eb8f07fbbd190cb19b82b7e76b
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: arm_xscale
+Installed-Size: 6369280
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_arm_xscale.ipk
+Size: 6355396
+SHA256sum: 8ac709bfaf97b1575e0896de02ddd2c2c1884b2e96f815e2bfc9d5f1c209bb74
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: i386_pentium-mmx
+Installed-Size: 7260160
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_i386_pentium-mmx.ipk
+Size: 7250688
+SHA256sum: a5cb31d4b07c844a338540831f25294bea34daed545cee6ecacd5824475319d0
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: i386_pentium4
+Installed-Size: 7249920
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_i386_pentium4.ipk
+Size: 7238424
+SHA256sum: 7ad2c4fbe22331c2a967bb5c82c44afcc055a632c8786ca2b2a4be5d82a9223b
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: loongarch64_generic
+Installed-Size: 26869760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_loongarch64_generic.ipk
+Size: 9918103
+SHA256sum: 0e2104c6e949c2f2394a6623b276de6f233f3e04e0c3f00f87196dde1fc3b3fb
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips64_mips64r2
+Installed-Size: 29788160
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips64_mips64r2.ipk
+Size: 9293872
+SHA256sum: 7e3baa5bc38169084f61d81f5cafc81e5e8568aecb19d65023ec39644b274a94
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips64_octeonplus
+Installed-Size: 29788160
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips64_octeonplus.ipk
+Size: 9294277
+SHA256sum: 53b6814773f0bc2a4ac93f851946a46e00c58c590e2c7a1982883f48b857f27b
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips64el_mips64r2
+Installed-Size: 29788160
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips64el_mips64r2.ipk
+Size: 9094389
+SHA256sum: 1afc7d95ebc2b4194c98e45bc1d66b25b2ceb7d78b65bb03d3c032d1e0ebc18e
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips_24kc
+Installed-Size: 6082560
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips_24kc.ipk
+Size: 6073195
+SHA256sum: 992db994360598d3201065b2eb82445f3ef20451e7b2cb4e4f545c18eb236989
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips_4kec
+Installed-Size: 6082560
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips_4kec.ipk
+Size: 6073453
+SHA256sum: 5693933b899907089d8fa50580256d74931508932f929dc5f264ddd6a6f54fe2
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mips_mips32
+Installed-Size: 6082560
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mips_mips32.ipk
+Size: 6073751
+SHA256sum: 61f35c0eb6beb19e1a9541a8b003826d4b2bb8bb5ebf42d26de3b5e383bcf2ca
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mipsel_24kc
+Installed-Size: 6205440
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mipsel_24kc.ipk
+Size: 6194326
+SHA256sum: 5c8cd638b3e978e4950bd58ab671cb2b6c11f1ec643c2d19b6cc12803fba5825
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mipsel_24kc_24kf
+Installed-Size: 6205440
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mipsel_24kc_24kf.ipk
+Size: 6191050
+SHA256sum: f770c3003ec71eaab54eaa48ca84a7e504d894309006cc2c7c09430652fc80a8
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mipsel_74kc
+Installed-Size: 6205440
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mipsel_74kc.ipk
+Size: 6192650
+SHA256sum: e43f1fe617b3ad19002dd766bd08b31c42890882ff1d366396d2f465fdfcca8c
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: mipsel_mips32
+Installed-Size: 6205440
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_mipsel_mips32.ipk
+Size: 6192394
+SHA256sum: f0c12145a7f785a67b7676cd113c4162295061eb5855cd2054aaf9ceb926cab1
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: riscv64_riscv64
+Installed-Size: 24565760
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_riscv64_riscv64.ipk
+Size: 9775414
+SHA256sum: f123c4094ec72ae35a768c8d8fac6fe2d9bc3ea408f263ee92fbb62018d3d17a
+
+Package: tailscale
+Version: 1.94.2-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+Source: feeds/base/tailscale
+SourceName: tailscale
+License: BSD-3-Clause
+LicenseFiles: LICENSE
+Section: net
+SourceDateEpoch: 1760891865
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Maintainer: LiuTangLei <liu.tang.lei@gmail.com>
+Architecture: x86_64
+Installed-Size: 7731200
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+Filename: tailscale_1.94.2_x86_64.ipk
+Size: 7722271
+SHA256sum: 472f42de1b132255712403b39b4203f9acaaf17b2c631e67c1607eebf8000d04
+
