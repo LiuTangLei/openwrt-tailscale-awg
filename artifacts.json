@@ -1,0 +1,258 @@
+[
+  {
+    "target": "aarch64_cortex-a53",
+    "ipk": "tailscale_1.94.2_aarch64_cortex-a53.ipk",
+    "ipk_sha256": "c8e59ca5f0552ede82cfdaa53531802e95c9fa54d18f1e1ee656571efd102afb",
+    "apk": "tailscale_1.94.2_aarch64_cortex-a53.apk",
+    "apk_sha256": "50620cd22a034bc6b4dc25ea4e8850a942991356ea211a831cb96c0b4d6af9c5",
+    "bin_size": "6373928"
+  },
+  {
+    "target": "aarch64_cortex-a72",
+    "ipk": "tailscale_1.94.2_aarch64_cortex-a72.ipk",
+    "ipk_sha256": "377a044f84119fff59d3607f7988ffbcf02b169b52ebd08c635f181c2cd6bfee",
+    "apk": "tailscale_1.94.2_aarch64_cortex-a72.apk",
+    "apk_sha256": "fa684eb90c72357ebf59c5de48763e458f7a899d85899e623e7a7eebd7f8d5ab",
+    "bin_size": "6375676"
+  },
+  {
+    "target": "aarch64_cortex-a76",
+    "ipk": "tailscale_1.94.2_aarch64_cortex-a76.ipk",
+    "ipk_sha256": "83f25e1fac1a56d2b3d87946095892a552d61cbc863925a5d36041be2a64390a",
+    "apk": "tailscale_1.94.2_aarch64_cortex-a76.apk",
+    "apk_sha256": "6eb41399b9045ef13d3b10dfcc5d03c9e327400f63766cbf41e9218359caeb50",
+    "bin_size": "6342308"
+  },
+  {
+    "target": "aarch64_generic",
+    "ipk": "tailscale_1.94.2_aarch64_generic.ipk",
+    "ipk_sha256": "756cd4199c4075c46844cbaae7049e52135d9c1b369fb316fcb42c4669afa37f",
+    "apk": "tailscale_1.94.2_aarch64_generic.apk",
+    "apk_sha256": "3ae34467129234e6bc89b611ed7bcee3cd19b6684ec0c05fc24088dcfc539790",
+    "bin_size": "6374548"
+  },
+  {
+    "target": "arm_arm1176jzf-s_vfp",
+    "ipk": "tailscale_1.94.2_arm_arm1176jzf-s_vfp.ipk",
+    "ipk_sha256": "2ce0aeca85dcac502d55cad2df9f08f525319088266f4fa1665b2023d40123b2",
+    "apk": "tailscale_1.94.2_arm_arm1176jzf-s_vfp.apk",
+    "apk_sha256": "fda16e3b210314b6a73008c15689961be6eaf6c52a44a400195e5e34682e8b89",
+    "bin_size": "6347280"
+  },
+  {
+    "target": "arm_arm926ej-s",
+    "ipk": "tailscale_1.94.2_arm_arm926ej-s.ipk",
+    "ipk_sha256": "771825e23d53a8cac986da7a3f43973bd871abf533275ccf6b0bba80eae48bdc",
+    "apk": "tailscale_1.94.2_arm_arm926ej-s.apk",
+    "apk_sha256": "e7d4f32195e51f57c274db3795b7fea83693c6ec5f634923a9467cbf69609633",
+    "bin_size": "6353616"
+  },
+  {
+    "target": "arm_cortex-a15_neon-vfpv4",
+    "ipk": "tailscale_1.94.2_arm_cortex-a15_neon-vfpv4.ipk",
+    "ipk_sha256": "cbcdbc8da4e8e9b432b26e0704927ea79b1d0f571536e542796cb43d68d04f97",
+    "apk": "tailscale_1.94.2_arm_cortex-a15_neon-vfpv4.apk",
+    "apk_sha256": "d84c1b420f64a04f86312b023289a940da931d7443b513a3ea052a2a726a61d2",
+    "bin_size": "6338592"
+  },
+  {
+    "target": "arm_cortex-a5_vfpv4",
+    "ipk": "tailscale_1.94.2_arm_cortex-a5_vfpv4.ipk",
+    "ipk_sha256": "5e6f16bc0351b6b2f006b5b6de9fdf7adc4d0c7c4758cb7cdafaffd5d3abbaec",
+    "apk": "tailscale_1.94.2_arm_cortex-a5_vfpv4.apk",
+    "apk_sha256": "04b7a368e4fb13e5cc70867c337a0000cef1d1a6fc1f6a8c1f1bd632dfd248c5",
+    "bin_size": "6340680"
+  },
+  {
+    "target": "arm_cortex-a7",
+    "ipk": "tailscale_1.94.2_arm_cortex-a7.ipk",
+    "ipk_sha256": "5723a92d68dbde06038720102425e74187b79f618a264ce8381ceb17c827ad96",
+    "apk": "tailscale_1.94.2_arm_cortex-a7.apk",
+    "apk_sha256": "9653e031ff2456c56ba75dc93e4739b6ea12782d7ce087ccd7efc0404dd8bde2",
+    "bin_size": "6352896"
+  },
+  {
+    "target": "arm_cortex-a7_neon-vfpv4",
+    "ipk": "tailscale_1.94.2_arm_cortex-a7_neon-vfpv4.ipk",
+    "ipk_sha256": "f3ffe3cd56d146e560b00a01dab75c1481464f66f9c01cd6bb278351d8aaade8",
+    "apk": "tailscale_1.94.2_arm_cortex-a7_neon-vfpv4.apk",
+    "apk_sha256": "ef292752831a37cc8717eaa0fadee329ec9e44944d57c757065480083f480703",
+    "bin_size": "6338696"
+  },
+  {
+    "target": "arm_cortex-a7_vfpv4",
+    "ipk": "tailscale_1.94.2_arm_cortex-a7_vfpv4.ipk",
+    "ipk_sha256": "e027b90819fddb09b19bfe72b402d81ad17b4cc8bd9cc7306064f5e20df62e11",
+    "apk": "tailscale_1.94.2_arm_cortex-a7_vfpv4.apk",
+    "apk_sha256": "1fe1ec65f69ff9847bad894dfb2adfac76fa7a668c896d614bd6391d3943597e",
+    "bin_size": "6340244"
+  },
+  {
+    "target": "arm_cortex-a8_vfpv3",
+    "ipk": "tailscale_1.94.2_arm_cortex-a8_vfpv3.ipk",
+    "ipk_sha256": "ed37683b8aa90fe4268fd954f9f83fd5be07e8b39042ae39da0c1cf8a790da47",
+    "apk": "tailscale_1.94.2_arm_cortex-a8_vfpv3.apk",
+    "apk_sha256": "f83c7c303fc74653b77d07965944ceded5407d0e7c94cf986e23d6773b07c4f6",
+    "bin_size": "6340696"
+  },
+  {
+    "target": "arm_cortex-a9",
+    "ipk": "tailscale_1.94.2_arm_cortex-a9.ipk",
+    "ipk_sha256": "7df7989e9d8c4a6e5630b3759141e2f3597501a7dfd112a3d2ef06a99b1b061e",
+    "apk": "tailscale_1.94.2_arm_cortex-a9.apk",
+    "apk_sha256": "a6312af900bc5b9384c0d79c6a57a1853355c0812bbb3ac0bc81b92c27069785",
+    "bin_size": "6351484"
+  },
+  {
+    "target": "arm_cortex-a9_neon",
+    "ipk": "tailscale_1.94.2_arm_cortex-a9_neon.ipk",
+    "ipk_sha256": "4b5ef913ad454412e1df75f28af393096914e0e50cdf501ba9d1f3514d84b835",
+    "apk": "tailscale_1.94.2_arm_cortex-a9_neon.apk",
+    "apk_sha256": "f5163f1bac0a6f0eb9c5913a14e6dab61256f7a9f9937d93370a9e8cdceef0a2",
+    "bin_size": "6339544"
+  },
+  {
+    "target": "arm_cortex-a9_vfpv3-d16",
+    "ipk": "tailscale_1.94.2_arm_cortex-a9_vfpv3-d16.ipk",
+    "ipk_sha256": "e9731fda0e84a7b38921fef7e6b711b963d8dd4e9dfd522c05185f7b74669db8",
+    "apk": "tailscale_1.94.2_arm_cortex-a9_vfpv3-d16.apk",
+    "apk_sha256": "dbce529d378c9180f5de624f2bc1841c416a63560426be241da0f0880fed94cc",
+    "bin_size": "6340080"
+  },
+  {
+    "target": "arm_fa526",
+    "ipk": "tailscale_1.94.2_arm_fa526.ipk",
+    "ipk_sha256": "c91a9fa33c07a5910f185bb0e6e02845ea4c9104bbecac12254bc055af551e72",
+    "apk": "tailscale_1.94.2_arm_fa526.apk",
+    "apk_sha256": "7cbf003edff6e406d38a57719824254561ba471c107975da5c7e5cf8e790c8b8",
+    "bin_size": "6352724"
+  },
+  {
+    "target": "arm_xscale",
+    "ipk": "tailscale_1.94.2_arm_xscale.ipk",
+    "ipk_sha256": "ccef4878fe59df6918206ce4be36c011558c6b54f63e2d74f4f4bc05e1ac7328",
+    "apk": "tailscale_1.94.2_arm_xscale.apk",
+    "apk_sha256": "d48d02092c69fd926103a4638e42bf84b541746f97e3380f64e91b04cdfaaf63",
+    "bin_size": "6353488"
+  },
+  {
+    "target": "i386_pentium-mmx",
+    "ipk": "tailscale_1.94.2_i386_pentium-mmx.ipk",
+    "ipk_sha256": "32f44f042a40feef91e8f853f8b7236446908a83e6659e9b626f044cd95e8d0c",
+    "apk": "tailscale_1.94.2_i386_pentium-mmx.apk",
+    "apk_sha256": "b58db3b38854e823965fa0e5c36352c4ce4908e6bc99f7909916eda61d8cd0d6",
+    "bin_size": "7245152"
+  },
+  {
+    "target": "i386_pentium4",
+    "ipk": "tailscale_1.94.2_i386_pentium4.ipk",
+    "ipk_sha256": "36937c8bf4be6935331e34834d71301a05d3376b1e39a44b517883574e6df5f2",
+    "apk": "tailscale_1.94.2_i386_pentium4.apk",
+    "apk_sha256": "3947e6cb4c4cc8687dfc821e95e535b988b07a7a4e319db59b72640cedea54e5",
+    "bin_size": "7234048"
+  },
+  {
+    "target": "loongarch64_generic",
+    "ipk": "tailscale_1.94.2_loongarch64_generic.ipk",
+    "ipk_sha256": "829348a592bef5edaad7c2f12799d98f97cde9d9c46c6e55ce8688790992b9eb",
+    "apk": "tailscale_1.94.2_loongarch64_generic.apk",
+    "apk_sha256": "df6d03089af5e65e56de537f4bf6d7d3cdb94d1907c62bcbe4ee34ae3215b7ca",
+    "bin_size": "26867464"
+  },
+  {
+    "target": "mips64_mips64r2",
+    "ipk": "tailscale_1.94.2_mips64_mips64r2.ipk",
+    "ipk_sha256": "ff637d5f049d49211cbdd967555cebf82b254dc57fc2c1c4a59c9640e577ed6d",
+    "apk": "tailscale_1.94.2_mips64_mips64r2.apk",
+    "apk_sha256": "890423d2e5b7d2fb74ba63f723a59344ce79a001017b5d4cbebc6b3636d71fb2",
+    "bin_size": "29771216"
+  },
+  {
+    "target": "mips64_octeonplus",
+    "ipk": "tailscale_1.94.2_mips64_octeonplus.ipk",
+    "ipk_sha256": "eb54a06345c5f5389196817173d18e80f6cb82db196b8006293e9897399d43c6",
+    "apk": "tailscale_1.94.2_mips64_octeonplus.apk",
+    "apk_sha256": "23ffe6e4b51921997fee6cfe88f43a2c8b5a8a0813665f09cc75d69e389a4adb",
+    "bin_size": "29771216"
+  },
+  {
+    "target": "mips64el_mips64r2",
+    "ipk": "tailscale_1.94.2_mips64el_mips64r2.ipk",
+    "ipk_sha256": "95bfae2d89b49293ec710e692360df1101bf5ecf5bd074f65f0f632adc40d183",
+    "apk": "tailscale_1.94.2_mips64el_mips64r2.apk",
+    "apk_sha256": "4e891681521fbee3767d3993abc793c8b28dd7f4f54551a1d7a17eb16780e97f",
+    "bin_size": "29771216"
+  },
+  {
+    "target": "mips_24kc",
+    "ipk": "tailscale_1.94.2_mips_24kc.ipk",
+    "ipk_sha256": "117456620adf063029bbfbab8a390b6a041c3ef1e23ab1794a1d6ba49a535977",
+    "apk": "tailscale_1.94.2_mips_24kc.apk",
+    "apk_sha256": "3d61a6016d2772ca14cb3d281c67a6c11c60ea9e185d2563ef848a8ef18c0290",
+    "bin_size": "6069868"
+  },
+  {
+    "target": "mips_4kec",
+    "ipk": "tailscale_1.94.2_mips_4kec.ipk",
+    "ipk_sha256": "0c8117424c8594bece85d90004b548ddd1d799c4437be6bf261e284e7b7977e3",
+    "apk": "none",
+    "apk_sha256": "none",
+    "bin_size": "6066888"
+  },
+  {
+    "target": "mips_mips32",
+    "ipk": "tailscale_1.94.2_mips_mips32.ipk",
+    "ipk_sha256": "f99b8dd83e4bc22a3f874898e95f472b41476f198d73b893772a260173b4b012",
+    "apk": "tailscale_1.94.2_mips_mips32.apk",
+    "apk_sha256": "130286c093a8cf215499cf43a0af5d2d210aef74f23cb5979bb2d7c46d76126f",
+    "bin_size": "6070160"
+  },
+  {
+    "target": "mipsel_24kc",
+    "ipk": "tailscale_1.94.2_mipsel_24kc.ipk",
+    "ipk_sha256": "10e8d82803774c94bf10da9572ff8b0618c48b2254fc44e2847f2ee410f5aa9c",
+    "apk": "tailscale_1.94.2_mipsel_24kc.apk",
+    "apk_sha256": "a3588a142e818a402ee795edce62898db6f62e261a762b72e99ae5ae6e842899",
+    "bin_size": "6189360"
+  },
+  {
+    "target": "mipsel_24kc_24kf",
+    "ipk": "tailscale_1.94.2_mipsel_24kc_24kf.ipk",
+    "ipk_sha256": "c887de9bfe35f87a26b34570349575e6cb484653c6e5e98f9fcc2153f2761b43",
+    "apk": "tailscale_1.94.2_mipsel_24kc_24kf.apk",
+    "apk_sha256": "5cd6b83d8779de5e7ee4938c5a05c4e4bf6db8e772665dc4e9030e6db9b2466d",
+    "bin_size": "6187972"
+  },
+  {
+    "target": "mipsel_74kc",
+    "ipk": "tailscale_1.94.2_mipsel_74kc.ipk",
+    "ipk_sha256": "d2e7fd900dd27b82ad9d672f1b7c02b7556f1fa9290f0833df11655d39e2391d",
+    "apk": "tailscale_1.94.2_mipsel_74kc.apk",
+    "apk_sha256": "308c68a052ba084dcd0d51d5334515a2f1440adb21605ca672993e2cf985fc42",
+    "bin_size": "6189472"
+  },
+  {
+    "target": "mipsel_mips32",
+    "ipk": "tailscale_1.94.2_mipsel_mips32.ipk",
+    "ipk_sha256": "c3f9190a49d9e1088eeca7d3bf260d593431136bb40ce7b6a31d9618b91e64c0",
+    "apk": "tailscale_1.94.2_mipsel_mips32.apk",
+    "apk_sha256": "d21eba2315ff7ec714d9f73a88fc5be0101d315f605daa983d6b91493e86d85d",
+    "bin_size": "6189244"
+  },
+  {
+    "target": "riscv64_riscv64",
+    "ipk": "tailscale_1.94.2_riscv64_riscv64.ipk",
+    "ipk_sha256": "e4eb78d17fad66df414b7c371f8b389e7e69808e20cd300d7f45781f6349e9be",
+    "apk": "none",
+    "apk_sha256": "none",
+    "bin_size": "24557576"
+  },
+  {
+    "target": "x86_64",
+    "ipk": "tailscale_1.94.2_x86_64.ipk",
+    "ipk_sha256": "b7cb78e190be26085300ba7a8e741ddeeecb11aaacee698cbc1001a16685931a",
+    "apk": "tailscale_1.94.2_x86_64.apk",
+    "apk_sha256": "eccd0a964d360910ecba7841182bc5896a2d113a1665395538c6c19c02b5ad0c",
+    "bin_size": "7723088"
+  }
+]
