@@ -13,8 +13,6 @@ PKG_NAME:=tailscale
 PKG_VERSION:=1.94.2
 PKG_RELEASE:=1
 
-PKG_STRIP:=0
-
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
 PKG_HASH:=1c6e42eabec6867da53353b595de4450c0bc506fbba1aa8ebaac5e652d1121fc
@@ -31,7 +29,7 @@ PKG_BUILD_FLAGS:=no-mips16
 GO_PKG:=tailscale.com/cmd/tailscaled
 GO_PKG_LDFLAGS:=-s -w -X 'tailscale.com/version.longStamp=$(PKG_VERSION)-$(PKG_RELEASE) (OpenWrt-UPX)'
 GO_PKG_LDFLAGS_X:=tailscale.com/version.shortStamp=$(PKG_VERSION)
-GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
+GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_taildrop,ts_omit_tap,ts_omit_tpm,ts_omit_relayserver,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient
 
 ifneq ($(filter mips64% riscv64% loongarch64%,$(ARCH)),)
   DISABLE_UPX:=1
@@ -44,17 +42,17 @@ define Package/tailscale
   SECTION:=net
   CATEGORY:=Network
   SUBMENU:=VPN
-  TITLE:=Zero config VPN with Amnezia WireGuard (UPX Compressed)
-  URL:=Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
-  DEPENDS:=$(GO_ARCH_DEPENDS) ca-bundle kmod-tun
+	TITLE:=Zero config VPN with Amnezia WireGuard (UPX Compressed)
+	URL:=Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+  DEPENDS:=$(GO_ARCH_DEPENDS) +ca-bundle +kmod-tun
   PROVIDES:=tailscale tailscaled
 endef
 
 define Package/tailscale/description
-  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
-  Built for OpenWrt. It creates a secure network between your servers,
-  computers, and cloud instances with enhanced censorship resistance.
-  Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+	Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+	Built for OpenWrt. It creates a secure network between your servers,
+	computers, and cloud instances with enhanced censorship resistance.
+	Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
 endef
 
 define Package/tailscale/conffiles
@@ -67,11 +65,18 @@ define Package/tailscale/install
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/tailscaled $(1)/usr/sbin
 
 ifneq ($(DISABLE_UPX),1)
-	echo "==> UPX enabled on ARCH $(ARCH)"
-	$(TOPDIR)/upx/upx --best --lzma $(1)/usr/sbin/tailscaled
+	if ! $(TOPDIR)/upx/upx -t $(GO_PKG_BUILD_BIN_DIR)/tailscaled >/dev/null 2>&1; then \
+		echo "==> UPX enabling on ARCH $(ARCH)"; \
+		$(TOPDIR)/upx/upx --best --lzma $(GO_PKG_BUILD_BIN_DIR)/tailscaled; \
+	else \
+		echo "==> UPX already compressed on ARCH $(ARCH)"; \
+	fi
 else
 	echo "==> UPX disabled on ARCH $(ARCH)"
 endif
+
+	mkdir -p /builder/bin/packages/$(ARCH_PACKAGES)/base
+	$(CP) $(GO_PKG_BUILD_BIN_DIR)/tailscaled /builder/bin/packages/$(ARCH_PACKAGES)/base/tailscaled
 
 	$(LN) tailscaled $(1)/usr/sbin/tailscale
 	$(INSTALL_BIN) ./files/tailscale.init $(1)/etc/init.d/tailscale

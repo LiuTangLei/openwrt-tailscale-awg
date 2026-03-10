@@ -1,29 +1,27 @@
 #!/bin/sh
 
 # 脚本信息
-SCRIPT_VERSION="v1.08"
-SCRIPT_DATE="2026/02/28"
+SCRIPT_VERSION="v1.1.0"
+SCRIPT_DATE="2025/03/04"
 
 # 基本配置
-REPO_URL="https://github.com/LiuTangLei/openwrt-tailscale-awg"
 REPO="LiuTangLei/openwrt-tailscale-awg"
-TAILSCALE_URL="${REPO}/releases/latest"
+REPO_URL="https://github.com/${REPO}"
+URL_HEAD="https://raw.githubusercontent.com/${REPO}/refs/heads/feed"
 TAILSCALE_FILE="" # 由get_tailscale_info设置
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"
 
 # 代理头
-URL_PROXYS="https://ghfast.top/https://github.com
-https://cf.ghproxy.cc/https://github.com
-https://www.ghproxy.cc/https://github.com
-https://gh-proxy.com/https://github.com
-https://ghproxy.cc/https://github.com
-https://ghproxy.cn/https://github.com
-https://www.ghproxy.cn/https://github.com
-https://github.com"
+PROXYS="https://ghfast.top/${URL_HEAD}
+https://gh-proxy.org/${URL_HEAD}
+https://cdn.jsdelivr.net/gh/${REPO}@feed
+https://raw.githubusercontent.com/${REPO}/refs/heads/feed"
+
 # 使用自定义代理头
 USE_CUSTOM_PROXY="false"
-# 可用代理头
-AVAILABLE_PROXY="" # 由test_proxy设置
+
+# 可用URL_HEAD, 由test_proxy设置
+AVAILABLE_URL_HEAD=""
 
 # TMP安装 [/usr/sbin/tailscale]
 TMP_TAILSCALE='#!/bin/sh
@@ -48,6 +46,7 @@ IS_TAILSCALE_INSTALLED="false"
 TAILSCALE_INSTALL_STATUS="none"
 FOUND_TAILSCALE_FILE="false"
 
+PACKAGE_MANAGER=""
 DEVICE_TARGET=""
 DEVICE_MEM_TOTAL=""
 DEVICE_MEM_FREE=""
@@ -60,50 +59,6 @@ TAILSCALE_TEMP_INSTALLABLE=""
 
 ENABLE_INIT_PROGRESS_BAR="true"
 
-# 函数：下载辅助 (uclient-fetch > curl > wget)
-# 用法: _download_to_file <url> <output_file> [timeout]
-_download_to_file() {
-    local url="$1"
-    local output="$2"
-    local timeout="${3:-10}"
-    if command -v uclient-fetch >/dev/null 2>&1; then
-        uclient-fetch -q -T "$timeout" -O "$output" "$url" 2>/dev/null && return 0
-    fi
-    if command -v curl >/dev/null 2>&1; then
-        curl -fsSL --connect-timeout "$timeout" -o "$output" "$url" 2>/dev/null && return 0
-    fi
-    wget -q --timeout="$timeout" -O "$output" "$url" 2>/dev/null && return 0
-    return 1
-}
-
-# 用法: _download_to_stdout <url> [timeout]
-_download_to_stdout() {
-    local url="$1"
-    local timeout="${2:-10}"
-    if command -v uclient-fetch >/dev/null 2>&1; then
-        uclient-fetch -q -T "$timeout" -O - "$url" 2>/dev/null && return 0
-    fi
-    if command -v curl >/dev/null 2>&1; then
-        curl -fsSL --connect-timeout "$timeout" "$url" 2>/dev/null && return 0
-    fi
-    wget -qO- --timeout="$timeout" "$url" 2>/dev/null && return 0
-    return 1
-}
-
-# 用法: _download_resume <url> <output_file>
-_download_resume() {
-    local url="$1"
-    local output="$2"
-    if command -v uclient-fetch >/dev/null 2>&1; then
-        uclient-fetch -q -O "$output" "$url" 2>/dev/null && return 0
-    fi
-    if command -v curl >/dev/null 2>&1; then
-        curl -fsSL -C - -o "$output" "$url" 2>/dev/null && return 0
-    fi
-    wget -cO "$output" "$url" 2>/dev/null && return 0
-    return 1
-}
-
 
 # 函数：脚本信息
 script_info() {
@@ -111,10 +66,11 @@ script_info() {
     echo "# ║ ├─┤ │ │  └─┐│  ├─┤│  ├┤   │ ││││  ║ ║├─┘├┤ │││ ║║║ ├┬┘ │   ║ │││└─┐ │ ├─┤│  │  ├┤ ├┬┘#"
     echo "# ╩ ┴ ┴ ┴ ┴─┘└─┘└─┘┴ ┴┴─┘└─┘  └─┘┘└┘  ╚═╝┴  └─┘┘└┘ ╚╩╝ ┴└─ ┴   ╩ ┘└┘└─┘ ┴ ┴ ┴┴─┘┴─┘└─┘┴└─#"
     echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-    echo "│ 一个用于在OpenWrt上安装Tailscale或更新Tailscale或...的一个脚本。                       │"
-    printf "│ 项目地址: %-77s│\n" "$REPO_URL"
-    printf "│ 脚本版本: %-77s│\n" "$SCRIPT_VERSION"
-    printf "│ 更新日期: %-77s│\n" "$SCRIPT_DATE"
+    echo "│ 一个用于在OpenWrt上安装Tailscale-AWG或更新Tailscale-AWG或...的一个脚本。               │"
+    echo "│ 项目地址: "$REPO_URL"                                │"
+    echo "│ 脚本版本: "$SCRIPT_VERSION"                                                                        │"
+    echo "│ 更新日期: "$SCRIPT_DATE"                                                                   │"
+    echo "│ 感谢您的使用, 如有帮助, 还请点颗star /<3                                               │"
     echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
 }
 
@@ -127,19 +83,29 @@ nameserver 119.29.29.29
 EOF
 }
 
+check_package_manager() {
+    if command -v opkg >/dev/null 2>&1; then
+        PACKAGE_MANAGER="opkg"
+    elif command -v apk >/dev/null 2>&1; then
+        PACKAGE_MANAGER="apk"
+    else
+        echo "[ERROR]: 未找到支持的包管理器，脚本退出。"
+        exit 1
+    fi
+}
+
 # 函数：获取设备架构
 check_device_target() {
     local exclude_target='powerpc_64_e5500|powerpc_464fp|powerpc_8548|armeb_xscale'
     local raw_target
 
-    raw_target="$(opkg print-architecture 2>/dev/null \
-        | awk '{print $2}' \
-        | grep -vE '^(all|noarch)$' \
-        | head -n 1)"
-
-    if [ -z "$raw_target" ]; then
-        raw_target="$(grep -E "^DISTRIB_ARCH=" /etc/openwrt_release 2>/dev/null \
-            | awk -F"'" '{print $2}')"
+    if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+        raw_target="$(opkg print-architecture 2>/dev/null \
+            | awk '{print $2}' \
+            | grep -vE '^(all|noarch)$' \
+            | head -n 1)"
+    elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+        raw_target="$(apk --print-arch 2>/dev/null)"
     fi
 
     if [ -z "$raw_target" ]; then
@@ -151,7 +117,7 @@ check_device_target() {
         | tr -d '\r\n\t\\ ' )"
 
     if printf '%s' "$raw_target" | grep -qiE "$exclude_target"; then
-        echo "[ERROR]: 当前架构 [$raw_target] 在排除名单中，脚本退出。"
+        echo "[ERROR]: 当前架构 [$raw_target] 不受支持，脚本退出。"
         exit 1
     fi
 
@@ -265,24 +231,24 @@ test_proxy() {
     local version
 
     for attempt_times in $attempt_range; do
-        for attempt_proxy in $URL_PROXYS; do
-            attempt_url="$attempt_proxy/$TAILSCALE_URL/download/version"
-            version=$(_download_to_stdout "$attempt_url" "$attempt_timeout" | tr -d ' \n\r')
+        for attempt_proxy in $PROXYS; do
+            attempt_url="$attempt_proxy/version"
+            version=$(wget -qO- --timeout=$attempt_timeout "$attempt_url" | tr -d ' \n\r')
 
             if [ -n "$version" ] && [[ "$version" =~ ^[0-9] ]]; then
-                AVAILABLE_PROXY="$attempt_proxy"
+                AVAILABLE_URL_HEAD="$attempt_proxy"
                 break 2
             fi
         done
     done
 
-    if [ "$USE_CUSTOM_PROXY" == "true" ] && [ -z "$AVAILABLE_PROXY" ]; then
+    if [ "$USE_CUSTOM_PROXY" == "true" ] && [ -z "$AVAILABLE_URL_HEAD" ]; then
         echo ""
         echo "[ERROR]: 您的自定义代理不可用, 脚本退出..."
         exit 1
     fi
 
-    if [ -z "$AVAILABLE_PROXY" ]; then
+    if [ -z "$AVAILABLE_URL_HEAD" ]; then
         echo "[ERROR]: 所有代理均不可用, 脚本退出..."
         echo "1. 确保网络连接正常"
         echo "2. 重试"
@@ -294,28 +260,15 @@ test_proxy() {
 # 函数：获取tailscale信息
 get_tailscale_info() {
     local version
-    local file
     local file_size
-    local tmp_packages="/tmp/Packages"
     # 尝试3次
     local attempt_range="1 2 3"
     # 超时时间（秒）
     local attempt_timeout=10
 
     for attempt_times in $attempt_range; do
-        version=$(_download_to_stdout "$AVAILABLE_PROXY/$TAILSCALE_URL/download/version" "$attempt_timeout" | tr -d ' \n\r')
-        file="tailscale_${version}_${DEVICE_TARGET}"
-
-        _download_to_file "$AVAILABLE_PROXY/$TAILSCALE_URL/download/Packages" "$tmp_packages" "$attempt_timeout"
-        if [ -f "$tmp_packages" ]; then
-            file_size=$(awk -v ipk="${file}.ipk" '
-            BEGIN { RS=""; FS="\n" }
-            $0 ~ ipk {
-                for(i=1;i<=NF;i++) if($i ~ /^Installed-Size:/) {
-                    print $i; exit
-                }
-            }' "$tmp_packages" | awk '{print $2}')
-        fi
+        version=$(wget -qO- --timeout=$attempt_timeout "$AVAILABLE_URL_HEAD/${DEVICE_TARGET}/version" | tr -d ' \n\r')
+        file_size=$(wget -qO- --timeout=$attempt_timeout "$AVAILABLE_URL_HEAD/${DEVICE_TARGET}/bin.size" | tr -d ' \n\r')
 
         if [ -n "$version" ] && [ -n "$file_size" ]; then
             break
@@ -334,7 +287,7 @@ get_tailscale_info() {
     fi
 
     TAILSCALE_LATEST_VERSION="$version"
-    TAILSCALE_FILE="$file"
+    TAILSCALE_FILE="tailscale_${TAILSCALE_LATEST_VERSION}_${DEVICE_TARGET}"
     TAILSCALE_FILE_SIZE=$((file_size / 1024 / 1024))
 
     if [ "$DEVICE_STORAGE_AVAILABLE" -gt "$TAILSCALE_FILE_SIZE" ]; then
@@ -402,7 +355,11 @@ remove() {
             tailscale_stoper
 
             if [ "$TAILSCALE_INSTALL_STATUS" = "persistent" ]; then
-                opkg remove tailscale
+                if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+                    opkg remove tailscale
+                elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+                    apk del tailscale
+                fi
             fi
 
             # remove指定目录的 tailscale 或 tailscaled 文件
@@ -507,6 +464,7 @@ persistent_install() {
         echo "║ "$TAILSCALE_FILE_SIZE", 推荐大于$(expr $TAILSCALE_FILE_SIZE \* 3)M.                                       ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
         echo "║ "$REPO_URL"/issues  ║"
+        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "确认采用持久安装方式安装tailscale吗? (y/N): " choice
@@ -530,10 +488,15 @@ persistent_install() {
     echo ""
     echo "[INFO]: 正在持久安装..."
     downloader
-    opkg remove tailscale
-    opkg install /tmp/$TAILSCALE_FILE.ipk
-
-    rm -rf "$TAILSCALE_FILE.ipk" "/tmp/$TAILSCALE_FILE.sha256"
+    if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+        opkg remove tailscale
+        opkg install /tmp/$TAILSCALE_FILE.ipk
+        rm -rf "$TAILSCALE_FILE.ipk" "/tmp/$TAILSCALE_FILE.sha256"
+    elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+        apk del tailscale
+        apk add --allow-untrusted /tmp/$TAILSCALE_FILE.apk
+        rm -rf "$TAILSCALE_FILE.apk" "/tmp/$TAILSCALE_FILE.sha256"
+    fi
     
     if [ "$silent_install" != "true" ]; then
         echo ""
@@ -544,6 +507,7 @@ persistent_install() {
         echo "║ 直接启动: tailscale up                                ║"
         echo "║ 安装后有任何无法使用的问题, 可以于:                   ║"
         echo "║ "$REPO_URL"/issues  ║"
+        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         echo ""
@@ -573,6 +537,7 @@ temp_install() {
         echo "║ 如果可以持久安装，推荐您采取持久安装方式!             ║"
         echo "║ 安装时产生任何错误, 您可以于:                         ║"
         echo "║ "$REPO_URL"/issues  ║"
+        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         read -n 1 -p "确认采用临时安装方式安装tailscale吗? (y/N): " choice
@@ -593,31 +558,62 @@ temp_install() {
 
     echo ""
     echo "[INFO]: 正在临时安装..." 
-    downloader
 
-    local ipk_file="/tmp/$TAILSCALE_FILE.ipk"
-    local extract_dir="/tmp/ts_extract"
+    local attempt_range="1 2 3"
+    local attempt_timeout=20
 
-    mkdir -p "$extract_dir"
+    local sha_file="/tmp/tailscaled.sha256"
+    local file_path="/tmp/tailscaled"
 
-    echo "[INFO]: 正在解压并部署文件..."
-    tar -xOzf "$ipk_file" ./data.tar.gz 2>/dev/null | tar -xzC "$extract_dir" 2>/dev/null
+    for attempt_times in $attempt_range; do
+        if ! wget -cO "$file_path" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/tailscaled"; then
+            if [ "$attempt_times" == "3" ]; then
+                echo "[ERROR]: tailscaled 三次下载均失败, 即将重启脚本!"
+                sleep 3
+                init
+            fi
+            continue
+        fi
 
-    [ -d "$extract_dir/etc" ] && cp -r "$extract_dir/etc/"* /etc/
-    [ -d "$extract_dir/lib" ] && cp -r "$extract_dir/lib/"* /lib/
-    [ -f "$extract_dir/usr/sbin/tailscale" ] && mv "$extract_dir/usr/sbin/tailscale" /tmp/tailscale
-    [ -f "$extract_dir/usr/sbin/tailscaled" ] && mv "$extract_dir/usr/sbin/tailscaled" /tmp/tailscaled
+        wget -cO "$sha_file" --timeout="$attempt_timeout"  "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/bin.sha256" 
+        wget -cO "/etc/config/tailscale" --timeout="$attempt_timeout" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/tailscale.conf"
+        wget -cO  "/etc/init.d/tailscale" --timeout="$attempt_timeout" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/tailscale.init"
+
+        printf "$(cat "$sha_file" | tr -d '\n\r')" > "$sha_file"
+        printf "  $file_path" >> "$sha_file"
+
+        if [ ! -s "$sha_file" ] || ! sha256sum -c "$sha_file" >/dev/null 2>&1; then
+            if [ "$attempt_times" == "3" ]; then
+                echo "[ERROR]: tailscaled 文件三次下载均失败, 即将重启脚本, 请重试!"
+                sleep 3
+                rm -f "$file_path" "$sha_file" "/etc/config/tailscale" "/etc/init.d/tailscale"
+                init
+            else
+                echo "[INFO]: tailscaled 文件校验不通过, 正在尝试重新下载!"
+                rm -f "$file_path" "$sha_file" "/etc/config/tailscale" "/etc/init.d/tailscale"
+                sleep 3
+            fi
+        else
+            echo "[INFO]: tailscaled 文件校验通过!"
+            rm -f "$sha_file"
+            break
+        fi
+    done
 
     echo "$TMP_TAILSCALE" > /usr/sbin/tailscale
     echo "$TMP_TAILSCALED" > /usr/sbin/tailscaled
-
-    rm -rf "$extract_dir" "$ipk_file" "/tmp/$TAILSCALE_FILE.sha256"
-
+    ln -sf /tmp/tailscaled /tmp/tailscale
+    
     echo "[INFO]: 临时安装完成!"
     echo "[INFO]: 正在启动tailscale服务..."
 
-    opkg update
-    opkg install $PACKAGES_TO_CHECK
+    if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+        opkg update
+        opkg install $PACKAGES_TO_CHECK
+    elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+        apk update
+        apk add --no-cache $PACKAGES_TO_CHECK
+    fi
 
     chmod +x /etc/init.d/tailscale
     chmod +x /usr/sbin/tailscale
@@ -644,6 +640,7 @@ temp_install() {
         echo "║ 直接启动: tailscale up                                ║"
         echo "║ 安装后有任何无法使用的问题, 可以于:                   ║"
         echo "║ "$REPO_URL"/issues  ║"
+        echo "║ 提出反馈. 谢谢您的使用! /<3                           ║"
         echo "║                                                       ║"
         echo "╚═══════════════════════════════════════════════════════╝"
         echo ""
@@ -662,31 +659,37 @@ downloader() {
     local attempt_range="1 2 3"
     local attempt_timeout=20
 
-    local tmp="/tmp"
-    local file_path="$tmp/$TAILSCALE_FILE.ipk"
-    local tmp_packages="$tmp/Packages"
-    local sha_file="$tmp/$TAILSCALE_FILE.sha256"
-    local target_ipk="${TAILSCALE_FILE}.ipk"
-    local download_url="${AVAILABLE_PROXY}/${TAILSCALE_URL}/download"
+    local sha_file="/tmp/$TAILSCALE_FILE.sha256"
+    local target_file=""
+    local file_path=""
+
+    if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+        target_file="$TAILSCALE_FILE.ipk"
+        file_path="/tmp/$TAILSCALE_FILE.ipk"
+    elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+        target_file="$TAILSCALE_FILE.apk"
+        file_path="/tmp/$TAILSCALE_FILE.apk"
+    fi
+
     for attempt_times in $attempt_range; do
-        if ! _download_resume "$download_url/$target_ipk" "$file_path"; then
-            [ "$attempt_times" == "3" ] && { echo "[ERROR]: tailscale 文件三次下载均失败, 即将重启脚本!"; sleep 3; init; }
+        if ! wget -cO "$file_path" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/$target_file"; then
+            if [ "$attempt_times" == "3" ]; then
+                echo "[ERROR]: $target_file 三次下载均失败, 即将重启脚本!"
+                sleep 3
+                init
+            fi
             continue
         fi
 
-        _download_to_file "$download_url/Packages" "$tmp_packages" "$attempt_timeout"
-        [ ! -f "$tmp_packages" ] && continue
-        awk -v ipk="$target_ipk" -v path="$file_path" '
-        BEGIN { RS=""; FS="\n" }
-        $0 ~ "Filename: " ipk {
-            for (i = 1; i <= NF; i++) {
-                if ($i ~ /^SHA256sum:/) {
-                    split($i, a, ": ");
-                    print a[2] "  " path;
-                    exit;
-                }
-            }
-        }' "$tmp_packages" > "$sha_file"
+        if [ "$PACKAGE_MANAGER" = "opkg" ]; then
+            wget -cO "$sha_file" --timeout="$attempt_timeout" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/ipk.sha256"
+        elif [ "$PACKAGE_MANAGER" = "apk" ]; then
+            wget -cO "$sha_file" --timeout="$attempt_timeout" "${AVAILABLE_URL_HEAD}/${DEVICE_TARGET}/apk.sha256"
+        fi
+
+        printf "$(cat "$sha_file" | tr -d '\n\r')" > "$sha_file"
+
+        printf "  $file_path\n" >> "$sha_file"
 
 
         if [ ! -s "$sha_file" ] || ! sha256sum -c "$sha_file" >/dev/null 2>&1; then
@@ -730,8 +733,8 @@ init() {
     local show_init_progress_bar=$1
     local change_dns=$2
 
-    local functions="check_device_target check_tailscale_install_status check_device_memory check_device_storage test_proxy get_tailscale_info"
-    local function_count=6
+    local functions="check_package_manager check_device_target check_tailscale_install_status check_device_memory check_device_storage test_proxy get_tailscale_info"
+    local function_count=7
     local total=$function_count
     local progress=0
     
@@ -749,17 +752,17 @@ init() {
 
         echo ""
 
-        printf "\r[INFO] 初始化中: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
+        printf "\r[INFO]初始化中: [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$progress"))" "$((progress * 2))"
         
         for function in $functions; do
             eval "$function"
             progress=$((progress + 1))
             percent=$((progress * 100 / function_count))
             bars=$((percent / 2))
-            printf "\r[INFO] 初始化中: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
+            printf "\r[INFO]初始化中: [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 "$bars"))" "$percent"
         done
     
-        printf "\r[INFO]   完成  : [%-50s] %3d%%" "$(printf '=%.0s' $(seq 1 50))" 100
+        printf "\r[INFO]  完成  : [%-50s] %3d%%" "$(printf '='%.0s $(seq 1 "$bars"))" "$percent"
     else
         for function in $functions; do
             eval "$function"
@@ -770,13 +773,16 @@ init() {
 
 # 函数：退出
 script_exit() {
-        echo "┌────────────────────────────────────────────────────────────────────────────────────────┐"
-        echo "│ 感谢您的使用!                                                                          │"
-        echo "│                                                                                        │"
-        echo "│ 安装后产生无法使用等情况, 您可以于:                                                    │"
-        printf "│ %-87s│\n" "$REPO_URL/issues"
-        echo "│                                                                                        │"
-        echo "└────────────────────────────────────────────────────────────────────────────────────────┘"
+        echo "┌───────────────────────────────────────────────────────┐"
+        echo "│ THANKS!!!感谢您的信任与使用!!!                        │"
+        echo "│                                                       │"
+        echo "│ 如果该脚本对您有帮助, 您可以点一颗Star支持我!         │"
+        echo "│ "$REPO_URL"/        │"
+        echo "│ 安装后产生无法使用等情况, 您可以于:                   │"
+        echo "│ "$REPO_URL"/issues  │"
+        echo "│ 提出反馈. 谢谢您的使用! /<3                           │"
+        echo "│                                                       │"
+        echo "└───────────────────────────────────────────────────────┘"
         exit 0
 }
 
@@ -844,9 +850,9 @@ show_info() {
     echo "   "
     echo "   代理："
     if [ "$USE_CUSTOM_PROXY" = "true" ]; then
-        echo "     - GitHub代理: $AVAILABLE_PROXY (自定义)"
+        echo "     - GitHub代理: $AVAILABLE_URL_HEAD (自定义)"
     else
-        echo "     - GitHub代理: $AVAILABLE_PROXY"
+        echo "     - GitHub代理: $AVAILABLE_URL_HEAD (默认)"
     fi
 
     echo "╚═════════════════════ 基 本 信 息 ═════════════════════╝"
@@ -920,7 +926,6 @@ option_menu() {
 
         read -n 1 -p "│ 请输入选项(0 ~ $option_index): " choice
         echo ""
-        echo "└───────────────────────────────────────────────────────┘"
         echo ""
 
         # 判断输入是否合法
@@ -942,7 +947,7 @@ option_menu() {
 }
 
 show_help() {
-    echo "Tailscale on OpenWrt installer script. $SCRIPT_VERSION"
+    echo "Tailscale-AWG on OpenWrt installer script. $SCRIPT_VERSION"
     echo ""$REPO_URL""
     echo "  Usage:   "
     echo "      --help: Show this help"
@@ -981,7 +986,7 @@ for arg in "$@"; do
                 read -n 1 -p "您确定使用该代理吗? (y/N): " choise
                 if [ "$choise" == "y" ] || [ "$choise" == "Y" ]; then
                     USE_CUSTOM_PROXY="true"
-                    URL_PROXYS="$custom_proxy/https://github.com/"
+                    PROXYS="$custom_proxy/${URL_HEAD}"
                     break 2
                 else
                     break

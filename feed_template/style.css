@@ -21,6 +21,8 @@
     --color-notice-border: #91d1ff;
     --color-tips-bg: #e8fff5;
     --color-tips-border: #42b983;
+    --color-important-bg: #fff7fa;
+    --color-important-border: #c2185b;
 
 
     --color-code-block: #f4f4f4;
@@ -54,6 +56,8 @@ body.dark {
     --color-notice-border: #91d1ff;
     --color-tips-bg: #303030;
     --color-tips-border: #42b983;
+    --color-important-bg: #303030;
+    --color-important-border: #c2185b;
 
 
     --color-code-block: #292929;
@@ -166,33 +170,25 @@ a:hover {
     margin-bottom: 1rem;
 }
 
-.tab-buttons .divider {
-    height: 2rem;
-    width: 2px;
-    background-color: var(--color-divider);
-    transition: background-color 0.3s;
-}
-
 .tab-buttons button {
     height: 2.5rem;
 }
 
 button {
     font-size: 1rem;
-    text-align: center;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.2s ease;
+    padding: 0.4rem 0.8rem;
+    border: 1px solid var(--color-brand-primary);
     background: transparent;
     color: var(--color-brand-primary);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
 }
 
 button.active {
     font-size: 1rem;
-    color: var(--color-text-primary);
-    background-color: var(--color-brand-lighter);
+    background: var(--color-brand-primary);
+    color: #fff;
     font-weight: bolder;
     cursor: default;
 }
@@ -203,7 +199,7 @@ button.active:hover {
 
 button.inactive {
     color: var(--color-brand-primary);
-    background-color: var(--color-brand-light);
+    /* background-color: var(--color-brand-light); */
     opacity: 0.8;
     font-size: 1rem;
     font-weight: bold;
@@ -215,6 +211,15 @@ button.inactive:hover {
     color: var(--color-text-primary);
 }
 
+.version-toggle-container {
+    margin: 1.5rem 0;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem;
+    border: 1px dashed var(--color-brand-lighter);
+    border-radius: 8px;
+}
 
 .notice {
     background: var(--color-notice-bg);
@@ -227,6 +232,19 @@ button.inactive:hover {
 
 .notice ul li {
     margin: 0.5rem 0;
+}
+
+.important {
+    background: var(--color-important-bg);
+    border-left: 4px solid var(--color-important-border);
+    padding: 1rem;
+    margin: 1rem 0;
+    border-radius: 8px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.important p {
+    line-height: normal;
 }
 
 .tips {
@@ -246,7 +264,8 @@ code {
     font-family: monospace;
     font-size: 0.95rem;
     transition: background-color 0.3s, color 0.3s;
-    white-space: nowrap;
+    white-space: normal;
+    word-break: break-word;
 }
 
 .code-block {
@@ -320,36 +339,105 @@ pre::-webkit-scrollbar-thumb:hover {
     border-color: #10b981;
 }
 
+/* 修改后的样式部分 */
+
+summary {
+    padding: 12px 16px;
+    background-color: var(--color-bg-part); /* 已适配变量 */
+    color: var(--color-text-primary);        /* 添加文字颜色适配 */
+    cursor: pointer;
+    font-weight: 600;
+    outline: none;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+summary::-webkit-details-marker {
+    display: none;
+}
+
+summary::before {
+    content: '▶';
+    display: inline-block;
+    width: 20px;
+    font-size: 12px;
+    transition: transform 0.2s;
+}
+
+details[open] summary::before {
+    transform: rotate(90deg);
+}
+
+summary:hover {
+    background-color: var(--color-brand-lighter); /* 已适配变量 */
+}
+
+.arch-section {
+    margin-bottom: 10px;
+    border: 1px solid var(--color-border-primary); /* 适配边框变量 */
+    border-radius: 6px;
+    overflow: hidden;
+}
 
 table {
     width: 100%;
     border-collapse: collapse;
-    border: 1px solid var(--color-border-primary);
-    margin: 1rem 0;
-    background: var(--color-bg-container);
-    transition: background-color 0.3s, border-color 0.3s;
-}
-
-th,
-td {
-    padding: 0.75rem;
-    text-align: left;
-    border-bottom: 1px solid var(--color-border-primary);
-}
-
-th {
-    background-color: var(--color-table-header-bg);
+    background: var(--color-bg-part); /* 已适配变量 */
+    font-size: 14px;
     transition: background-color 0.3s;
 }
 
-tr:hover {
-    background-color: var(--color-table-row-hover-bg);
+th {
+    text-align: left;
+    background: var(--color-table-header-bg); /* 适配表头背景变量 */
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-border-primary); /* 适配边框变量 */
+    color: var(--color-text-secondary);       /* 适配次级文字颜色 */
+}
+
+td {
+    padding: 10px 16px;
+    border-bottom: 1px solid var(--color-border-primary); /* 适配边框变量 */
+    color: var(--color-text-primary);        /* 适配文字颜色 */
+}
+
+tr:hover td {
+    background-color: var(--color-table-row-hover-bg); /* 适配行高亮变量 */
+}
+
+a {
+    color: var(--color-brand-primary); /* 适配品牌主色变量 */
+    text-decoration: none;
+    transition: color 0.3s;
+}
+
+a:hover {
+    text-decoration: underline;
+    color: var(--color-brand-link-hover); /* 适配链接悬停变量 */
+}
+
+.size-cell {
+    width: 100px;
+}
+
+.sha256-cell {
+    width: 250px;
 }
 
 span {
     font-size: 1rem;
     display: inline-block;
     margin-right: 1rem;
+}
+
+p {
+    line-height: 2rem;
+}
+
+img {
+    border-radius: 8px;
 }
 
 #security-statement {
@@ -380,6 +468,11 @@ span {
 
     .tab-buttons .divider {
         display: none;
+    }
+
+    .version-toggle-container {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
     button {

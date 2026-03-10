@@ -3,12 +3,17 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Smaller Tailscale for OpenWrt</title>
+    <title>Smaller Tailscale-AWG for OpenWrt</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description"
-        content="A smaller Tailscale repository for OpenWrt, designed to reduce storage usage while maintaining essential functionality.">
-    <meta name="keywords"
-        content="OpenWrt, Tailscale, smaller packages, tailscale openwrt, openwrt tailscale, tailscale for openwrt, install tailscale on openwrt, tailscale on openwrt, openwrt 安装 tailscale, tailscale ipk, repository, repo, ipk, installation, usage, packages, smaller ipk, optimized tailscale, upx compression">
+        content="Optimized Tailscale-AWG repository for OpenWrt. Features smaller IPK and next-gen APK packages with UPX compression. Supports all architectures including x86_64, aarch64, and mips. Securely signed and ready for opkg/apk integration.">
+    <meta name="keywords" content="OpenWrt, Tailscale, APK, IPK, OpenWrt 25.10, OpenWrt 24.10, 
+    Tailscale APK, Tailscale IPK, Tailscale Repository, OpenWrt Software Feed, 
+    smaller packages, optimized tailscale, upx compression, VPN for OpenWrt, 
+    tailscale for openwrt, install tailscale on openwrt,
+    Tailscale 官方源, OpenWrt 安装 Tailscale, 轻量版 Tailscale, 
+    tailscale-openwrt, custom tailscale repo, opkg, apk index,
+    latest tailscale, 最新 的 tailscale">
     <link rel="stylesheet" href="style.css">
 </head>
 
@@ -16,82 +21,138 @@
 
     <div class="container">
         <header>
+                <h1><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg" target="_blank">Smaller Tailscale-AWG Repository For
+                    OpenWrt</a></h1>
             <button id="toggle-theme" onclick="toggleTheme()">🌙</button>
             <div class="tab-buttons">
                 <button id="btn-usage" onclick="showSection('usage')">Usage</button>
-                <!-- <div class="divider"></div> -->
                 <button id="btn-usage-chinese" onclick="showSection('usage-chinese')">用法</button>
-                <!-- <div class="divider"></div> -->
                 <button id="btn-packages" onclick="showSection('packages')">Packages</button>
-                <!-- <div class="divider"></div> -->
                 <button id="btn-security-statement" onclick="showSection('security-statement')">Security Statement
                     安全声明</button>
             </div>
-            <h1><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg" target="_blank">Smaller Tailscale-AWG Repository For
-                    OpenWrt</a></h1>
-            <hr>
         </header>
 
         <main>
             <section id="usage">
                 <div class="notice">
                     <p>
-                    <h3>Note:</h3> These are smaller Tailscale packages for OpenWrt, specifically designed to
-                    reduce storage usage while maintaining essential functionality. </p>
-                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;optimized:</p>
+                    <h3>Note:</h3> These are smaller Tailscale packages for OpenWrt, specifically designed to reduce
+                    storage usage while maintaining essential functionality. </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optimizations:</p>
                     <ul>
                         <li>Combined <code>tailscale</code> and <code>tailscaled</code> into a single binary.</li>
-                        <li>Built with the <code>--extra-small</code> flag to significantly reduce binary size.</li>
-                        <li>UPX compression applied to binaries (except for mips64 architecture) to further reduce
-                            storage usage.</li>
+                        <li>Built with a series of build tags (<a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli, ts_omit_...</a>) to significantly reduce binary size.
+                        </li>
+                        <li>UPX compression applied to binaries (except for mips64, riscv64, loongarch64 architectures)
+                            to further reduce storage usage.</li>
                     </ul>
                 </div>
 
-                <h2>Repository Setup</h2>
-                <section class="part">
-                    <p>Import the public key used to verify package signatures:</p>
-
-                    <div class="code-block">
-                        <p>Run this command on your OpenWrt device:</p>
-                        <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                <div class="version-toggle-container">
+                    <span>Select your OpenWrt Version:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.10+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 or older
+                            (OPKG)</button>
                     </div>
+                </div>
 
-                    <p>Add the package feed to your OpenWrt configuration:</p>
+                <section id="v25usage">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the repository public key to trusted keys:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <p>Or manually download the public key file to the <code>/etc/apk/keys/</code> directory on
+                                your OpenWrt device.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(apk --print-arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>Or manually edit the file <code>/etc/apk/repositories.d/customfeeds.list</code> and add
+                                the following line:</p>
+                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}/packages.adb</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using <code>apk --print-arch</code>.</p>
+                        </div>
+                    </section>
 
-                    <div class="code-block">
-                        <p>Edit <code>/etc/opkg/customfeeds.conf</code>:</p>
-                        <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg" >> /etc/opkg/customfeeds.conf</pre>
-
-                        <p>Or manually add this line:</p>
-                        <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg</pre>
-                    </div>
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
                 </section>
 
-                <h2>Installation Methods</h2>
-                <section class="part">
-                    <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
-                    <div class="method">
-                        <h4>Web UI:</h4>
-                        <ol>
-                            <li>Navigate to <strong>System → Software ;</strong></li>
-                            <li>Click <em>Update lists</em> to refresh packages ;</li>
-                            <li>Search for "tailscale" ;</li>
-                            <li>Install the main package and any desired utilities ;</li>
-                        </ol>
-                    </div>
-                    <div class="method">
-                        <h4>Command Line:</h4>
-                        <pre>opkg update
+                <section id="v24usage" style="display:none;">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the public key for package signature verification:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>Or manually download the public key file to the <code>/tmp/</code> directory on your
+                                OpenWrt device, and add it using the <code>opkg-key add</code> command.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>Or manually edit the file <code>/etc/opkg/customfeeds.conf</code> and add the following
+                                line:</p>
+                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>.
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>opkg update
 opkg install tailscale</pre>
-                        <p class="note">Note: The "failed log upload" message during installation is expected and can be
-                            safely ignored.</p>
-                    </div>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
                 </section>
 
                 <h2>Web UI (LuCI)</h2>
                 <section class="part">
-                    <p>For a graphical interface to manage Tailscale, we recommend installing the LuCI app which build by <a href="https://github.com/Tokisaki-Galaxy" target="_blank">@Tokisaki-Galaxy</a> and open source on GitHub: <a href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community" target="_blank">luci-app-tailscale-community</a></p>
-                    <p>This provides an easy-to-use web interface to configure and manage Tailscale directly from OpenWrt's LuCI dashboard.</p>
+                    <p>For a graphical interface to manage Tailscale, we recommend installing the LuCI app which
+                        build
+                        by <a href="https://github.com/Tokisaki-Galaxy" target="_blank">@Tokisaki-Galaxy</a> and
+                        open
+                        source on GitHub: <a href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
+                    <p>This provides an easy-to-use web interface to configure and manage Tailscale directly from
+                        OpenWrt's LuCI dashboard.</p>
                 </section>
 
                 <h2>Post-Installation Steps</h2>
@@ -103,35 +164,41 @@ opkg install tailscale</pre>
     --accept-dns=false \
     --advertise-routes=10.0.0.0/24 \
     --advertise-exit-node</pre>
-                    <p>If you're using OpenWrt == 22.03 you will also need to specify <code>--netfilter-mode=off</code>.
-                        For versions 23+ do NOT include netfilter-mode. </p>
+                    <p>If you're using OpenWrt == 22.03 you will also need to specify
+                        <code>--netfilter-mode=off</code>.
+                        For versions 23+ do NOT include netfilter-mode.
+                    </p>
 
                     <div class="tips">
                         <h3>Tips:</h3>
                         <ul>
-                            <li>Consider adding <code>--hostname=your-router-name</code> for easier identification.</li>
+                            <li>Consider adding <code>--hostname=your-router-name</code> for easier identification.
+                            </li>
                         </ul>
                     </div>
-                    <div class="notice">
-                        <p>
-                        <h3>Note:</h3> If you encounter any of the following situations: </p>
-                        <ul>
-                            <li>Your device has limited RAM, and during usage, Tailscale consumes an excessive amount of
-                                memory;</li>
-                            <li>Or Tailscale is killed and restarted by the OOM Killer;</li>
-                            <li>Or you’re not sure why Tailscale keeps restarting unexpectedly;</li>
-                        </ul>
-                        <p>Then you may try trading higher CPU usage for lower memory usage. Here's how:</p>
-                        <ol>
-                            <li>Edit the <code>/etc/init.d/tailscale</code> file:</li>
-                            <pre>vi /etc/init.d/tailscale</pre>
-                            <li>Locate the following line:</li>
-                            <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
-                            <li>Append <code>GOGC=10</code> to the end of that line so it becomes:</li>
-                            <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
-                            <p>This will make Tailscale more aggressive in memory garbage collection.</p>
-                        </ol>
-                    </div>
+                </section>
+
+                <h2>About using</h2>
+                <section class="part">
+                    <h3>About Out Of Memory</h3>
+                    <p>If you encounter any of the following situations: </p>
+                    <ul>
+                        <li>Your device has limited RAM, and during usage, Tailscale consumes an excessive
+                            amount of
+                            memory;</li>
+                        <li>Or Tailscale is killed and restarted by the OOM Killer;</li>
+                        <li>Or you’re not sure why Tailscale keeps restarting unexpectedly;</li>
+                    </ul>
+                    <p>Then you may try trading higher CPU usage for lower memory usage. Here's how:</p>
+                    <ol>
+                        <li>Edit the <code>/etc/init.d/tailscale</code> file:</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>Locate the following line:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>Append <code>GOGC=10</code> to the end of that line so it becomes:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>This will make Tailscale more aggressive in memory garbage collection.</p>
+                    </ol>
                 </section>
             </section>
 
@@ -142,55 +209,110 @@ opkg install tailscale</pre>
                     <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;优化内容：</p>
                     <ul>
                         <li>将 <code>tailscale</code> 和 <code>tailscaled</code> 合并为一个单一的可执行文件。</li>
-                        <li>使用 <code>--extra-small</code> 编译标志以显著减小二进制文件体积。</li>
-                        <li>使用 UPX 对二进制文件进行压缩（mips64 架构除外），进一步降低存储占用。</li>
+                        <li>使用一系列编译参数
+                            <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli,ts_omit_...</a>
+                            以显著减小二进制文件体积。
+                        </li>
+                        <li>使用 UPX 对二进制文件进行压缩（mips64、riscv64、loongarch64 架构除外），进一步降低存储占用。</li>
                     </ul>
                 </div>
 
-
-                <h2>软件源设置</h2>
-                <section class="part">
-                    <p>导入用于验证软件包签名的公钥：</p>
-
-                    <div class="code-block">
-                        <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                        <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                <div class="version-toggle-container">
+                    <span>选择你的 OpenWrt 版本:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.10+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 或更早
+                            (OPKG)</button>
                     </div>
+                </div>
 
-                    <p>将软件源添加到你的 OpenWrt 配置中：</p>
+                <section id="v25usage-zh">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加软件源公钥到受信任密钥库：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <p>或者手动下载公钥文件到你的OpenWrt设备的 <code>/etc/apk/keys/</code> 目录下。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(apk --print-arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>或者手动编辑 <code>/etc/apk/repositories.d/customfeeds.list</code> 文件添加以下内容：</p>
+                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}/packages.adb</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用 <code>apk --print-arch</code> 查看设备架构。</p>
+                        </div>
+                    </section>
 
-                    <div class="code-block">
-                        <p>编辑 <code>/etc/opkg/customfeeds.conf</code> 文件：</p>
-                        <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg" >> /etc/opkg/customfeeds.conf</pre>
-
-                        <p>或者手动添加以下内容：</p>
-                        <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg</pre>
-                    </div>
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
                 </section>
 
-                <h2>安装方式</h2>
-                <section class="part">
-                    <p>请选择你喜欢的方式安装 Tailscale：</p>
-                    <div class="method">
-                        <h4>Web 界面方式：</h4>
-                        <ol>
-                            <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
-                            <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
-                            <li>搜索 "tailscale" ;</li>
-                            <li>安装主软件包及其他你需要的工具组件 ;</li>
-                        </ol>
-                    </div>
-                    <div class="method">
-                        <h4>命令行方式：</h4>
-                        <pre>opkg update
+                <section id="v24usage-zh" style="display:none;">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加用于验证软件包签名的公钥：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>或者手动下载公钥文件到你的 OpenWrt 设备的 <code>/tmp/</code> 目录下，并使用 <code>opkg-key add</code> 命令添加。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>或者手动编辑 <code>/etc/opkg/customfeeds.conf</code> 文件添加以下内容：</p>
+                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>
+                                查看设备架构。
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>请选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>opkg update
 opkg install tailscale</pre>
-                        <p class="note">Note: 安装过程中出现 "failed log upload" 报错属于预期现象，可放心忽略。</p>
-                    </div>
+                        </div>
+                        <div class="method">
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
                 </section>
 
                 <h2>Web UI (LuCI)</h2>
                 <section class="part">
-                    <p>为了获得图形界面来管理 Tailscale，我们建议安装由 <a href="https://github.com/Tokisaki-Galaxy" target="_blank">@Tokisaki-Galaxy</a> 开发并在 GitHub 上开源的 LuCI 应用：<a href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community" target="_blank">luci-app-tailscale-community</a></p>
+                    <p>为了获得图形界面来管理 Tailscale，我们建议安装由 <a href="https://github.com/Tokisaki-Galaxy"
+                            target="_blank">@Tokisaki-Galaxy</a> 开发并在 GitHub 上开源的 LuCI 应用：<a
+                            href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
                     <p>这提供了一个易于使用的 Web 界面，可以直接从 OpenWrt 的 LuCI 仪表板配置和管理 Tailscale。</p>
                 </section>
                 <h2>安装后步骤</h2>
@@ -209,199 +331,127 @@ opkg install tailscale</pre>
                             <li>建议添加 <code>--hostname=your-router-name</code> 参数，以便在 Tailscale 网络中更容易识别该设备。</li>
                         </ul>
                     </div>
+                </section>
 
-                    <div class="notice">
-                        <p>
-                        <h3>NOTE:</h3> 如果你遇到以下情况： </p>
-                        <ul>
-                            <li>设备运行内存有限，在使用过程中出现tailscale占用极高运行内存;</li>
-                            <li>或直接致使tailscale被OOM KILLER杀死并重启;</li>
-                            <li>或你不清楚什么原因导致tailscale异常重启;</li>
-                        </ul>
-                        <p>则，你可以尝试以更高的CPU占用换取较低的内存占用，操作如下：</p>
-                        <ol>
-                            <li>修改 <code>/etc/init.d/tailscale</code> 文件</li>
-                            <pre>vi /etc/init.d/tailscale</pre>
-                            <li>找到以下一行：</li>
-                            <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
-                            <li>在该行后方加上参数 <code>GOGC=10</code>，使其变为：</li>
-                            <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
-                            <p>该参数将使 Tailscale 更积极地回收内存。</p>
-                        </ol>
-                    </div>
+                <h2>关于使用</h2>
+                <section class="part">
+                    <h3>关于内存溢出</h3>
+                    <p>如果你遇到以下情况： </p>
+                    <ul>
+                        <li>设备运行内存有限，在使用过程中出现tailscale占用极高运行内存;</li>
+                        <li>或直接致使tailscale被OOM KILLER杀死并重启;</li>
+                        <li>或你不清楚什么原因导致tailscale异常重启;</li>
+                    </ul>
+                    <p>则，你可以尝试以更高的CPU占用换取较低的内存占用，操作如下：</p>
+                    <ol>
+                        <li>修改 <code>/etc/init.d/tailscale</code> 文件</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>找到以下一行：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>在该行后方加上参数 <code>GOGC=10</code>，使其变为：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>该参数将使 Tailscale 更积极地回收内存。</p>
+                    </ol>
                 </section>
             </section>
+
             <section id="security-statement">
-                <h1 style="text-align: center;">Feed Security Statement 软件源安全声明</h1>
+
+                <h1 style="text-align: center;">Feed Security Statement</h1>
+
                 <section class="part">
+                    <p>All .ipk packages in this feed are built automatically via GitHub Actions. The entire process is
+                        open-source, auditable, and reproducible.</p>
+                        <p>Repository: <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
 
-                    <p>All <code>.ipk</code> packages provided by this OpenWrt software feed are built automatically via
-                        <a href="https://docs.github.com/en/actions" target="_blank">GitHub Actions</a>,
-                        with a fully open-source, transparent, and auditable process.
-                    </p>
-
-                    <p>You can review the build workflows, scripts, logs, and release history at:
-                        <a href="https://github.com/GuNanOvO/openwrt-tailscale"
-                            target="_blank">https://github.com/GuNanOvO/openwrt-tailscale</a>
-                    </p>
-
-                    <h3>Build Integrity & Transparency</h3>
+                    <h3>Trustworthiness</h3>
                     <ul>
-                        <li>
-                            <strong>Built from Official Source:</strong> All binaries are compiled from
-                            <a href="https://github.com/tailscale/tailscale" target="_blank">official Tailscale release
-                                source code</a>,
-                            without any functional modifications.
-                            <a href="https://upx.github.io/" target="_blank">UPX</a> is optionally used for binary
-                            compression.
+                        <li>Source code is based on <a href="https://github.com/LiuTangLei/tailscale"
+                            target="_blank">LiuTangLei/tailscale</a>, which itself is based on the official Tailscale repository and adds Amnezia WireGuard support.
                         </li>
-                        <li>
-                            <strong>Fully Public Workflow:</strong> All
-                            <a href="https://github.com/GuNanOvO/openwrt-tailscale/tree/main/.github/workflows"
-                                target="_blank">build scripts</a>,
-                            packaging steps, compiler flags, and release assets are open for community audit.
+                        <li>Only compiler flags are added, and <a href="https://upx.github.io/" target="_blank">UPX</a>
+                            is optionally used on most architectures to reduce package size.</li>
+                        <li>All build scripts, workflows, compiler flags, and logs are fully public in the repository's
+                            <code>.github/workflows</code> and <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                history</a>.
                         </li>
-                        <li>
-                            <strong>Automated & Reproducible:</strong> Builds are performed in
-                            <a href="https://docs.github.com/en/actions/using-workflows/about-workflows"
-                                target="_blank">GitHub's CI environment</a>,
-                            eliminating the risk of manual tampering.
+                        <li>No manual uploads, no dynamic backend — all artifacts are generated automatically by CI and
+                            served statically via <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
                         </li>
                     </ul>
 
-                    <h3>Security Best Practices</h3>
+                    <h3>Recommended Verification Steps</h3>
                     <ul>
-                        <li>
-                            <strong>Minimal Attack Surface:</strong> The feed is served statically via
-                            <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>, with no dynamic code
-                            or
-                            backend logic.
+                        <li>Review the repository code and check <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                scripts and build logs</a></li>
+                        <li>Reproduce the build locally following the instructions in README to verify reproducibility
                         </li>
-                        <li>
-                            <strong>No Manual Uploads:</strong> All artifacts are generated directly from source during
-                            <a href="https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions"
-                                target="_blank">automated CI runs</a> —
-                            never uploaded manually or by third parties.
-                        </li>
-                    </ul>
-
-                    <h3>User Recommendations</h3>
-                    <p>To further validate the feed's trustworthiness, users are encouraged to:</p>
-                    <ul>
-                        <li><a href="https://github.com/GuNanOvO/openwrt-tailscale/actions" target="_blank">Review the
-                                GitHub Actions workflows and build history</a></li>
-                        <li><a href="https://github.com/GuNanOvO/openwrt-tailscale#build" target="_blank">Reproduce
-                                builds
-                                locally or via GitHub</a> to verify reproducibility</li>
-                        <li>Verify checksums or cryptographic signatures (e.g., SHA256 or <code>usign</code>) of
-                            downloaded
-                            packages</li>
+                        <li>Verify SHA256 checksums or other signatures (if provided) after downloading</li>
                     </ul>
 
                     <h3>Disclaimer</h3>
-                    <p>While every effort has been made to ensure the security, transparency, and integrity of this
-                        feed, it
-                        is provided
-                        <a href="https://en.wikipedia.org/wiki/As_is" target="_blank">as-is</a>, with no warranties.
-                        Users
-                        should always evaluate the source code, build process, and decide independently whether to trust
-                        and
-                        use these packages.
-                    </p>
-                    <p>For a safer OpenWrt experience, it is recommended to use packages only from this feed or other
-                        trusted sources, and stay up to date with the repository.</p>
+                    <p>This feed is provided <a href="https://en.wikipedia.org/wiki/As_is" target="_blank">as-is</a>,
+                        without any warranties, express or implied. Users are solely responsible for reviewing the
+                        source code and build process before use.</p>
+                    <p>For maximum security, prefer official sources or trusted feeds, and keep the repository watched
+                        for updates.</p>
                 </section>
-                <hr>
+
+                <!-- <hr> -->
+
+                <h1 style="text-align: center;">软件源安全声明</h1>
 
                 <section class="part">
-                    <p>所有本软件源中的 <code>.ipk</code> 软件包均通过
-                        <a href="https://docs.github.com/zh/actions" target="_blank">GitHub Actions</a>
-                        自动化构建，构建流程开源、透明、可审计。
-                    </p>
+                    <p>本 feed 中的所有 .ipk 软件包通过 GitHub Actions 自动化构建，过程完全开源、可审计、可复现。</p>
+                        <p>仓库地址：<a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
 
-                    <p>详细的构建脚本、日志和发布历史可在以下仓库查看：
-                        <a href="https://github.com/GuNanOvO/openwrt-tailscale"
-                            target="_blank">https://github.com/GuNanOvO/openwrt-tailscale</a>
-                    </p>
-
-                    <h3>构建透明性与可信性</h3>
+                    <h3>可信性</h3>
                     <ul>
-                        <li>
-                            <strong>构建基于 <a href="https://github.com/tailscale/tailscale" target="_blank">Tailscale
-                                    官方源代码</a>：</strong> 不做任何功能性更改，仅使用
-                            <a href="https://upx.github.io/" target="_blank">UPX</a> 等开源工具进行二进制压缩以减小体积。
-                        </li>
-                        <li>
-                            <strong>完全公开的工作流程：</strong>
-                            <a href="https://github.com/GuNanOvO/openwrt-tailscale/tree/main/.github/workflows"
-                                target="_blank">构建脚本</a>、打包流程、编译参数等均完全公开，供任何人审查验证。
-                        </li>
-                        <li>
-                            <strong>自动化与可复现性：</strong> 构建过程由
-                            <a href="https://docs.github.com/zh/actions" target="_blank">CI 自动执行</a>，避免人为干预，构建结果具备可复现性。
-                        </li>
+                        <li>源代码基于 <a href="https://github.com/LiuTangLei/tailscale" target="_blank">LiuTangLei/tailscale</a>，其本身基于 Tailscale 官方源码并加入了 Amnezia WireGuard 支持。</li>
+                        <li>仅添加编译参数，并在大部分架构上使用 <a href="https://upx.github.io/" target="_blank">UPX</a> 进行压缩以减小包体积。</li>
+                        <li>构建脚本、工作流、编译参数、日志全部公开，位于仓库的 <code>.github/workflows</code> 和 <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                历史</a> 中。</li>
+                        <li>无人工上传、无动态后端，所有产物由 CI 自动生成并部署到 <a href="https://pages.github.com/" target="_blank">GitHub
+                                Pages</a>。</li>
                     </ul>
 
-                    <h3>安全保障原则</h3>
+                    <h3>用户验证建议</h3>
                     <ul>
-                        <li>
-                            <strong>最小攻击面原则：</strong> Feed 页面托管在
-                            <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>，无需动态服务或后端执行，攻击面极小。
-                        </li>
-                        <li>
-                            <strong>零人工上传：</strong> 构建产物完全由
-                            <a href="https://docs.github.com/zh/actions" target="_blank">CI 自动生成</a>，无任何第三方上传或手动干预。
-                        </li>
+                        <li>审查仓库代码，查看 <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions"
+                                target="_blank">Actions 脚本与构建日志</a></li>
+                        <li>按照 README 中的说明自行构建，以验证可复现性</li>
+                        <li>下载后校验 SHA256 或其他签名（如有提供）</li>
                     </ul>
 
-                    <h3>用户使用建议</h3>
-                    <p>为了进一步验证本软件源的安全性，建议用户：</p>
-                    <ul>
-                        <li><a href="https://github.com/GuNanOvO/openwrt-tailscale/actions" target="_blank">审查 GitHub
-                                Actions 构建脚本和构建日志</a></li>
-                        <li><a href="https://github.com/GuNanOvO/openwrt-tailscale#build" target="_blank">使用本仓库脚本在本地或
-                                GitHub
-                                上自行构建</a> 以验证可复现性</li>
-                        <li>校验 .ipk 软件包的哈希值或签名（如 SHA256 或 <code>usign</code>）</li>
-                    </ul>
-
-                    <h3>风险提示</h3>
-                    <p>尽管本项目已尽最大努力确保 Feed 的安全性、透明度与可信性，本软件源仍然是
-                        <a href="https://zh.wikipedia.org/wiki/%E6%8C%89%E5%8E%9F%E6%A0%B7%E6%8F%90%E4%BE%9B"
-                            target="_blank">“按原样”</a>提供，不附带任何形式的担保。请用户自行评估源代码与构建过程，并据此判断是否使用。
-                    </p>
-                    <p>为确保系统安全，请尽量从本源或 其他可信来源 获取软件包，并关注仓库更新动态。</p>
+                    <h3>免责声明</h3>
+                    <p>本 feed <a href="https://zh.wikipedia.org/wiki/%E6%8C%89%E5%8E%9F%E6%A0%B7%E6%8F%90%E4%BE%9B"
+                            target="_blank">按原样</a>提供，不附带任何明示或暗示的担保。使用前请自行审查源代码与构建过程，并自行承担风险。</p>
+                    <p>建议始终保持关注仓库更新，并优先从官方或可信渠道获取软件包。</p>
                 </section>
             </section>
 
-
             <section id="packages" style="display: none;">
-                <table>
-                    <thead>
-                        <tr>
-                            <th>File</th>
-                            <th>Size</th>
-                            <th>Date</th>
-                        </tr>
-                    </thead>
-                    <!-- tbody-anchor -->
-          <tbody>
-                        <tr>
-                            <td><a href="Example">Example</a></td>
-                            <td>Ex kb</td>
-                            <td>Example Sun Example UTC</td>
-                        </tr>
-          </tbody>
-                    <!-- end-tbody-anchor -->
-                </table>
+                <section class="important">
+                    <p>Please select the correct package for your device architecture.</p>
+                    <p>To check your device architecture on your openwrt 24.10 or earlier device, run</p>
+                    <pre>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</pre>
+                    <p>To check your device architecture on your openwrt 25.12 or later device, run</p>
+                    <pre>apk --print-arch</pre>
+                    <p>Use <code>.ipk</code> for OpenWrt 24.10 or earlier, and <code>.apk</code> for OpenWrt 25.12 or later.</p>
+                </section>
+                <!-- arch-section-anchor -->
+                <section></section>
+                <!-- end-arch-section-anchor -->
             </section>
         </main>
 
-        </script>
-
         <footer class="footer">
             <hr>
-
             <p>
                 <span>Built with ❤️ and shared with the community. </span>
                 <span>Open source on <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg">GitHub</a>.</span>
@@ -417,6 +467,9 @@ opkg install tailscale</pre>
                     <span id="version">Example</span>
                     <!-- end-version-anchor -->
                 </span>
+            </p>
+            <p>
+                <img src="./banner.png" alt="Tailscale & OpenWrt" style="width: 100%; display: block; margin: 0 auto;">
             </p>
         </footer>
     </div>
@@ -442,7 +495,30 @@ opkg install tailscale</pre>
             });
         }
 
+        function switchVersion(version) {
+            document.getElementById('v25usage').style.display = version === 'v25' ? 'block' : 'none';
+            document.getElementById('v24usage').style.display = version === 'v24' ? 'block' : 'none';
+            const v25zh = document.getElementById('v25usage-zh');
+            const v24zh = document.getElementById('v24usage-zh');
+            if (v25zh) v25zh.style.display = version === 'v25' ? 'block' : 'none';
+            if (v24zh) v24zh.style.display = version === 'v24' ? 'block' : 'none';
+
+            document.querySelectorAll('.v-btn').forEach(btn => {
+                if (btn.dataset.version === version) {
+                    btn.classList.remove('inactive');
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('inactive');
+                }
+            });
+
+            localStorage.setItem('owrt-version', version);
+        }
+
         document.addEventListener("DOMContentLoaded", () => {
+            const savedVersion = localStorage.getItem('owrt-version') || 'v25';
+            switchVersion(savedVersion);
             document.querySelectorAll("pre").forEach((pre) => {
                 const wrapper = document.createElement("div");
                 wrapper.classList.add("pre-wrapper");
