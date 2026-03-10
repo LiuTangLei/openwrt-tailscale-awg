@@ -213,7 +213,18 @@ jobs:
           if echo "${{ env.SKIP_TARGETS_24 }}" | grep -qw "${{ matrix.platform }}"; then
             echo "Skipping pull of OpenWRT 24.10 SDK for ${{ matrix.platform }} due to unspported target."
           else
-            docker pull ghcr.io/openwrt/sdk:${{ matrix.platform }}-V${{ env.OPENWRT_IPK_SDK }}
+            image="ghcr.io/openwrt/sdk:${{ matrix.platform }}-V${{ env.OPENWRT_IPK_SDK }}"
+            for attempt in 1 2 3; do
+              if docker pull "$image"; then
+                break
+              fi
+              if [ "$attempt" = "3" ]; then
+                echo "Failed to pull $image after 3 attempts"
+                exit 1
+              fi
+              echo "Pull failed for $image, retrying in 15 seconds... ($attempt/3)"
+              sleep 15
+            done
           fi
 
       - name: Pull OpenWRT 25.12 SDK Docker Image
@@ -221,7 +232,18 @@ jobs:
           if echo "${{ env.SKIP_TARGETS_25 }}" | grep -qw "${{ matrix.platform }}"; then
             echo "Skipping pull of OpenWRT 25.12 SDK for ${{ matrix.platform }} due to unsupported target."
           else
-            docker pull ghcr.io/openwrt/sdk:${{ matrix.platform }}-V${{ env.OPENWRT_APK_SDK }}
+            image="ghcr.io/openwrt/sdk:${{ matrix.platform }}-V${{ env.OPENWRT_APK_SDK }}"
+            for attempt in 1 2 3; do
+              if docker pull "$image"; then
+                break
+              fi
+              if [ "$attempt" = "3" ]; then
+                echo "Failed to pull $image after 3 attempts"
+                exit 1
+              fi
+              echo "Pull failed for $image, retrying in 15 seconds... ($attempt/3)"
+              sleep 15
+            done
           fi
 
       # BUILD PACKAGES
