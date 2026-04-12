@@ -15,7 +15,7 @@ PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=154d1fc903e028542d15e24f395081a503538bb163b1cc20fe25fb54675a5389
+PKG_HASH:=a2e34406ef47f3c39c790f4ddcf92b0055dee830210e05a0ba72ce770f98f190
 
 PKG_MAINTAINER:=LiuTangLei <liu.tang.lei@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
