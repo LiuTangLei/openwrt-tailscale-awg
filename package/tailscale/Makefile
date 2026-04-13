@@ -10,12 +10,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tailscale
-PKG_VERSION:=1.94.2
+PKG_VERSION:=1.96.5
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=1c6e42eabec6867da53353b595de4450c0bc506fbba1aa8ebaac5e652d1121fc
+PKG_HASH:=a2e34406ef47f3c39c790f4ddcf92b0055dee830210e05a0ba72ce770f98f190
 
 PKG_MAINTAINER:=LiuTangLei <liu.tang.lei@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
@@ -74,9 +74,11 @@ ifneq ($(DISABLE_UPX),1)
 else
 	echo "==> UPX disabled on ARCH $(ARCH)"
 endif
-
-	mkdir -p /builder/bin/packages/$(ARCH_PACKAGES)/base
-	$(CP) $(GO_PKG_BUILD_BIN_DIR)/tailscaled /builder/bin/packages/$(ARCH_PACKAGES)/base/tailscaled
+	# [Maintainer Note] Save a copy of the binary for the repository. 
+    # Feel free to remove the next two lines for local builds.
+	# 可选：以下两行仅用于为本项目仓库保留一份二进制副本，自行使用时可删除
+	mkdir -p $(TOPDIR)/bin/packages/$(ARCH_PACKAGES)/base
+	$(CP) $(GO_PKG_BUILD_BIN_DIR)/tailscaled $(TOPDIR)/bin/packages/$(ARCH_PACKAGES)/base/tailscaled
 
 	$(LN) tailscaled $(1)/usr/sbin/tailscale
 	$(INSTALL_BIN) ./files/tailscale.init $(1)/etc/init.d/tailscale

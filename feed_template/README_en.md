@@ -39,7 +39,7 @@ wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/open
 **2. Add the repository**
 
 ```sh
-echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(apk --print-arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
 ```
 
 Or manually edit `/etc/apk/repositories.d/customfeeds.list` and add the following line (replace `{your device architecture}` with your actual architecture):
