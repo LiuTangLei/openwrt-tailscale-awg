@@ -1,0 +1,2001 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smaller Tailscale-AWG for OpenWrt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Optimized Tailscale-AWG repository for OpenWrt. Features smaller IPK and next-gen APK packages with UPX compression. Supports all architectures including x86_64, aarch64, and mips. Securely signed and ready for opkg/apk integration.">
+    <meta name="keywords" content="OpenWrt, Tailscale, APK, IPK, OpenWrt 25.10, OpenWrt 24.10, 
+    Tailscale APK, Tailscale IPK, Tailscale Repository, OpenWrt Software Feed, 
+    smaller packages, optimized tailscale, upx compression, VPN for OpenWrt, 
+    tailscale for openwrt, install tailscale on openwrt,
+    Tailscale 官方源, OpenWrt 安装 Tailscale, 轻量版 Tailscale, 
+    tailscale-openwrt, custom tailscale repo, opkg, apk index,
+    latest tailscale, 最新 的 tailscale">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+                <h1><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg" target="_blank">Smaller Tailscale-AWG Repository For
+                    OpenWrt</a></h1>
+            <button id="toggle-theme" onclick="toggleTheme()">🌙</button>
+            <div class="tab-buttons">
+                <button id="btn-usage" onclick="showSection('usage')">Usage</button>
+                <button id="btn-usage-chinese" onclick="showSection('usage-chinese')">用法</button>
+                <button id="btn-packages" onclick="showSection('packages')">Packages</button>
+                <button id="btn-security-statement" onclick="showSection('security-statement')">Security Statement
+                    安全声明</button>
+            </div>
+        </header>
+
+        <main>
+            <section id="usage">
+                <div class="notice">
+                    <p>
+                    <h3>Note:</h3> These are smaller Tailscale packages for OpenWrt, specifically designed to reduce
+                    storage usage while maintaining essential functionality. </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optimizations:</p>
+                    <ul>
+                        <li>Combined <code>tailscale</code> and <code>tailscaled</code> into a single binary.</li>
+                        <li>Built with a series of build tags (<a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli, ts_omit_...</a>) to significantly reduce binary size.
+                        </li>
+                        <li>UPX compression applied to binaries (except for mips64, riscv64, loongarch64 architectures)
+                            to further reduce storage usage.</li>
+                    </ul>
+                </div>
+
+                <div class="version-toggle-container">
+                    <span>Select your OpenWrt Version:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.10+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 or older
+                            (OPKG)</button>
+                    </div>
+                </div>
+
+                <section id="v25usage">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the repository public key to trusted keys:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <p>Or manually download the public key file to the <code>/etc/apk/keys/</code> directory on
+                                your OpenWrt device.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>Or manually edit the file <code>/etc/apk/repositories.d/customfeeds.list</code> and add
+                                the following line:</p>
+                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}/packages.adb</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using <code>cat /etc/apk/arch</code>.</p>
+                        </div>
+                    </section>
+
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="v24usage" style="display:none;">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the public key for package signature verification:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>Or manually download the public key file to the <code>/tmp/</code> directory on your
+                                OpenWrt device, and add it using the <code>opkg-key add</code> command.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>Or manually edit the file <code>/etc/opkg/customfeeds.conf</code> and add the following
+                                line:</p>
+                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>.
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>opkg update
+opkg install tailscale</pre>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <h2>Web UI (LuCI)</h2>
+                <section class="part">
+                    <p>For a graphical interface to manage Tailscale, we recommend installing the LuCI app which
+                        build
+                        by <a href="https://github.com/Tokisaki-Galaxy" target="_blank">@Tokisaki-Galaxy</a> and
+                        open
+                        source on GitHub: <a href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
+                    <p>This provides an easy-to-use web interface to configure and manage Tailscale directly from
+                        OpenWrt's LuCI dashboard.</p>
+                </section>
+
+                <h2>Post-Installation Steps</h2>
+                <section class="part">
+                    <p>After installation, you need to configure Tailscale to connect your device to the Tailscale
+                        network.</p>
+                    <p>Run the following command to start Tailscale and configure it:</p>
+                    <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                    <p>If you're using OpenWrt == 22.03 you will also need to specify
+                        <code>--netfilter-mode=off</code>.
+                        For versions 23+ do NOT include netfilter-mode.
+                    </p>
+
+                    <div class="tips">
+                        <h3>Tips:</h3>
+                        <ul>
+                            <li>Consider adding <code>--hostname=your-router-name</code> for easier identification.
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <h2>About using</h2>
+                <section class="part">
+                    <h3>About Out Of Memory</h3>
+                    <p>If you encounter any of the following situations: </p>
+                    <ul>
+                        <li>Your device has limited RAM, and during usage, Tailscale consumes an excessive
+                            amount of
+                            memory;</li>
+                        <li>Or Tailscale is killed and restarted by the OOM Killer;</li>
+                        <li>Or you’re not sure why Tailscale keeps restarting unexpectedly;</li>
+                    </ul>
+                    <p>Then you may try trading higher CPU usage for lower memory usage. Here's how:</p>
+                    <ol>
+                        <li>Edit the <code>/etc/init.d/tailscale</code> file:</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>Locate the following line:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>Append <code>GOGC=10</code> to the end of that line so it becomes:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>This will make Tailscale more aggressive in memory garbage collection.</p>
+                    </ol>
+                </section>
+            </section>
+
+            <section id="usage-chinese">
+                <div class="notice">
+                    <p>
+                    <h3>Note:</h3> 这是为 OpenWrt 精简定制的 Tailscale 软件包，旨在在保持核心功能的同时，尽可能降低存储占用。 </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;优化内容：</p>
+                    <ul>
+                        <li>将 <code>tailscale</code> 和 <code>tailscaled</code> 合并为一个单一的可执行文件。</li>
+                        <li>使用一系列编译参数
+                            <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli,ts_omit_...</a>
+                            以显著减小二进制文件体积。
+                        </li>
+                        <li>使用 UPX 对二进制文件进行压缩（mips64、riscv64、loongarch64 架构除外），进一步降低存储占用。</li>
+                    </ul>
+                </div>
+
+                <div class="version-toggle-container">
+                    <span>选择你的 OpenWrt 版本:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.10+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 或更早
+                            (OPKG)</button>
+                    </div>
+                </div>
+
+                <section id="v25usage-zh">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加软件源公钥到受信任密钥库：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <p>或者手动下载公钥文件到你的OpenWrt设备的 <code>/etc/apk/keys/</code> 目录下。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>或者手动编辑 <code>/etc/apk/repositories.d/customfeeds.list</code> 文件添加以下内容：</p>
+                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}/packages.adb</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用 <code>cat /etc/apk/arch</code> 查看设备架构。</p>
+                        </div>
+                    </section>
+
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="v24usage-zh" style="display:none;">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加用于验证软件包签名的公钥：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>或者手动下载公钥文件到你的 OpenWrt 设备的 <code>/tmp/</code> 目录下，并使用 <code>opkg-key add</code> 命令添加。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>或者手动编辑 <code>/etc/opkg/customfeeds.conf</code> 文件添加以下内容：</p>
+                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>
+                                查看设备架构。
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>请选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>opkg update
+opkg install tailscale</pre>
+                        </div>
+                        <div class="method">
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <h2>Web UI (LuCI)</h2>
+                <section class="part">
+                    <p>为了获得图形界面来管理 Tailscale，我们建议安装由 <a href="https://github.com/Tokisaki-Galaxy"
+                            target="_blank">@Tokisaki-Galaxy</a> 开发并在 GitHub 上开源的 LuCI 应用：<a
+                            href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
+                    <p>这提供了一个易于使用的 Web 界面，可以直接从 OpenWrt 的 LuCI 仪表板配置和管理 Tailscale。</p>
+                </section>
+                <h2>安装后步骤</h2>
+                <section class="part">
+                    <p>安装完成后，需要配置 Tailscale 以将设备接入 Tailscale 网络。</p>
+                    <p>执行以下命令：</p>
+                    <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                    <p>如果你的OpenWrt版本为22.03，你还需要添加 <code>--netfilter-mode=off</code> 参数， 对于 OpenWrt 23+ 则不应该包含该参数 </p>
+
+                    <div class="tips">
+                        <h3>Tips:</h3>
+                        <ul>
+                            <li>建议添加 <code>--hostname=your-router-name</code> 参数，以便在 Tailscale 网络中更容易识别该设备。</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <h2>关于使用</h2>
+                <section class="part">
+                    <h3>关于内存溢出</h3>
+                    <p>如果你遇到以下情况： </p>
+                    <ul>
+                        <li>设备运行内存有限，在使用过程中出现tailscale占用极高运行内存;</li>
+                        <li>或直接致使tailscale被OOM KILLER杀死并重启;</li>
+                        <li>或你不清楚什么原因导致tailscale异常重启;</li>
+                    </ul>
+                    <p>则，你可以尝试以更高的CPU占用换取较低的内存占用，操作如下：</p>
+                    <ol>
+                        <li>修改 <code>/etc/init.d/tailscale</code> 文件</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>找到以下一行：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>在该行后方加上参数 <code>GOGC=10</code>，使其变为：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>该参数将使 Tailscale 更积极地回收内存。</p>
+                    </ol>
+                </section>
+            </section>
+
+            <section id="security-statement">
+
+                <h1 style="text-align: center;">Feed Security Statement</h1>
+
+                <section class="part">
+                    <p>All .ipk packages in this feed are built automatically via GitHub Actions. The entire process is
+                        open-source, auditable, and reproducible.</p>
+                        <p>Repository: <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
+
+                    <h3>Trustworthiness</h3>
+                    <ul>
+                        <li>Source code is based on <a href="https://github.com/LiuTangLei/tailscale"
+                            target="_blank">LiuTangLei/tailscale</a>, which itself is based on the official Tailscale repository and adds Amnezia WireGuard support.
+                        </li>
+                        <li>Only compiler flags are added, and <a href="https://upx.github.io/" target="_blank">UPX</a>
+                            is optionally used on most architectures to reduce package size.</li>
+                        <li>All build scripts, workflows, compiler flags, and logs are fully public in the repository's
+                            <code>.github/workflows</code> and <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                history</a>.
+                        </li>
+                        <li>No manual uploads, no dynamic backend — all artifacts are generated automatically by CI and
+                            served statically via <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
+                        </li>
+                    </ul>
+
+                    <h3>Recommended Verification Steps</h3>
+                    <ul>
+                        <li>Review the repository code and check <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                scripts and build logs</a></li>
+                        <li>Reproduce the build locally following the instructions in README to verify reproducibility
+                        </li>
+                        <li>Verify SHA256 checksums or other signatures (if provided) after downloading</li>
+                    </ul>
+
+                    <h3>Disclaimer</h3>
+                    <p>This feed is provided <a href="https://en.wikipedia.org/wiki/As_is" target="_blank">as-is</a>,
+                        without any warranties, express or implied. Users are solely responsible for reviewing the
+                        source code and build process before use.</p>
+                    <p>For maximum security, prefer official sources or trusted feeds, and keep the repository watched
+                        for updates.</p>
+                </section>
+
+                <!-- <hr> -->
+
+                <h1 style="text-align: center;">软件源安全声明</h1>
+
+                <section class="part">
+                    <p>本 feed 中的所有 .ipk 软件包通过 GitHub Actions 自动化构建，过程完全开源、可审计、可复现。</p>
+                        <p>仓库地址：<a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
+
+                    <h3>可信性</h3>
+                    <ul>
+                        <li>源代码基于 <a href="https://github.com/LiuTangLei/tailscale" target="_blank">LiuTangLei/tailscale</a>，其本身基于 Tailscale 官方源码并加入了 Amnezia WireGuard 支持。</li>
+                        <li>仅添加编译参数，并在大部分架构上使用 <a href="https://upx.github.io/" target="_blank">UPX</a> 进行压缩以减小包体积。</li>
+                        <li>构建脚本、工作流、编译参数、日志全部公开，位于仓库的 <code>.github/workflows</code> 和 <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                历史</a> 中。</li>
+                        <li>无人工上传、无动态后端，所有产物由 CI 自动生成并部署到 <a href="https://pages.github.com/" target="_blank">GitHub
+                                Pages</a>。</li>
+                    </ul>
+
+                    <h3>用户验证建议</h3>
+                    <ul>
+                        <li>审查仓库代码，查看 <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions"
+                                target="_blank">Actions 脚本与构建日志</a></li>
+                        <li>按照 README 中的说明自行构建，以验证可复现性</li>
+                        <li>下载后校验 SHA256 或其他签名（如有提供）</li>
+                    </ul>
+
+                    <h3>免责声明</h3>
+                    <p>本 feed <a href="https://zh.wikipedia.org/wiki/%E6%8C%89%E5%8E%9F%E6%A0%B7%E6%8F%90%E4%BE%9B"
+                            target="_blank">按原样</a>提供，不附带任何明示或暗示的担保。使用前请自行审查源代码与构建过程，并自行承担风险。</p>
+                    <p>建议始终保持关注仓库更新，并优先从官方或可信渠道获取软件包。</p>
+                </section>
+            </section>
+
+            <section id="packages" style="display: none;">
+                <section class="important">
+                    <p>Please select the correct package for your device architecture.</p>
+                    <p>To check your device architecture on your openwrt 24.10 or earlier device, run</p>
+                    <pre>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</pre>
+                    <p>To check your device architecture on your openwrt 25.12 or later device, run</p>
+                    <pre>cat /etc/apk/arch</pre>
+                    <p>Use <code>.ipk</code> for OpenWrt 24.10 or earlier, and <code>.apk</code> for OpenWrt 25.12 or later.</p>
+                </section>
+                <!-- arch-section-anchor -->
+<details class="arch-section">
+    <summary>📂 aarch64_cortex-a53</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="aarch64_cortex-a53/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2b52f8cd76209cbed0e2d0da3ac0824be9f632658bde241cd1fc8df908769517</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b207ad1c9f69eab00f368c919e8d25db7dc0f1468d6b9be28671e89148ca2496</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">3a6bbb7dcc6be665991a8cebe22e23932cc955031b5563d04e92d6b313c9b23a</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2987527379f93d7e022df9d1fb81c520b9a434877919d944db304d2c294faf71</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">48f1ea42e2a05aa40aa507641c0b90461ca612cb111cf8507e8ecc2ebbc02e4c</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">60f6e46e1b11e42ef0ab1849cae0aa69202b73f7b44a5294aa8f7f833316919f</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a53/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">f52539abed6820c46596b97c8adb508655b4cb9d2a5165edf994cdd84fc468e6</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 aarch64_cortex-a72</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="aarch64_cortex-a72/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4ad4044140cc26e2fc8ffb0036ce22f6cafaf3af071d647246545fd5c75173ac</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">64d73f8164c25faef902dc808211728a3d053d06b9f4613b24709a6e7dc9ad41</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">dbbe8cb3b159bd4d4a4858993932c20be91630d9a17e84c7b04e9986ffb1cd6c</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f2dd15b5523ef33748aee0c1df501d02a74fc7951347771966a933b3eb0ce697</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">b77478bfa0bc14502590d89282c1f48a8096bcd44efc7bf726a23105dca9de6b</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">750989de8de73ea0fe392ded392f5223bbb7c34e743e2f272476f31a70a77f93</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a72/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">bf168d067f0f05cc18eddb7e010eaa525f679adb5d066c2a0511f57ef495cf58</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 aarch64_cortex-a76</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="aarch64_cortex-a76/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">0d989ee3105875df210b18138b0cf6bb0fbff1bae177e06300ae9337aa75a389</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ffd95d66ba3f7b969d27e362ee47d539d9d01c6bb5364f7e3fb7f7492f3f8e03</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">135808c20bb0b0c77d161a18b338381f8c9d47044e9248442a611b9066476421</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">de936bad3e3b83450a9409a15082df65bacaaa622960d8030d0778a276cc6138</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">134f6a8ca1c70b2a4fcafe36ba6850d794ffa0a8b5f948813bb7e59ac1aa8b8d</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">6252b2d2be620bdb22e863bc8ee68adee5ae39b2d9a89e30aa43c4980bae2c5a</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_cortex-a76/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">41f0fea89126f569a04d7e05d6649fb7c1391bf98958957309762e91151927d0</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 aarch64_generic</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="aarch64_generic/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b1918759e97739ebcd38ad79d88f38bb766692616ca9e06d33745007c3b3ed83</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">cedb7b4c9aac6cb76b55f879e0e47abf137d6a236b0dd708da1119824a4945b6</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f478b98665d612f91a44bae9b68d612c14f2079e9a60f8f1f99e40ac95aaeda2</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">17d30c94d74d6032754399f7e627bd51d6b1041a7aed889a6b56fe45c45639cc</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">686eb6af20f8aa4583b747522cc2ffcbcc0072d3579c39508e78ebf0033a6312</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.3M</td>
+                <td class="sha256-cell">86de3bf45945800ef827bbcca069b17d87a7adeccac49c1d2b1de0ddd801349b</td>
+            </tr>
+            <tr>
+                <td><a href="aarch64_generic/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">f4dd7b49bd9286253f870fd6275519f45de121eed7b01e79083281731b4b4c9f</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_arm1176jzf-s_vfp</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">90a5d6d4ec3a7f474e727aa4ea6653524df2765b91e6baac04c6eafdfc7024e5</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4dc2511dcabb8e0023ca8a53604c93073fa4a2e3c6137da590eae9b2b58eaa41</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">944f6b34e11f00d232bdbd222f3acb2af0cf033522e5b8e00cf9ebef443a911c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">72dede9fd527ff32686bc6ade6b8d1892490649cf383649af6df426315c79f40</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">bddd8dbdf0f027004c02108d90706edc910a8a5bb5e96bfe4b68dfec8e35730c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">d2533559a3f4db57305b83f875ddd362862dee6ed9ced3bf271d6424c31a6251</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm1176jzf-s_vfp/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">c6000ce4ac57ddf9fc77bc4fe3a4937af0afce22827c1ff2f8c90b536c9e1882</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_arm926ej-s</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_arm926ej-s/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">9222248c0cdcd93d63254f6c18b36a7cb5b717e7d87747c312aa357520570174</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ff3d63dd60013f58170bce76306e30cbe4a5bedb0759379c07a64e0c271f066b</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8b7b55a3c3eeb5564cbed6a7eeb0b3cc69f615367eb15d15b93277605b1cce84</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8b2e448b9b5dbb5df23e22f87a52ddaa4f69cfe130c2ab430111faf75b4534d7</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">a1a8406c8469cdf717d9f77084cf744f2ebccf1f211328124d98df4b39f8fe73</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">e6fb03ca8f8f2da5155e0889bdbc380d587d1105129efb63b4b34b9ad19df2de</td>
+            </tr>
+            <tr>
+                <td><a href="arm_arm926ej-s/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">d5a2034998a4d7c6db98ae52b72281e2b53f73c25be27307f9da408f93f676cf</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a15_neon-vfpv4</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ed860e15f6e09546350695d50d21145ae56ee4c8bfd3ecb0807b2311b1d18d7c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2ed84942a8a7fde3b627ac0072b343d4d60022ecb04f39ac01057d75f0c3f4db</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">fec9830fba246f527275aa1da7af189075ffbdb05e123a331e1b327eec4f82b7</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ffe9e21f0103a452b4d35d028bba530f925a75868dd427b2f506146f308a97d7</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">e11dab719dab24d4fcdb9d907d05640613fd148b176afba664c47d2e36d3d3b8</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">74f8f840df26c4583d555db1fef37eef91aab6fc2e7324ab3f96ab44d76283d5</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a15_neon-vfpv4/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">906cf0a8645800d103b33b9403b65755bc8d02a97efe9445bc537455de83e6f4</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a5_vfpv4</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">a4231a385b59b8b3392f183a8e72fe178f5e1db97eff7317a1db44b4b2fcbf51</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2a11ecf264354a12dcef3d0808d323eaddea659f3ec251c5254bb94e96aa660f</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f965bffd2a30a9d60395192e27303ebae60b583ebe379d7e2055f8c2eca0f3cf</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">e2be1a43fe247820803f8064568fda7e058979a58caa13418bda4cef362a2bd6</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">6c06dddb2d40aa9a0ee4fe83f05e070fb88d40f103b287fb2ccfda5c4d6d3b74</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">c8f15edb9884fc6041cc8f91a3a977001922f847407bab3d2a9215f600099f9e</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a5_vfpv4/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">bd664e0b1cbd9fef51697e9f4783878dab003cb24775a8b7479155e09c0c0cb6</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a7</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a7/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">9b071759d28b27f48d7cb67eb428d3643888e6064f773d37f79322d51742909d</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ffd66dfafbad7ee1a4881ca41c175d7d93282f976e5ea199491836e5807a7919</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">d6a6a9afc2d5e25de825707d7545b18d958865373483928ea107e5860ad80e2c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4c3b78b58bc52013d265f207505a859360cc5c83a4d9eca69a3b40f6a82b0d49</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">b7e0537600bb70ae456e035bef94823dadc395227089945b1040dff8d1ff652e</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">cbe0cd08865d3021d6e42b8744f8ad46233c8498d23a8d021b9b46aa73546059</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">08ca2120f68013398780df496c186b77bb88ea11145d3060e035d7406233a2b2</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a7_neon-vfpv4</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">5c74e0bf87cb4c14080881fedd86763759bc92b2a52acb720cfccc07ebda9f57</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f0ba3d021f917c1339e5cb585362cfabb20c180c75eccf03d934f61d0353e7b9</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f4c16e2eabd393e0360f166a33db879ca8e4db4f2a366170fefd285b218b5808</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">3443c2520facb91e63adaa339abdcd744a949443f909fa75826fc8427195aa9f</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">0d4a5d58ee70af364e7a28dbed04e768611829cd7599b476543908ee8dc29638</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">d75b1d9050a5a8cbb0ab5d1c22968652ce10967aaa82c5bed88a796bc3ae7b70</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_neon-vfpv4/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">53c04005973813f77ccea4509b973a3a61f07949aaab21ec3db1c60abacfc968</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a7_vfpv4</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8d197be94c095cfb0d45d01eb2451f1b1e2f10c5f7bd8ae7eca50e94f476651c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">05a5d6efef81ac8e405febd41dad7c43c6f1f05c2d4113c8034a33e68f9e67f8</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">5b3106c161495c18bb356bb7922de483ccd7863a813be2bf6f1a152246329633</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">9225e03bcf75aeb479b23f8b5d4e059041cf84ec7d0d490ae6a6b7a353cc8e4f</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">c31108b677e447a49ae603df9f75282849264921af286b4fc5c534a3c6d5f146</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">17da239056da20a8622e9d6f9bd059a88ceaeb750484f4a129486fc7b898d230</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a7_vfpv4/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">36e795f40ba06c2649017852ab765eb5eb05181b72fb6fac3dcfe265aa414d29</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a8_vfpv3</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b3d7f9b37be6e3472e99728342fc81517c14042a786e8a9f378a785a505a6963</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f86f2be8f8d62bd6ce8eba55c26afc98400e614efdb3a253b7a07cb1857a2254</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4d6b47bc3706f516e3a32766e214475c8824a2ed4bee68c565d5bc7aac6d2496</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">5b021fe5a9d8fca83b97ae125c4cbe8bc82cea6019352483d754191402991519</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">469ea57b2fc3915c001fff582b4de0ec49e2a94237647ebe6bdd22773bf61aac</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">0defb700fd22cf70880187996c050700fd0e3e50ca7bfc6505227cc56dcba655</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a8_vfpv3/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">c09ef19991efaf1eca3e6d771f28660ca96d399d4837c9b6d3bbed4694b67222</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a9</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a9/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">af011359129fe428f249f2457b539872d970931a0e78925b8ec5a7cce4f01d5a</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">02573091e07a90ec9e891f67089390186be2d60b87783dcc7adec1e6b9711a3b</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">db590b4a038e186de6e3380db7290d0d5aec2d548da69b486ddc1b15ac01b675</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">89d21247a413e0d8c320ed10a9cb7ee58de5b0414e344f908b60e4b4123f82e9</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">54f636d5cd2ea9588176e7b8ed09a20c376a32794ecec4f54533ce06060c60de</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">4b5a2dc163747dca8bdb1e51ce10b4f302dec8cef988e3eaae56899d4bc7e137</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">6cec93a56dc91f7ada8fd17a27be961c6b4f0474d3c9c82b91f124654206bc9a</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a9_neon</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">582f4aeaba2a9aa9607ecb6de0a6e9034edccec193ae82e5677f65bed1f61a14</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">3fa06ec846cd988da5f20b17d13f68a49260d8ede5fa5b21d9fe41c618b5d8a6</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b46b0a2cec3e9d8b1411444bf1e273d4b270f3771137f59a1876046ca7fcdf51</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ecfe2a9f877f85d6212756326ba3eab0a4ad77466eb6db350410caa02eaa4236</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">aaa97255a30912bd50967b626be74af46d8887f051c862e6601aea6d429d6a92</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">d1ce75cd245f069aabebf8b78f124cbb9e9e0ebfc03e77bcc4d8a47616355931</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_neon/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">9fe1c97efc41da849a2937490f135b4552cf176cbf904e4941a24db0e1543ec0</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_cortex-a9_vfpv3-d16</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">5acb9cd3e281248aff37052f935a8b14211dfdfda4334822f4ee2f0373413a5e</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8fe5500c25d4f62610454db87c39e64d1f5d71b109e96756a9d94358b2f7de23</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">333513e7bbedbe1526a620b9ff335b3f6e1d978033c15b57c91b3273c6d1f7ec</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2a07aebcc405e8ad29b36325bcfe22a41e018e7f6260c76c425da02ab8d85b57</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">1fe9c1d439a975c2edcddbbe00995417eae326e5e478f6a1f07e6e49c7aa021b</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">e90f5030b3047d4a81c9d8a92411308531347a716708ce7c7dca120c0d01358b</td>
+            </tr>
+            <tr>
+                <td><a href="arm_cortex-a9_vfpv3-d16/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">3435a4bed1c55e6e0ec199944f835e602419d91b27ccef024ce17a51e18191d6</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_fa526</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_fa526/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">01e9d4dcbb38c3ef33345aeab30d8518c39142be99ade44ef82c073f14243b71</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f7b56e5eaa469b32f2b345fad902a439964ef2817e9fc19a79a2a1906782327d</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">7e710aa0acad3efc4762bb160db56e6eba6f7fc77a32a5a59b5efd0fce3e15b2</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">7a11dc5371b4d3baff10411215361f3f573db15c52f7321e068803a5df672d0c</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">d1a51f571c23efb176e2ba0ba47af14dee723c660ad534a4228e050daac59f33</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">1c0bf087654a864ee40fe684d04aaa435b57a2e1646fb66ac897f842713bfcc1</td>
+            </tr>
+            <tr>
+                <td><a href="arm_fa526/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">33fd458aa1d8f6f30d0df9006db2d0d7da22bfb0109916015ed9fd4cb4ed8e81</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 arm_xscale</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="arm_xscale/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">a7e9ab0cd3297909f5c6a45a23cc6ec3252870a5a8106a99357c0b421e5fa3b5</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">97ae3cb234394146e870b69c464caffb4c8dfb0f352412d02aba90bd0130af3f</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4ff420cd88ecb75caa101cba2bb4ded02c6a21101483e56df91e48ebeb3d9be9</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2f49401bd104f20c0e5d858732741ac0d77cf2facd80387e28ebc47115971545</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">21384dc6bfd6577d958235bceb50aa922ad026bddcef51b9afdd48a2f48e70b8</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">53bc681b0b4a99a19170bd8472ed5eeae889d3b9934292b44f2d0e04c4488a3b</td>
+            </tr>
+            <tr>
+                <td><a href="arm_xscale/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.2M</td>
+                <td class="sha256-cell">bfb33a194631d4f557a38982303c4f553b07966473193d0244584b3db21e1fba</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 i386_pentium-mmx</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="i386_pentium-mmx/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">15c3a5d6a95356b09c2514e558f122b742928e92814cedace96b6e17d7c943e1</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">429f7d118b5fba8b113c4942eb33fd07c0832afe5ac2464743ded340e47430a3</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">0afa29ba42a895afba50e7a85641e0498ac0337b71d6f61c39fc07800667488f</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4612c2587ce478bc9a8aa33deaf47630612c47bb916c49a97deee1509b87bbac</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">9ff071a95044ee9e5dedfa03b1ae7570b132be3673a1ce75b237ebf40a7195ea</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">3ed50e435ea1c123ad53b5f47986f9e4734cc1bc8a60a1cbfd44dda771351655</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium-mmx/tailscaled">tailscaled</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">d0c0c05edca3f7b3ddad1044a6e799cfc2d3e7b78315c64377da28cc53dc2b57</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 i386_pentium4</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="i386_pentium4/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">3e016a0da9dfc2701985e111f4374d7b38af2327ef54085f66fab611cd4fc300</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b801725450bfe0aecdf7cc4c1bc2b4a8814b4a5053ce71faca45c28a51d9d3f9</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">1d570063f190f34fb6f407178829a0bf6950b14146ae1bd94aca66864bcc9ec7</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">fea1352a4ad678993fdd299632eed3a5a4128dacd3a7f202e384e61cd425621e</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">498b6b38e13972cd16fc3c831b4c728eda93997cc2e67e696f293c0f7f30d4de</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">df0a80bea0d695e13a9b0d04a4b25c42d7fdcfa3162dd44f6273cd7c0b5375e9</td>
+            </tr>
+            <tr>
+                <td><a href="i386_pentium4/tailscaled">tailscaled</a></td>
+                <td class="size-cell">7.1M</td>
+                <td class="sha256-cell">35a9f34c8f382e3e2c5597811128a7f39f16f39b24d2adc49ee38950fd8c2806</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 loongarch64_generic</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="loongarch64_generic/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">2ab0f704ad392c568d1d6d9fac1b681cadbff57c8bf96bbf42b916336835cb7e</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">1526e4df0704ce1914872fe84cda34f25b6c520c80505482c1a6b040d3930010</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">41d229755c4278d2225ea7cfe4e4d5a1abb5a942ce93c7dab9cf2266bedb29c8</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">6e8d7adf98d34bc267105a28b41ab71a5ba97dcad9a8b20e3c993762b89877f2</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">9.7M</td>
+                <td class="sha256-cell">86e699c98e6879599eba09b5d56a436a1c703383021479dd95173ee6ebbea892</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">9.7M</td>
+                <td class="sha256-cell">c674480b2d6db0b195a79c306d4e294af340c8f9bf467080c85c20526f3cf850</td>
+            </tr>
+            <tr>
+                <td><a href="loongarch64_generic/tailscaled">tailscaled</a></td>
+                <td class="size-cell">27M</td>
+                <td class="sha256-cell">2b835c1e524049269ecee06ca3c7dd3ed05252b29108319b3811920f5c1aa446</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips64_mips64r2</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips64_mips64r2/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">90045b286673b7a488b6082ab03a7fb089dea67042d618077ebb0016c3636589</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">139255d74cac5eca5a5ec8e05d8761721827f89471f84541b592b9a0486ebf83</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">bf169ded2091c4e38b04fc953e4880a9f406be55bb4677b733f95b347cb3fb2d</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">9e524355c9373d935cf22d92f45746efde3f7f643f20e5a5515c26bdb1c970a0</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">8.9M</td>
+                <td class="sha256-cell">e0270c08245bf58a5cbfffd0154dc0739392ecdc844c30245ecfb1ebb19e6d39</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">9.1M</td>
+                <td class="sha256-cell">2dee8c33cced060ed3619d06ce8d8eb1445a40a2ec683739a6274cb078d19ce3</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_mips64r2/tailscaled">tailscaled</a></td>
+                <td class="size-cell">30M</td>
+                <td class="sha256-cell">2be109d14c8721eef8b5d15e5b461cf737b4d5b39b689f559de3c86e402caca4</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips64_octeonplus</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips64_octeonplus/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">6afeb4b4dc58547b75725057df098008e12ec564f4dcaf7e0f078dabc9e8f7b3</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">077e58234f750a9b1ebcf4d690f478a84d3ac9b9d5dbf3a5a079897e454c8e1c</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">ebc1763617b0625900c7a3a5f9c4e57dbe7a8cba4eb9a09d2d0e878086be9d97</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">1eca238f477e1e5de5eea78d7fe2eff83d5e29e878304bd81dd66b7d7fc04d5d</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">8.9M</td>
+                <td class="sha256-cell">a1fc84a7679f138bab27ac89db85a096df10cdcfa7393b1a46970282734e7426</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">9.1M</td>
+                <td class="sha256-cell">78675bf38002669588e787a01bb15867092f7a81c7982713d11195b3b806a878</td>
+            </tr>
+            <tr>
+                <td><a href="mips64_octeonplus/tailscaled">tailscaled</a></td>
+                <td class="size-cell">30M</td>
+                <td class="sha256-cell">94f6484772ed156adec9f392a7e92c9cd28d6d350d3eb1f67fa9a68fc5f8233b</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips64el_mips64r2</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips64el_mips64r2/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">fb12933064fbadcfab7d9197e0c4c74543888437a6a8b962ac611a531553efe2</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8485d73407f8289db031f1b3f4f571933b107f5fb99c5af51998315514282f2e</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">a13ab87d93a7309e80809d5f5f94d001ffe037f071b3939fb46742e86cdddd27</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">958cfcfa924ffc8d75cf17e98ae67dae2cf703c4849cc30eeea28574f3eed6c6</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">8.8M</td>
+                <td class="sha256-cell">8da8d99be98f8c1ac8ef4af269e508a91d1afdf724bd8ed91c472652622d57d6</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">8.9M</td>
+                <td class="sha256-cell">79926ba4d16b67b7ae7404521d97167f4436c2e3a4343cbc69f4fca3b6b7fb4a</td>
+            </tr>
+            <tr>
+                <td><a href="mips64el_mips64r2/tailscaled">tailscaled</a></td>
+                <td class="size-cell">30M</td>
+                <td class="sha256-cell">bb2b478d81d0cf19e142d15300b192ea09aca363f29b10de0182c446ff7ad072</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips_24kc</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips_24kc/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">456692d6264cb80c2efd5ffeaca9f6dcee655fdeedf9a57885b19d230dd70c19</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4b175866f94efb0f3167f80110ae5e9ed3a67f182bb8fc44f933efcbe0fe8af6</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">5abed065284f8bbbb0ebb33966b1bc51edd1b605b1d4115c135c293f3e507c19</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">94937e2dd43a1f6e3393a347221e1d4460eeb677adc87028ee7bf0b0e71dd6f3</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">e38b203150a1918bfec3bc855d00df28276690b122f2eaab2b4a07111e39a9e7</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">b353ef23184aa97ac0daf78748814a710c69a0d414c755872594e57157f26821</td>
+            </tr>
+            <tr>
+                <td><a href="mips_24kc/tailscaled">tailscaled</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">68a13d6330e473fe8def4676de72da2be31ce6a9255b2d24705b93ed4bf908e5</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips_4kec</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips_4kec/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">357c10634ac36a21199e2656dc1a1f6054e7eddd9206f20f0072c70e5b149dce</td>
+            </tr>
+            <tr>
+                <td><a href="mips_4kec/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">3bed54dff54a7b1378a534f1375b7236aa7a04324d6040c823397be314c4db63</td>
+            </tr>
+            <tr>
+                <td><a href="mips_4kec/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">41f5dc3b14e7a572908cd3b207b578b061f7f8b640f822d046d8a49791d0508e</td>
+            </tr>
+            <tr>
+                <td><a href="mips_4kec/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">1e252b4ebef9ad8b849a7b3d4bd333dbc4b7c3db668341d78ad7ac521eba50a1</td>
+            </tr>
+            <tr>
+                <td><a href="mips_4kec/tailscaled">tailscaled</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">8b69c809e8f2ddcf262a4a2a6c32baed4fe10e2eb3f99a895b6de846fbb0b1d9</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mips_mips32</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mips_mips32/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">0336c6f2ffca5f8d2afd833237bf09bdfc2885b78e6890876eb4dfd6b1790b0d</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">cc39c5e3dfd291645ef1345d92982ee6f62f2038405393b30287bb2b822dabed</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4531907a232d80359bb9a2414d0a185c9f4099da7fb7c1ee28aa3ee4378c6f25</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8d0cb0ebf5ea5362727b670d2f702c4e1ca02623eb151c175002f28332b5d7cd</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">353a155241245598f2fb9aa67c758b78081b8872ddc77ea8ed2175f6c37b6f23</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">9e42490e2eecf05c9ca8325eebf2c2fd9c2397cb78e3f510447372b0336675a5</td>
+            </tr>
+            <tr>
+                <td><a href="mips_mips32/tailscaled">tailscaled</a></td>
+                <td class="size-cell">5.9M</td>
+                <td class="sha256-cell">b86e7d46089fdf81fcebbc27df36ceae46b6e6ed31be9fe88f3616acd28f411b</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mipsel_24kc</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mipsel_24kc/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">e32584a2e0234270af6971b23f6f293d714bfa86d2742e714fde632b12cb189f</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">c038b5225a03ccd0f6864cb2348842d4e828fedd66ca1d76e44b32776496ad42</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">e59d72e8c210e0a577dd122a1a2cf4e3a8c865bdff0960f5b1050a7846481635</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">220a40e1ba3dba54080fcc25a241d7564f8b2744d42f69d4b17dae5d1663c58e</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">63b5adfdcce063c1e97e6ed43b7019d64d177fd90e27563d416f1b2ead4e805b</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">a45090bd9d9b59459892698fbc92d27fcf2ef938e47dd12f3911a969fdf8029b</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">8346d3f2042c29c240d37f8e0c408a0a924d75399e1dc49f66d27ad6b0cee346</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mipsel_24kc_24kf</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">79a6de30d6f12daa11325a08a75489ed88b684c8743bb5680b9b9c330d9227f7</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">42f66f4a6dc8e37ba115b73a5e3dd1dc3360134fd8fac2c075de33c54e3e2435</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">4c654d87b092fee1c19d919ace14e831e95a6ff15e8bc12a240510909e5af551</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">c135315021b32c13f22802c35f72fc5a7a2628209e2584c521833929857630f9</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">2ce8eff0b03fdddfac9cd75ff67cf576ba3a7e446b883ebb32f24ddc810aff70</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">659e6a9ef4a0560e211b49d8f253ac05bb53eecc9eea630f9028ab04c108052c</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_24kc_24kf/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">0c4acd2685a2482b09d83468bd4323257488e3f7cf6dee5e37b2297741d30649</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mipsel_74kc</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mipsel_74kc/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">068d45051778226ec1eedff06e76e78b02a5d54daedf0b1a4479300e9196aed0</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">6184b27813767de90a06591a66b67b3987d5b7ae1e957343fd0e5199f4ce1180</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">84ab808e0318947b97920f81406d7eae240f87451ac539963aaa7cdf8902812e</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">260751347c1e13df20b313f2a43326841fed823affccf11191700b3db0174a38</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">7234147e130bcd12ce4729c96ffb202e9551ba083b1e1df74933f2d683c3a65a</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">393d1b1e4bf918228d6471efdab3ade76dd7e1bf8d171acdc28240ae29ca5608</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_74kc/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">9bf27e7a52dec773326323371c93c62562767eebac52f393891c6089b0d515b6</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 mipsel_mips32</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="mipsel_mips32/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">f4b60b988155cac97eddff41e94f2a03a9d8c4553053766d08e4b99d833cbfd4</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">1441b0f924642e2fe07b020757d13fdbb9be23ff1b8b5e38502a4fe68bea1547</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">970d0a6ed8fb1977960c46897efd7732749b6364a7064e982379b03ae94af575</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">b2d98b8b78d212c24702033c6b0ce3e24482caa596d2a071cb72d53bb5d88833</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">3492beb7424cc4a0ea8160c1b764c8ce4afe40628bd6b7cccdb0417b36086851</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">994b69556034b87206e985f8773c9650f66813da8b218ab026ece5289b37474b</td>
+            </tr>
+            <tr>
+                <td><a href="mipsel_mips32/tailscaled">tailscaled</a></td>
+                <td class="size-cell">6.1M</td>
+                <td class="sha256-cell">9990fc39d76de6929c631722a846f5163dce6d7c03a7c444ea60dd579cb2a71d</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 riscv64_generic</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 riscv64_riscv64</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="riscv64_riscv64/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">e15ce805c3c04e542061d848e98f49cc2e1bb3092dd3796c85efc2ab6033faef</td>
+            </tr>
+            <tr>
+                <td><a href="riscv64_riscv64/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">9c3b65df6eae7c9ee28d96ead7562a24e8e891b8d5eb023f37b4bb195938a615</td>
+            </tr>
+            <tr>
+                <td><a href="riscv64_riscv64/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">720985063970ae02996d8fe83aecb235cafb7d5d06881af03e5a1fffac61c48d</td>
+            </tr>
+            <tr>
+                <td><a href="riscv64_riscv64/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">9.6M</td>
+                <td class="sha256-cell">c8968a4c356a80f6475c47710f730f67e70f1a2c12229a91d7b180ea60e2715c</td>
+            </tr>
+            <tr>
+                <td><a href="riscv64_riscv64/tailscaled">tailscaled</a></td>
+                <td class="size-cell">24M</td>
+                <td class="sha256-cell">0721ee10ec63eeb47a0299c57566b88e460334db97d10580c5526fecd1bd663c</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+<details class="arch-section">
+    <summary>📂 x86_64</summary>
+    <table>
+        <thead>
+            <tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><a href="x86_64/Packages">Packages</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8a9ff1b4803e33d95c2eaa246be33c4cd1f5ceba60989e16a536accddfa70a00</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/Packages.gz">Packages.gz</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">8eb1f2eef3d08d93ec8fae2667c9594ce2465c8becd22c32f30db420d68539e6</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/Packages.sig">Packages.sig</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">e9185b5b0a81072f67dd5cc90c67c4c2f4dddd59701d00bd7ec571253ff08bda</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/packages.adb">packages.adb</a></td>
+                <td class="size-cell">4.0K</td>
+                <td class="sha256-cell">cf81e765ff90b6d0a4de798169cbc403205affc0fded30503b3deba36ffe3cf3</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/tailscale-1.98.2-r1.apk">tailscale-1.98.2-r1.apk</a></td>
+                <td class="size-cell">7.6M</td>
+                <td class="sha256-cell">3eb4c7725b1b35b8ebfe7926426fd359ee19dee9256baf069e0c588d51fcbe2c</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/tailscale-1.98.2-r1.ipk">tailscale-1.98.2-r1.ipk</a></td>
+                <td class="size-cell">7.6M</td>
+                <td class="sha256-cell">98060fb93dc76d4d5954573a20d8692c763c6a202899d33bcfea64e95ee0fe95</td>
+            </tr>
+            <tr>
+                <td><a href="x86_64/tailscaled">tailscaled</a></td>
+                <td class="size-cell">7.6M</td>
+                <td class="sha256-cell">03c7091611bc9686155f42972207253dc255efdcff797016e1192016d89523a3</td>
+            </tr>
+        </tbody>
+    </table>
+</details>
+                <!-- end-arch-section-anchor -->
+            </section>
+        </main>
+
+        <footer class="footer">
+            <hr>
+            <p>
+                <span>Built with ❤️ and shared with the community. </span>
+                <span>Open source on <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg">GitHub</a>.</span>
+                <span><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg">⭐Star it!</a></span>
+                <span><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/LICENSE">MIT License</a>.</span>
+                <span>Generated by GitHub Action on:
+                    <!-- date-anchor -->
+                    <span id="date">2026-05-17 16:35:01 UTC</span>
+                    <!-- end-date-anchor -->
+                </span>
+                <span>Version:
+                    <!-- version-anchor -->
+                    <span id="version">1.98.2</span>
+                    <!-- end-version-anchor -->
+                </span>
+            </p>
+            <p>
+                <img src="./banner.png" alt="Tailscale & OpenWrt" style="width: 100%; display: block; margin: 0 auto;">
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+
+            const buttons = [
+                { id: 'btn-usage', section: 'usage', label: 'Usage' },
+                { id: 'btn-usage-chinese', section: 'usage-chinese', label: '用法' },
+                { id: 'btn-security-statement', section: 'security-statement', label: 'Security Statement 安全声明' },
+                { id: 'btn-packages', section: 'packages', label: 'Packages' }
+            ];
+
+            buttons.forEach(btn => {
+                const isActive = (id === btn.section);
+                const el = document.getElementById(btn.id);
+                el.classList.toggle('active', isActive);
+                el.classList.toggle('inactive', !isActive);
+                el.disabled = isActive;
+            });
+        }
+
+        function switchVersion(version) {
+            document.getElementById('v25usage').style.display = version === 'v25' ? 'block' : 'none';
+            document.getElementById('v24usage').style.display = version === 'v24' ? 'block' : 'none';
+            const v25zh = document.getElementById('v25usage-zh');
+            const v24zh = document.getElementById('v24usage-zh');
+            if (v25zh) v25zh.style.display = version === 'v25' ? 'block' : 'none';
+            if (v24zh) v24zh.style.display = version === 'v24' ? 'block' : 'none';
+
+            document.querySelectorAll('.v-btn').forEach(btn => {
+                if (btn.dataset.version === version) {
+                    btn.classList.remove('inactive');
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('inactive');
+                }
+            });
+
+            localStorage.setItem('owrt-version', version);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedVersion = localStorage.getItem('owrt-version') || 'v25';
+            switchVersion(savedVersion);
+            document.querySelectorAll("pre").forEach((pre) => {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("pre-wrapper");
+
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
+
+                const btn = document.createElement("button");
+                btn.className = "copy-btn";
+                btn.textContent = "Copy";
+
+                btn.addEventListener("click", () => {
+                    navigator.clipboard.writeText(pre.textContent).then(() => {
+                        btn.textContent = "Copied!";
+                        btn.classList.add("copied");
+                        setTimeout(() => {
+                            btn.textContent = "Copy";
+                            btn.classList.remove("copied");
+                        }, 2000);
+                    });
+                });
+
+                wrapper.appendChild(btn);
+            });
+        });
+
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('toggle-theme').textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function initTheme() {
+            const hour = new Date().getHours();
+            const saved = localStorage.getItem('theme');
+            const isDark = saved === 'dark' || (!saved && (hour < 6 || hour >= 18));
+            if (isDark) {
+                document.body.classList.add('dark');
+                document.getElementById('toggle-theme').textContent = '☀️';
+            } else {
+                document.getElementById('toggle-theme').textContent = '🌙';
+            }
+        }
+
+        document.getElementById('btn-usage').click();
+        initTheme();
+
+    </script>
+</body>
+
+</html>
