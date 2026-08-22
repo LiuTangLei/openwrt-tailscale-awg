@@ -10,12 +10,12 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tailscale
-PKG_VERSION:=1.102.2
+PKG_VERSION:=1.102.3
 PKG_RELEASE:=1
 
 PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
 PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=ac329d142f582a21d94fc858b9a874f533002c0e4758369643ccafe4ce3c7176
+PKG_HASH:=85f9a43be090d270487cc74ccecde73ef07854727c2a5107a40e56cf3faf448c
 
 PKG_MAINTAINER:=LiuTangLei <liu.tang.lei@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
