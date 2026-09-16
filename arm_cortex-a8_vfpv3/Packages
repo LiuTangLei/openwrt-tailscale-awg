@@ -1,0 +1,18 @@
+Package: tailscale
+Version: 1.102.4-r1
+Depends: libc, ca-bundle, kmod-tun
+Provides: tailscaled
+License: BSD-3-Clause
+Section: net
+URL: Fork(https://github.com/LiuTangLei/openwrt-tailscale-awg);Original(https://github.com/GuNanOvO/openwrt-tailscale)
+CPE-ID: cpe:/a:tailscale:tailscale
+Architecture: arm_cortex-a8_vfpv3
+Installed-Size: 7659520
+Filename: tailscale-1.102.4-r1.ipk
+Size: 7651523
+SHA256sum: e00464b84fabd11fbc67849eae9f6164daf8d965d36f3cc0aefc30a7fc8395bd
+Description:  Tailscale-AWG: Tailscale with Amnezia WireGuard support.
+ Built for OpenWrt. It creates a secure network between your servers,
+ computers, and cloud instances with enhanced censorship resistance.
+ Based on https://github.com/GuNanOvO/openwrt-tailscale (thanks to GuNanOvO).
+
