@@ -561,7 +561,7 @@ jobs:
           echo "Current artifact structure:"
           ls -R "${{ env.ARTIFACT_DIR }}"
 
-          table="| Target Platform / 目标平台 | IPK Package (OpenWrt) | APK Package (Next-Gen) |\n|:--- |:--- |:--- |"
+          table="| Architecture | IPK | APK |\n|:--- |:--- |:--- |"
 
           rows=""
 
@@ -590,44 +590,24 @@ jobs:
           full_table="${table}${rows}"
 
           release_body="
-          ## Smaller Tailscale-AWG / 更小的Tailscale-AWG  
-          #### Version / 版本 : ${{ env.RELEASE_TAG }}
-          #### Build Date / 构建日期 : ${{ env.BUILD_DATE }}
-          #### Upstream Changelog / 上游更新日志 : [https://tailscale.com/changelog](https://tailscale.com/changelog)
-          ---
+          Compact Tailscale-AWG ${{ env.RELEASE_TAG }} packages built with the official OpenWrt SDKs. Binaries use UPX compression where supported.
 
-          #### 本项目是为 OpenWRT 构建的 Tailscale-AWG 精简版本，使用官方 SDK 编译，旨在降低存储空间占用。    
-          - 使用 OpenWRT 官方 SDK 编译。  
-          - 采用 UPX 压缩技术大幅缩小二进制体积。  
-          - 标准 IPK、APK 包，支持 opkg、apk 直接安装。  
+          - **IPK:** OpenWrt 24.10 or earlier.
+          - **APK:** OpenWrt 25.12 or later.
+          - Select the package matching your device architecture.
+          - Build date: ${{ env.BUILD_DATE }}. [Upstream changelog](https://tailscale.com/changelog).
 
-          #### Minimalistic Tailscale-AWG build for OpenWRT using the official SDK.  
-          - Compiled with official OpenWRT SDK.  
-          - Significant size reduction via UPX compression.  
-          - Standard IPK, APK packages for direct opkg, apk installation.  
+          Check your architecture:
 
-          #### Architecture Check / 架构查询  
-          Openwrt 24.10 or earlier / 或更早版本：:  
-          \`\`\`bash
-          opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1
-          \`\`\`
-
-          Openwrt 25.12 or later / 或更高版本：:
-          \`\`\`bash
+          \`\`\`sh
+          # OpenWrt 24.10 or earlier
+          opkg print-architecture | awk 'NF==3 && \$3~/^[0-9]+$/ {print \$2}' | tail -1
+          # OpenWrt 25.12 or later
           cat /etc/apk/arch
           \`\`\`
-          ---
-        
-          #### Download Links / 下载清单
-          > [!IMPORTANT]
-          > 请根据设备架构与openwrt版本选择对应的安装包。
-          > OpenWrt 24.10或更早版本请使用 .ipk 包，OpenWrt 25.12或更高版本请使用 .apk 包。
-          >  
-          > Please select the correct package for your device architecture.
-          > Use .ipk for OpenWrt 24.10 or earlier, and .apk for OpenWrt 25.12 or later.
 
           <details open>
-          <summary>Package List / 文件列表</summary>
+          <summary>Packages</summary>
 
           ${full_table}
 
