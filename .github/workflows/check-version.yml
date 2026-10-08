@@ -14,7 +14,7 @@ on:
         options:
           - ghcr
           - tag
-        default: 'ghcr'
+        default: 'tag'
         required: true
 
 env:
@@ -37,7 +37,7 @@ jobs:
       - name: Load check method from .config/check-method
         id: load-method
         run: |
-          # 优先使用 workflow_dispatch 输入，其次读取配置文件，最后默认 ghcr
+          # 优先使用 workflow_dispatch 输入，其次读取配置文件，最后默认 tag
           if [ -n "${{ github.event.inputs.version_check_method }}" ]; then
             method="${{ github.event.inputs.version_check_method }}"
             echo "Using manually provided method: $method"
@@ -45,7 +45,7 @@ jobs:
             method=$(cat .config/check-method | tr -d '[:space:]')
             echo "Using method from .config/check-method: $method"
           else
-            method="ghcr"
+            method="tag"
             echo "Using default method: $method"
           fi
 
@@ -54,6 +54,7 @@ jobs:
 
       - name: Get GHCR stable version
         id: get_ghcr
+        if: steps.load-method.outputs.method == 'ghcr'
         uses: actions/github-script@v6
         env:
           GHCR_TOKEN: ${{ secrets.GHCR_READ_TOKEN }}
@@ -96,30 +97,19 @@ jobs:
             console.log('Upstream latest stable version tag:', versionTag);
             core.setOutput('stable_version', versionTag);
 
-      - name: Get latest tag from release
+      - name: Get latest published fork release
         id: get_tag_release
         uses: actions/github-script@v6
         with:
           script: |
-            const { data: tags } = await github.rest.repos.listTags({
+            const { data } = await github.rest.repos.getLatestRelease({
               owner: 'LiuTangLei',
-              repo: 'tailscale',
-              per_page: 100
+              repo: 'tailscale'
             });
-
-            const stableTags = tags
-              .map(tag => tag.name)
-              .filter(name => /^v\d+\.\d+\.\d+$/.test(name));
-
-            stableTags.sort((a, b) => {
-              const parse = v => v.slice(1).split('.').map(Number);
-              const [a1, a2, a3] = parse(a);
-              const [b1, b2, b3] = parse(b);
-              return b1 - a1 || b2 - a2 || b3 - a3;
-            });
-
-            const latest = stableTags[0] || '';
-            core.setOutput('tag', latest);
+            if (data.draft || data.prerelease || !/^v\d+\.\d+\.\d+$/.test(data.tag_name)) {
+              throw new Error('Expected a published stable fork release');
+            }
+            core.setOutput('tag', data.tag_name);
 
       - name: Get latest release tag from openwrt-tailscale
         id: get_small
@@ -138,37 +128,25 @@ jobs:
 
       - name: Compare versions
         id: compare
+        env:
+          CHECK_METHOD: ${{ steps.load-method.outputs.method }}
+          FORK_VERSION: ${{ steps.get_tag_release.outputs.tag }}
+          GHCR_VERSION: ${{ steps.get_ghcr.outputs.stable_version }}
+          PACKAGE_VERSION: ${{ steps.get_small.outputs.tag }}
         run: |
-          check_method="${{ steps.load-method.outputs.method }}"
-          echo "Using version check method: $check_method"
-          
-          if [ "$check_method" = "ghcr" ]; then
-            echo "GHCR Upstream Version: ${{ steps.get_ghcr.outputs.stable_version }}"
-            echo "Local Version: ${{ steps.get_small.outputs.tag }}"
-            
-            if [ "${{ steps.get_ghcr.outputs.stable_version }}" != "${{ steps.get_small.outputs.tag }}" ]; then
-              echo "New version found in GHCR"
-              echo "should_build=true" >> ${GITHUB_OUTPUT}
-              echo "selected_version=${{ steps.get_ghcr.outputs.stable_version }}" >> ${GITHUB_OUTPUT}
-              echo "check_method=ghcr" >> ${GITHUB_OUTPUT}
-            else
-              echo "No new version found in GHCR"
-              echo "should_build=false" >> ${GITHUB_OUTPUT}
-            fi
-          else
-            echo "Tag Release Version: ${{ steps.get_tag_release.outputs.tag }}"
-            echo "Local Version: ${{ steps.get_small.outputs.tag }}"
-            
-            if [ "${{ steps.get_tag_release.outputs.tag }}" != "${{ steps.get_small.outputs.tag }}" ]; then
-              echo "New version found in tag release"
-              echo "should_build=true" >> ${GITHUB_OUTPUT}
-              echo "selected_version=${{ steps.get_tag_release.outputs.tag }}" >> ${GITHUB_OUTPUT}
-              echo "check_method=tag" >> ${GITHUB_OUTPUT}
-            else
-              echo "No new version found in tag release"
-              echo "should_build=false" >> ${GITHUB_OUTPUT}
+          # Only published fork releases can trigger a package build.
+          # Package rebuild suffixes (-rN) must not trigger a downgrade loop.
+          current_core="${PACKAGE_VERSION%-r*}"
+          should_build=false
+          if [ "$FORK_VERSION" != "$current_core" ]; then
+            if [ "$CHECK_METHOD" != "ghcr" ] || [ "${GHCR_VERSION#v}" = "${FORK_VERSION#v}" ]; then
+              should_build=true
             fi
           fi
+          echo "Fork: $FORK_VERSION; package: $PACKAGE_VERSION; build: $should_build"
+          echo "should_build=$should_build" >> "$GITHUB_OUTPUT"
+          echo "selected_version=$FORK_VERSION" >> "$GITHUB_OUTPUT"
+          echo "check_method=$CHECK_METHOD" >> "$GITHUB_OUTPUT"
 
 
   trigger-build:
@@ -186,48 +164,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Get commit based on selected method
+      - name: Resolve published fork tag to commit
         id: get_commit
+        env:
+          RELEASE_TAG: ${{ needs.version-check.outputs.selected_version }}
         run: |
-          check_method="${{ needs.version-check.outputs.check_method }}"
-          version="${{ needs.version-check.outputs.selected_version }}"
-          echo "Using method: $check_method with version: $version"
-          
-          if [ "$check_method" = "ghcr" ]; then
-            echo "Getting commit from GHCR version ${version}"
-            docker pull ghcr.io/tailscale/tailscale:${version}
-            commit=$(docker run --rm ghcr.io/tailscale/tailscale:${version} tailscale version | grep -oP 'tailscale commit: \K\w+')
-            if [ -n "$commit" ]; then
-              echo "Commit from GHCR: $commit"
-              echo "commit=$commit" >> $GITHUB_OUTPUT
-              echo "version=$version" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          else
-            echo "Getting commit from tag release $version"
-            git ls-remote https://github.com/LiuTangLei/tailscale.git refs/tags/${version} | cut -f1 > tag_commit.txt
-            commit=$(cat tag_commit.txt)
-            if [ -n "$commit" ]; then
-              echo "Commit from tag: $commit"
-              echo "commit=$commit" >> $GITHUB_OUTPUT
-              echo "version=$version" >> $GITHUB_OUTPUT
-              exit 0
-            fi
-          fi
-          
-          echo "Failed to get commit using $check_method method"
-          exit 1
-          
+          git fetch --no-tags https://github.com/LiuTangLei/tailscale.git "refs/tags/$RELEASE_TAG"
+          commit=$(git rev-parse 'FETCH_HEAD^{commit}')
+          echo "commit=$commit" >> "$GITHUB_OUTPUT"
+          echo "version=$RELEASE_TAG" >> "$GITHUB_OUTPUT"
+
       - name: Update Makefile with new version and hash
         id: update_makefile
         run: |
+          set -euo pipefail
           RAW_VER="${{ steps.get_commit.outputs.version }}"
           NEW_VER=$(echo "$RAW_VER" | sed 's/^v//')
           NEW_COMMIT="${{ steps.get_commit.outputs.commit }}"
           
           SOURCE_URL="https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v${NEW_VER}?"
           echo "Downloading from $SOURCE_URL to calculate hash..."
-          NEW_HASH=$(curl -L "$SOURCE_URL" | sha256sum | awk '{print $1}')
+          NEW_HASH=$(curl -fL "$SOURCE_URL" | sha256sum | awk '{print $1}')
           echo "New Hash: $NEW_HASH"
 
           sed -i "s/^PKG_VERSION:=.*/PKG_VERSION:=$NEW_VER/" package/tailscale/Makefile

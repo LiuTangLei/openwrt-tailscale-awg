@@ -18,7 +18,7 @@ env:
   OPENWRT_IPK_SDK: "24.10.4"
   OPENWRT_APK_SDK: "25.12.0"
   SKIP_TARGETS_24: "riscv64_generic" # 25.12 renamed, skip for 24.10
-  SKIP_TARGETS_25: "mips_4kec riscv64_riscv64 riscv64_generic" # skip for 25.12, removed: mips_4kec; renamed: riscv64_riscv64 -> riscv64_generic
+  SKIP_TARGETS_25: "mips_4kec riscv64_riscv64" # skip for 25.12, removed: mips_4kec; renamed: riscv64_riscv64 -> riscv64_generic
 
 jobs:
   prepare:
@@ -306,6 +306,16 @@ jobs:
         env:
           artifacts: "Packages Packages.gz Packages.sig packages.adb tailscaled tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.ipk tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.apk"
         run: |
+          set -euo pipefail
+          artifact_base="bin/packages/${{ matrix.platform }}/base"
+          test -s "$artifact_base/tailscaled"
+          if ! echo "${{ env.SKIP_TARGETS_24 }}" | grep -qw "${{ matrix.platform }}"; then
+            test -s "$artifact_base/tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.ipk"
+          fi
+          if ! echo "${{ env.SKIP_TARGETS_25 }}" | grep -qw "${{ matrix.platform }}"; then
+            test -s "$artifact_base/tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.apk"
+          fi
+
           mkdir -p "${{ env.ARTIFACT_DIR }}/${{ matrix.platform }}"
 
           for pattern in $artifacts; do
@@ -634,7 +644,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
-          name: "Smaller ${{ env.SOFTWARE_NAME }} ${{ env.RELEASE_TAG }}"
+          name: "${{ env.RELEASE_TAG }}"
           body: ${{ steps.generate_release_markdown.outputs.release_body }}
           files: |
             ${{ env.ARTIFACT_DIR }}/**/*.ipk
