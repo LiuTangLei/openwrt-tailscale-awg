@@ -2,7 +2,7 @@
 
 ![Tailscale & OpenWrt](./banner.png)
 
-# [Tailscale-AWG Repository for OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg)
+# [Tailscale-AWG Repository for OpenWrt](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
 **Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ## Repository Setup
@@ -14,19 +14,19 @@ Choose the setup method according to your OpenWrt version.
 **1. Add the public key**
 
 ```sh
-wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub
+wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub
 ```
 
 **2. Add the repository**
 
 ```sh
-echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf
+echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf
 ```
 
 Or manually edit `/etc/opkg/customfeeds.conf` and add the following line (replace `{your device architecture}` with your actual architecture):
 
 ```
-src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}
+src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}
 ```
 
 ### OpenWrt 25.12 or later (APK)
@@ -34,19 +34,19 @@ src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/
 **1. Add the public key**
 
 ```sh
-wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub
+wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub
 ```
 
 **2. Add the repository**
 
 ```sh
-echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
 ```
 
 Or manually edit `/etc/apk/repositories.d/customfeeds.list` and add the following line (replace `{your device architecture}` with your actual architecture):
 
 ```
-https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}/packages.adb
+https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}/packages.adb
 ```
 
 ---

@@ -67,17 +67,17 @@
                         <p>1. Add the repository public key to trusted keys:</p>
                         <div class="code-block">
                             <p>Run the following command on your OpenWrt device:</p>
-                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub</pre>
                             <p>Or manually download the public key file to the <code>/etc/apk/keys/</code> directory on
                                 your OpenWrt device.</p>
                         </div>
                         <p>2. Add the repository to your OpenWrt configuration:</p>
                         <div class="code-block">
                             <p>Run the following command on your OpenWrt device:</p>
-                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <pre>echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
                             <p>Or manually edit the file <code>/etc/apk/repositories.d/customfeeds.list</code> and add
                                 the following line:</p>
-                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}/packages.adb</pre>
+                            <pre>https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}/packages.adb</pre>
                             <p>Replace <code>{your device architecture}</code> with your device architecture. You can
                                 check it using <code>cat /etc/apk/arch</code>.</p>
                         </div>
@@ -107,17 +107,17 @@ apk add tailscale</pre>
                         <p>1. Add the public key for package signature verification:</p>
                         <div class="code-block">
                             <p>Run the following command on your OpenWrt device:</p>
-                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <pre>wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
                             <p>Or manually download the public key file to the <code>/tmp/</code> directory on your
                                 OpenWrt device, and add it using the <code>opkg-key add</code> command.</p>
                         </div>
                         <p>2. Add the repository to your OpenWrt configuration:</p>
                         <div class="code-block">
                             <p>Run the following command on your OpenWrt device:</p>
-                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
                             <p>Or manually edit the file <code>/etc/opkg/customfeeds.conf</code> and add the following
                                 line:</p>
-                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}</pre>
+                            <pre>src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}</pre>
                             <p>Replace <code>{your device architecture}</code> with your device architecture. You can
                                 check it using
                                 <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>.
@@ -234,15 +234,15 @@ opkg install tailscale</pre>
                         <p>1、添加软件源公钥到受信任密钥库：</p>
                         <div class="code-block">
                             <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub</pre>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub</pre>
                             <p>或者手动下载公钥文件到你的OpenWrt设备的 <code>/etc/apk/keys/</code> 目录下。</p>
                         </div>
                         <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
                         <div class="code-block">
                             <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                            <pre>echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <pre>echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
                             <p>或者手动编辑 <code>/etc/apk/repositories.d/customfeeds.list</code> 文件添加以下内容：</p>
-                            <pre>https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}/packages.adb</pre>
+                            <pre>https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}/packages.adb</pre>
                             <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用 <code>cat /etc/apk/arch</code> 查看设备架构。</p>
                         </div>
                     </section>
@@ -271,15 +271,15 @@ apk add tailscale</pre>
                         <p>1、添加用于验证软件包签名的公钥：</p>
                         <div class="code-block">
                             <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                            <pre>wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <pre>wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
                             <p>或者手动下载公钥文件到你的 OpenWrt 设备的 <code>/tmp/</code> 目录下，并使用 <code>opkg-key add</code> 命令添加。</p>
                         </div>
                         <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
                         <div class="code-block">
                             <p>在你的 OpenWrt 设备上执行以下命令：</p>
-                            <pre>echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
                             <p>或者手动编辑 <code>/etc/opkg/customfeeds.conf</code> 文件添加以下内容：</p>
-                            <pre>src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}</pre>
+                            <pre>src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}</pre>
                             <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用
                                 <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>
                                 查看设备架构。

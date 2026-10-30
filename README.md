@@ -2,7 +2,7 @@
 
 ![Tailscale & OpenWrt](./banner.png)
 
-# [适用于 OpenWrt 的 Tailscale-AWG 软件源](https://liutanglei.github.io/openwrt-tailscale-awg)
+# [适用于 OpenWrt 的 Tailscale-AWG 软件源](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
 **Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ## 软件源设置
@@ -14,19 +14,19 @@
 **1. 添加公钥**
 
 ```sh
-wget -O /tmp/key-build.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.pub && opkg-key add /tmp/key-build.pub
+wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub
 ```
 
 **2. 添加软件源**
 
 ```sh
-echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf
+echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf
 ```
 
 或者手动编辑 `/etc/opkg/customfeeds.conf`，添加以下行（请将 `{你的设备架构}` 替换为实际架构）：
 
 ```
-src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}
+src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}
 ```
 
 ### OpenWrt 25.12 或更新版本（APK）
@@ -34,19 +34,19 @@ src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/
 **1. 添加公钥**
 
 ```sh
-wget -O /etc/apk/keys/liutanglei@github.io.pub https://liutanglei.github.io/openwrt-tailscale-awg/key-build.rsa.pub
+wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub
 ```
 
 **2. 添加软件源**
 
 ```sh
-echo "https://liutanglei.github.io/openwrt-tailscale-awg/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
+echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list
 ```
 
 或者手动编辑 `/etc/apk/repositories.d/customfeeds.list`，添加以下行（请将 `{你的设备架构}` 替换为实际架构）：
 
 ```
-https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}/packages.adb
+https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}/packages.adb
 ```
 
 ---
