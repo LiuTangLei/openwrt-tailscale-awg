@@ -18,7 +18,7 @@
 
 * 适用于多种架构的、最新的、更小的 **Tailscale-AWG.ipk** 和 **Tailscale-AWG.apk** 软件包
 * 一键安装脚本，支持 **持久化安装**、**临时安装** Tailscale-AWG 至你的 OpenWrt 24.10 或 OpenWrt 25.12 设备
-* **OPKG 和 APK 软件源**，更简单、更加方便持续更新 ➡️ [ [Smaller Tailscale-AWG Repo](https://liutanglei.github.io/openwrt-tailscale-awg/) ]
+* **OPKG 和 APK 软件源**，更简单、更加方便持续更新 ➡️ [ [Smaller Tailscale-AWG Repo](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) ]
 
 ---
 
@@ -58,7 +58,7 @@ wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com
 
 #### 添加软件源：
 
-详见本项目分支 [软件源分支](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) 或本项目软件源页面 [Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg/)
+详见本项目分支 [软件源分支](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) 或本项目软件源页面 [Smaller Tailscale-AWG Repository For OpenWrt](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
 仅包含受支持的架构的包
 

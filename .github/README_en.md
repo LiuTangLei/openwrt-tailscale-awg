@@ -18,7 +18,7 @@
 
 * The latest and smaller **Tailscale-AWG ipk packages** and **Tailscale-AWG apk packages** for multiple architectures
 * One-click installation scripts supporting **persistent installation** and **temporary installation** on your OpenWrt 24.10 or OpenWrt 25.12 device
-* An **OPKG and APK feed** for easier and continuous updates ➡️ [ [Smaller Tailscale-AWG Repo](https://liutanglei.github.io/openwrt-tailscale-awg/) ]
+* An **OPKG and APK feed** for easier and continuous updates ➡️ [ [Smaller Tailscale-AWG Repo](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) ]
 
 ---
 
@@ -47,7 +47,7 @@ wget -O /usr/sbin/install.sh https://raw.githubusercontent.com/LiuTangLei/openwr
 
 #### Add OPKG/APK Feed
 
-See the [feed branch README](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) or the repository page: [Smaller Tailscale-AWG Repository For OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg/)
+See the [feed branch README](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed) or the repository page: [Smaller Tailscale-AWG Repository For OpenWrt](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
 Only ipk and apk packages for supported architectures are included.
 
