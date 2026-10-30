@@ -4,6 +4,7 @@
 
 # [Tailscale-AWG Repository for OpenWrt](https://liutanglei.github.io/openwrt-tailscale-awg)
 
+**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ## Repository Setup
 
 Choose the setup method according to your OpenWrt version.
@@ -28,7 +29,7 @@ Or manually edit `/etc/opkg/customfeeds.conf` and add the following line (replac
 src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{your device architecture}
 ```
 
-### OpenWrt 25.10 or later (APK)
+### OpenWrt 25.12 or later (APK)
 
 **1. Add the public key**
 
@@ -59,7 +60,7 @@ opkg update
 opkg install tailscale
 ```
 
-### OpenWrt 25.10 or later (APK)
+### OpenWrt 25.12 or later (APK)
 
 ```sh
 apk update

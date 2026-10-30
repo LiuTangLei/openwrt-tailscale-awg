@@ -4,6 +4,7 @@
 
 # [适用于 OpenWrt 的 Tailscale-AWG 软件源](https://liutanglei.github.io/openwrt-tailscale-awg)
 
+**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ## 软件源设置
 
 请根据你的 OpenWrt 版本选择对应的设置方式。
@@ -28,7 +29,7 @@ echo "src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscal
 src/gz openwrt-tailscale-awg https://liutanglei.github.io/openwrt-tailscale-awg/{你的设备架构}
 ```
 
-### OpenWrt 25.10 或更新版本（APK）
+### OpenWrt 25.12 或更新版本（APK）
 
 **1. 添加公钥**
 
@@ -59,7 +60,7 @@ opkg update
 opkg install tailscale
 ```
 
-### OpenWrt 25.10 或更新版本（APK）
+### OpenWrt 25.12 或更新版本（APK）
 
 ```sh
 apk update
