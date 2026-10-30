@@ -418,6 +418,7 @@ jobs:
           # Copy feed template files to the root of the branch
           cp -r feed_template/* ./
           rm -rf feed_template
+          sed -i -E "/Current release:/s@v[0-9]+\.[0-9]+\.[0-9]+@${RELEASE_TAG}@g" README.md README_en.md
 
           # Create .nojekyll to prevent GitHub Pages from ignoring files with underscores
           touch .nojekyll

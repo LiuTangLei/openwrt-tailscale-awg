@@ -4,6 +4,7 @@
 
 # 适用于 OpenWrt 设备的 最新的、更小的 Tailscale-AWG  
 
+**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat-square&color=2196f3)
 ![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FLiuTangLei%2Fopenwrt-tailscale-awg&label=Views&countColor=%23a8d08d&style=flat-square)
 ![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat-square&color=4caf50)
@@ -27,7 +28,7 @@
 > 请在使用前阅读以下内容  
 > **需求说明:**
 >
-> * **存储空间**：小于 8MB (除`mips64` `riscv64` `loongarch64`)；  
+> * **存储空间**：足够安装对应架构软件包的可用空间；
 > * **运行内存**：大约 60MB (运行时)；  
 > * **网络环境**：能够访问 GitHub 或代理镜像站；  
 > 
@@ -35,7 +36,6 @@
 >
 > * 运行内存小于 256MB 的设备可能无法运行，详见[关于内存占用](https://github.com/LiuTangLei/openwrt-tailscale-awg/issues/17)；  
 > * 临时安装高度依赖于网络环境，可靠性较低！建议仅用于无法持久安装的设备；  
-> * 多数设备或架构未经过测试，如果您测试不可用，烦请提出issues,我会尽快与您沟通进行修复；  
 
 #### 一键式命令行脚本：
 
@@ -64,7 +64,7 @@ wget -O /usr/bin/install.sh https://ghfast.top/https://raw.githubusercontent.com
 
 #### 自行安装ipk或apk软件包：
 
-1. 于本项目 [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases) 下载与您设备对应架构的ipk或apk软件包；
+1. 于本项目 [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest) 下载与您设备对应架构的ipk或apk软件包；
 2. 可以于OpenWrt设备后台网页界面 -> 系统 -> 软件包
    -> 上传软件包，选择您下载的软件包进行上传并安装；
 

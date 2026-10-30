@@ -4,6 +4,7 @@
 
 # The Latest, Smaller Tailscale-AWG for OpenWrt Devices
 
+**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
 ![GitHub release](https://img.shields.io/github/v/release/LiuTangLei/openwrt-tailscale-awg?style=flat-square&color=2196f3)
 ![Views](https://api.visitorbadge.io/api/combined?path=https%3A%2F%2Fgithub.com%2FLiuTangLei%2Fopenwrt-tailscale-awg&label=Views&countColor=%23a8d08d&style=flat-square)
 ![Downloads](https://img.shields.io/github/downloads/LiuTangLei/openwrt-tailscale-awg/total?style=flat-square&color=4caf50)
@@ -27,7 +28,7 @@
 > Please read the following before use
 > **Requirements:**
 >
-> * **Storage**: Less than 8MB (except `mips64`, `riscv64`, `loongarch64`)
+> * **Storage**: Enough free space for the package matching your architecture
 > * **RAM**: About 60MB (runtime)
 > * **Network**: Ability to access GitHub
 >
@@ -35,7 +36,6 @@
 >
 > * Devices with less than 256MB RAM may fail to run Tailscale; see [About memory usage](https://github.com/LiuTangLei/openwrt-tailscale-awg/issues/17)
 > * Temporary installation heavily depends on network stability and is less reliable — recommended only for devices where persistent installation is impossible
-> * Most devices/architectures are untested; if you encounter issues, please open an issue and I will respond as soon as possible
 
 #### One-click CLI Installation Script
 
@@ -53,7 +53,7 @@ Only ipk and apk packages for supported architectures are included.
 
 #### Manual ipk/apk Installation
 
-1. Download the ipk or apk package matching your device architecture from [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases)
+1. Download the ipk or apk package matching your device architecture from [Releases](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest)
 2. On your OpenWrt device's web UI, go to System → Software → Upload Package, select the downloaded package, and install it
 
 > [!NOTE]

@@ -7,7 +7,7 @@ SCRIPT_DATE="2025/03/24"
 # Basic Configuration
 REPO="LiuTangLei/openwrt-tailscale-awg"
 REPO_URL="https://github.com/${REPO}"
-TAILSCALE_URL="https://raw.githubusercontent.com/${REPO}/refs/heads/feed"
+TAILSCALE_URL="${TAILSCALE_FEED_URL:-https://raw.githubusercontent.com/${REPO}/refs/heads/feed}"
 TAILSCALE_FILE="" # Set by get_tailscale_info
 PACKAGES_TO_CHECK="libc kmod-tun ca-bundle"
 
