@@ -49,6 +49,9 @@ echo "Using $(/builder/go/bin/go version)"
 
 # build tailscale package
 make package/tailscale/compile -j$(nproc) V=s
+bash /builder/build_scripts/verify_core_binary.sh \
+    "/builder/bin/packages/${TARGET_ARCH}/base/tailscaled" /builder/tailscale/Makefile \
+    "/builder/bin/packages/${TARGET_ARCH}/base/build-info-apk.txt" /builder/go/bin/go /builder/upx/upx
 
 # check package build result (match any -rN, PKG_RELEASE may change)
 SDK_APK=$(ls /builder/bin/packages/${TARGET_ARCH}/base/tailscale-${PKG_VERSION}-r*.apk 2>/dev/null | head -n1)

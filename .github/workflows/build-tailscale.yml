@@ -68,10 +68,10 @@ jobs:
           key: upx-linux-amd64-${{ steps.check_upx.outputs.upx_ver }}
 
       # ----------------- Go -----------------
-      - name: Check Latest Go Version
+      - name: Use Qualified Go Version
         id: check_go
         run: |
-          GO_TAG=$(curl -s https://go.dev/VERSION?m=text | head -1)
+          GO_TAG=go1.27.3
           echo "GO_TAG=$GO_TAG" >> "$GITHUB_ENV"
 
           GO_VER="${GO_TAG#go}"
@@ -304,7 +304,7 @@ jobs:
 
       - name: Collect Build Artifacts
         env:
-          artifacts: "Packages Packages.gz Packages.sig packages.adb tailscaled tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.ipk tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.apk"
+          artifacts: "build-info-ipk.txt build-info-apk.txt Packages Packages.gz Packages.sig packages.adb tailscaled tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.ipk tailscale-${{ steps.get_build_version.outputs.version }}-r${{ steps.get_build_version.outputs.release }}.apk"
         run: |
           set -euo pipefail
           artifact_base="bin/packages/${{ matrix.platform }}/base"

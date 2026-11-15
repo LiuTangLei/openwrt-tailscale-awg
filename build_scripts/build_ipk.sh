@@ -51,6 +51,9 @@ echo "Using $(/builder/go/bin/go version)"
 # build tailscale package
 echo "Building Tailscale IPK package..."
 make package/tailscale/compile -j$(nproc) V=s
+bash /builder/build_scripts/verify_core_binary.sh \
+    "/builder/bin/packages/${TARGET_ARCH}/base/tailscaled" /builder/tailscale/Makefile \
+    "/builder/bin/packages/${TARGET_ARCH}/base/build-info-ipk.txt" /builder/go/bin/go /builder/upx/upx
 
 # check package build result (match any -rN, PKG_RELEASE may change)
 SDK_IPK=$(ls /builder/bin/packages/${TARGET_ARCH}/base/tailscale_${PKG_VERSION}-r*_${TARGET_ARCH}.ipk 2>/dev/null | head -n1)
