@@ -4,7 +4,7 @@
 
 # [适用于 OpenWrt 的 Tailscale-AWG 软件源](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
-**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
+**Current release: [v1.104.6](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.6)**
 ## 软件源设置
 
 请根据你的 OpenWrt 版本选择对应的设置方式。

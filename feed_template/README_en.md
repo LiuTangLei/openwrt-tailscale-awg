@@ -4,7 +4,7 @@
 
 # [Tailscale-AWG Repository for OpenWrt](https://github.com/LiuTangLei/openwrt-tailscale-awg/tree/feed)
 
-**Current release: [v1.104.4](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.4)**
+**Current release: [v1.104.6](https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/tag/v1.104.6)**
 ## Repository Setup
 
 Choose the setup method according to your OpenWrt version.
