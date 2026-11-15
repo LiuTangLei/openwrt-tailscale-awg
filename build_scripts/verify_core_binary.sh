@@ -13,13 +13,18 @@ test -n "$core" && test -n "$version"
 test "$source_version" = "v${version}-r1"
 scratch=$(mktemp -d)
 trap 'rm -rf "$scratch"' EXIT
+inspect_binary="$binary"
 "$go_tool" version -m "$binary" > "$scratch/info" 2>&1 || true
 if ! grep -qF 'github.com/LiuTangLei/quic-go' "$scratch/info"; then
     "$upx_tool" -t "$binary" >/dev/null
     "$upx_tool" -d -o "$scratch/unpacked" "$binary" >/dev/null
+    inspect_binary="$scratch/unpacked"
     "$go_tool" version -m "$scratch/unpacked" > "$scratch/info"
 fi
-for marker in "$core" 'go1.27.3' \
+# -trimpath omits linker flags from Go metadata. Check the linked commit value
+# in the executable itself; keep dependency versions in their Go metadata.
+grep -aqF "$core" "$inspect_binary" || { echo "Embedded core commit mismatch" >&2; exit 1; }
+for marker in 'go1.27.3' \
     'github.com/LiuTangLei/wireguard-go' 'v0.0.35' \
     'github.com/LiuTangLei/quic-go' 'v0.65.0-quic.4' \
     'github.com/LiuTangLei/utls' '7effde6a93dc'; do
