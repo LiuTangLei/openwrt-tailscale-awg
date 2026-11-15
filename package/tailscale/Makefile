@@ -10,25 +10,27 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=tailscale
-PKG_VERSION:=1.104.4
+PKG_VERSION:=1.104.6
 PKG_RELEASE:=1
+PKG_SOURCE_VERSION:=v1.104.6-r1
+PKG_COMMIT:=42e1cdcb7e058f64104aa7f4f42e7b3dda015253
 
-PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION).tar.gz
-PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v$(PKG_VERSION)?
-PKG_HASH:=935a3d1432b21a560a5908b930cf86a34a4ac8c8d13a8911f346fcec282da1f4
+PKG_SOURCE:=$(PKG_NAME)-$(patsubst v%,%,$(PKG_SOURCE_VERSION)).tar.gz
+PKG_SOURCE_URL:=https://codeload.github.com/LiuTangLei/tailscale/tar.gz/$(PKG_SOURCE_VERSION)?
+PKG_HASH:=8062853fe57b7b970e39d965253a9ee6cc753effe2199516dbc1fd32a2b7798e
 
 PKG_MAINTAINER:=LiuTangLei <liu.tang.lei@gmail.com>
 PKG_LICENSE:=BSD-3-Clause
 PKG_LICENSE_FILES:=LICENSE
 PKG_CPE_ID:=cpe:/a:tailscale:tailscale
 
-PKG_BUILD_DIR:=$(BUILD_DIR)/tailscale-$(PKG_VERSION)
+PKG_BUILD_DIR:=$(BUILD_DIR)/tailscale-$(patsubst v%,%,$(PKG_SOURCE_VERSION))
 PKG_BUILD_PARALLEL:=1
 PKG_BUILD_FLAGS:=no-mips16
 
 GO_PKG:=tailscale.com/cmd/tailscaled
 GO_PKG_LDFLAGS:=-s -w -X 'tailscale.com/version.longStamp=$(PKG_VERSION)-$(PKG_RELEASE) (OpenWrt-UPX)'
-GO_PKG_LDFLAGS_X:=tailscale.com/version.shortStamp=$(PKG_VERSION)
+GO_PKG_LDFLAGS_X:=tailscale.com/version.shortStamp=$(PKG_VERSION) tailscale.com/version.gitCommitStamp=$(PKG_COMMIT)
 # Keep Peer Relay and Taildrop available; updates are managed by OpenWrt.
 GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient,ts_omit_clientupdate
 

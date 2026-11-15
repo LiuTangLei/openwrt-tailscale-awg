@@ -145,7 +145,8 @@ jobs:
           fi
           echo "Fork: $FORK_VERSION; package: $PACKAGE_VERSION; build: $should_build"
           echo "should_build=$should_build" >> "$GITHUB_OUTPUT"
-          echo "selected_version=$FORK_VERSION" >> "$GITHUB_OUTPUT"
+          # Platforms keep the numeric release; their core uses an immutable r1 tag.
+          echo "selected_version=${FORK_VERSION}-r1" >> "$GITHUB_OUTPUT"
           echo "check_method=$CHECK_METHOD" >> "$GITHUB_OUTPUT"
 
 
@@ -180,6 +181,7 @@ jobs:
           set -euo pipefail
           RAW_VER="${{ steps.get_commit.outputs.version }}"
           NEW_VER=$(echo "$RAW_VER" | sed 's/^v//')
+          PACKAGE_VER="${NEW_VER%-r1}"
           NEW_COMMIT="${{ steps.get_commit.outputs.commit }}"
           
           SOURCE_URL="https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v${NEW_VER}?"
@@ -187,16 +189,18 @@ jobs:
           NEW_HASH=$(curl -fL "$SOURCE_URL" | sha256sum | awk '{print $1}')
           echo "New Hash: $NEW_HASH"
 
-          sed -i "s/^PKG_VERSION:=.*/PKG_VERSION:=$NEW_VER/" package/tailscale/Makefile
+          sed -i "s/^PKG_VERSION:=.*/PKG_VERSION:=$PACKAGE_VER/" package/tailscale/Makefile
           sed -i "s/^PKG_RELEASE:=.*/PKG_RELEASE:=1/" package/tailscale/Makefile
+          sed -i "s/^PKG_SOURCE_VERSION:=.*/PKG_SOURCE_VERSION:=$RAW_VER/" package/tailscale/Makefile
           sed -i "s/^PKG_HASH:=.*/PKG_HASH:=$NEW_HASH/" package/tailscale/Makefile
           sed -i "s/PKG_COMMIT:=.*/PKG_COMMIT:=$NEW_COMMIT/" package/tailscale/Makefile
+          printf 'UPSTREAM_COMMIT: %s\nVERSION: %s\n' "$NEW_COMMIT" "$RAW_VER" > version
 
       - name: Commit and push changes
         run: |
           git config --local user.name "github-actions[bot]"
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
-          git add package/tailscale/Makefile
+          git add package/tailscale/Makefile version
           git commit -m "chore: update tailscale to ${{ steps.get_commit.outputs.version}} (${{ steps.get_commit.outputs.commit }})" || true
           git push origin main
 
