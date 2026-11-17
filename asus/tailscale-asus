@@ -54,7 +54,7 @@ cleanup() {
     [ -z "$STAGE" ] || rm -rf "$STAGE"
 }
 lock() {
-    [ "$(id -u)" = 0 ] || die "run as root"
+    [ "$(awk '/^Uid:/ {print $3}' /proc/self/status)" = 0 ] || die "run as root"
     [ ! -L "$RUN_DIR" ] && [ ! -L "$HOME_DIR" ] || die "installation directories must not be symlinks"
     mkdir -p "$RUN_DIR" "$HOME_DIR"
     chmod 700 "$RUN_DIR" "$HOME_DIR"

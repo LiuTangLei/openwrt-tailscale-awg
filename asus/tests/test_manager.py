@@ -90,6 +90,10 @@ class ManagerTests(unittest.TestCase):
         sleep = Path('/usr/sbin/sleep')
         sleep.write_text('#!/bin/sh\ncase "$1" in ""|*[!0-9]*) echo "integer sleep required" >&2; exit 1;; esac\nexec /bin/busybox sleep "$@"\n')
         sleep.chmod(0o755)
+        # The stock image also omits the id applet; use /proc for EUID.
+        no_id = Path('/usr/sbin/id')
+        no_id.write_text('#!/bin/sh\necho "id applet unavailable" >&2\nexit 127\n')
+        no_id.chmod(0o755)
         if (RUN / 'daemon.pid').exists():
             command('stop')
         for path in (HOME, RUN, INPUTS, Path('/jffs/scripts'), Path('/opt/etc/init.d')):
