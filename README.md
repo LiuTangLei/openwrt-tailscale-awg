@@ -11,7 +11,7 @@ curl -fsSL https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/ma
 ## 华硕原厂 / 梅林一键安装
 
 ```sh
-curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | sh
+curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | /bin/sh
 ```
 
 自动识别 ARM64 / ARMv7 和固件类型，压缩包保存在 JFFS，程序解压到内存运行。

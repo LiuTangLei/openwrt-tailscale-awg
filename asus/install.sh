@@ -43,7 +43,7 @@ if ! { [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-in
     fi
 fi
 
-sh "$work/tailscale-asus" install --release "$RELEASE" --platform auto
+/bin/sh "$work/tailscale-asus" install --release "$RELEASE" --platform auto
 installed=true
 echo "ASUS Tailscale: installed $RELEASE; login with:"
 echo "  ${TS_ASUS_HOME:-/jffs/addons/tailscale-awg}/tailscale-asus cli up --accept-dns=false --accept-routes=false"

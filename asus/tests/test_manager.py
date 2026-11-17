@@ -130,6 +130,10 @@ esac
             fake_curl.unlink()
 
     def setUp(self):
+        # ASUS also ships a hardware register tool named /usr/sbin/sh.
+        decoy = Path('/usr/sbin/sh')
+        decoy.write_text('#!/bin/sh\necho "vendor memory utility, not a shell" >&2\nexit 0\n')
+        decoy.chmod(0o755)
         # ASUS BusyBox 1.24 is compiled without fractional sleep support.
         sleep = Path('/usr/sbin/sleep')
         sleep.write_text('#!/bin/sh\ncase "$1" in ""|*[!0-9]*) echo "integer sleep required" >&2; exit 1;; esac\nexec /bin/busybox sleep "$@"\n')

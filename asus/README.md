@@ -62,7 +62,7 @@ resizing is performed. `TS_ASUS_HOME` may select persistent USB storage;
 Run over SSH on either stock firmware or Merlin:
 
 ```sh
-curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | sh
+curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | /bin/sh
 ```
 
 The release-pinned installer detects the CPU and firmware, enables Merlin's
