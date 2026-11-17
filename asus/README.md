@@ -63,6 +63,11 @@ GitHub release; SHA256 detects corruption, not compromise of the release account
 For offline installation, transfer the installer, architecture-specific gzip
 and manifest, then use `install --bundle FILE.gz --manifest FILE.gz.manifest`.
 
+If your existing tailnet uses AWG, also import its shared camouflage parameters
+with `cli set --amnezia-wg JSON`. A new device starts with standard WireGuard
+parameters. Keep the new device identity independent; do not copy another
+device's state directory or private keys.
+
 The daemon starts without joining a tailnet or advertising LAN/exit routes.
 Login explicitly, preserving the router's normal DNS and routes:
 
