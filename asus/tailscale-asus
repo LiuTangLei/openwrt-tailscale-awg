@@ -145,9 +145,9 @@ stop_service() {
     local count=0
     if pid_matches worker; then kill -TERM "$PID"; fi
     if pid_matches daemon; then kill -TERM "$PID"; fi
-    while [ "$count" -lt 50 ]; do
+    while [ "$count" -lt 5 ]; do
         if ! pid_matches daemon && ! pid_matches worker; then break; fi
-        sleep 0.1; count=$((count+1))
+        sleep 1; count=$((count+1))
     done
     if pid_matches daemon; then kill -KILL "$PID"; fi
     if pid_matches worker; then kill -KILL "$PID"; fi
@@ -162,6 +162,8 @@ load_tun() {
 }
 start_service() {
     if pid_matches daemon && [ -S "$RUN_DIR/tailscaled.sock" ]; then return 0; fi
+    # A missing RAM socket does not mean the existing daemon has stopped.
+    if pid_matches daemon || pid_matches worker; then stop_service; fi
     local slot bin foreign deadline
     slot=$(pointer current); [ -n "$slot" ] || die "nothing installed"
     bin="$RUN_DIR/instances/$slot"
@@ -195,7 +197,7 @@ start_service() {
             note "ready: $slot (binary/logs/socket in RAM; identity in $HOME_DIR/state)"
             return 0
         fi
-        sleep 0.1 9>&-
+        sleep 1 9>&-
     done
     stop_service
     return 1
@@ -321,6 +323,12 @@ install_release() {
     local old previous free_kb need_kb reclaim=0 destination="$HOME_DIR/releases/$SLOT"
     old=$(pointer current); previous=$(pointer previous)
     for entry in "$HOME_DIR"/releases/.incoming-*; do [ ! -d "$entry" ] || rm -rf "$entry"; done
+    # A power cut after the flash rename but before pending is written can
+    # leave an unreferenced payload. Reclaim only our inactive cache slots.
+    for entry in "$HOME_DIR"/releases/*; do
+        [ -d "$entry" ] || continue
+        case "${entry##*/}" in "$old"|"$previous"|"$SLOT") ;; *) rm -rf "$entry";; esac
+    done
     if [ -d "$destination" ]; then
         [ "$(sha "$destination/manifest")" = "$(sha "$STAGE/manifest")" ] && [ "$(sha "$destination/payload.gz")" = "$ARCHIVE_SHA" ] || die "release already exists with different content"
     else

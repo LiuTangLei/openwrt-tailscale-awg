@@ -86,6 +86,10 @@ def wait_ready():
 
 class ManagerTests(unittest.TestCase):
     def setUp(self):
+        # ASUS BusyBox 1.24 is compiled without fractional sleep support.
+        sleep = Path('/usr/sbin/sleep')
+        sleep.write_text('#!/bin/sh\ncase "$1" in ""|*[!0-9]*) echo "integer sleep required" >&2; exit 1;; esac\nexec /bin/busybox sleep "$@"\n')
+        sleep.chmod(0o755)
         if (RUN / 'daemon.pid').exists():
             command('stop')
         for path in (HOME, RUN, INPUTS, Path('/jffs/scripts'), Path('/opt/etc/init.d')):
@@ -354,6 +358,34 @@ class ManagerTests(unittest.TestCase):
         command('rollback')
         self.assertEqual(current(), 'v1.104.6-arm64')
         self.assertIn('1.104.6', command('cli', 'version'))
+
+    def test_15_missing_socket_restarts_owned_daemon(self):
+        install()
+        old_pid = int((RUN / 'daemon.pid').read_text().split()[0])
+        (RUN / 'tailscaled.sock').unlink()
+        try:
+            command('start')
+            try:
+                still_owned = os.readlink(f'/proc/{old_pid}/exe').startswith(str(RUN))
+            except FileNotFoundError:
+                still_owned = False
+            self.assertFalse(still_owned, 'old daemon must stop before recreating the socket')
+        finally:
+            try:
+                if os.readlink(f'/proc/{old_pid}/exe').startswith(str(RUN)):
+                    os.kill(old_pid, signal.SIGTERM)
+            except FileNotFoundError:
+                pass
+
+    def test_16_orphan_slot_after_interrupted_flash_copy(self):
+        install()
+        marker = HOME / 'state/test-identity'; marker.write_text('keep')
+        orphan = HOME / 'releases/v1.104.9-arm64'
+        shutil.copytree(HOME / 'releases' / current(), orphan)
+        install(make_bundle('v1.104.8'))
+        self.assertFalse(orphan.exists())
+        self.assertEqual(current(), 'v1.104.8-arm64')
+        self.assertEqual(marker.read_text(), 'keep')
 
 
 if __name__ == '__main__':
