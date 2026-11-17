@@ -62,15 +62,25 @@ resizing is performed. `TS_ASUS_HOME` may select persistent USB storage;
 Run over SSH on either stock firmware or Merlin:
 
 ```sh
-curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | /bin/sh
+curl -fsSL https://gh-proxy.org/https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | /bin/sh
 ```
 
 The release-pinned installer detects the CPU and firmware, enables Merlin's
 JFFS scripts when necessary, and downloads the matching compressed payload.
+It tries the upstream mirror services `gh-proxy.org`, `ghfast.top`, then GitHub
+directly. Scripts and manifests are checked against pinned SHA256 values;
+payload checksums remain mandatory. Invalid mirror pages and partial downloads
+are rejected before changing the active installation.
 Stock firmware still needs one of the startup hooks listed above; firmware
 flashing and JFFS resizing are not automated. Existing hooks and node identity
 are preserved. An installation failure restores a previously disabled Merlin
 script setting.
+
+On an interactive SSH terminal it then opens a Chinese management menu for
+login/Headscale, AWG/QUIC configuration, restart, logs, updates, rollback and
+uninstall. Run the same command again to reopen it: an identical installed
+version skips the payload download and retains the running daemon. Add
+`--no-menu` when invoking the downloaded installer in automation.
 
 ## Install a particular release
 

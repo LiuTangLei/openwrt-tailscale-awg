@@ -9,9 +9,11 @@ import gzip
 import hashlib
 import json
 import os
+import pty
 from pathlib import Path
 import shutil
 import signal
+import select
 import subprocess
 import tempfile
 import time
@@ -51,6 +53,7 @@ def make_bundle(release='v1.104.7', binary=None, **changes):
         archive.write_bytes(gzip.compress(binary, mtime=0))
     data = dict(format='1', release=release, version='1.104.7', arch='arm64',
                 core=CORE, core_tag='v1.104.7', quic='v0.65.0-quic.4',
+                go='go1.27.4', build_tags='ts_include_cli,ts_omit_clientupdate,ts_omit_flashappliance',
                 sha256=sha(archive), binary_sha256=hashlib.sha256(raw).hexdigest(),
                 binary_bytes=str(len(raw)), manager_sha256=sha(MANAGER))
     data.update(changes)
@@ -85,8 +88,11 @@ def wait_ready():
 
 
 class ManagerTests(unittest.TestCase):
-    def bootstrap(self, merlin=False, corrupt=False, expected=0):
+    def bootstrap(self, merlin=False, corrupt=False, expected=0, mode='', preinstalled=False, terminal=False):
+        if preinstalled:
+            install()
         archive, manifest = make_bundle()
+        (INPUTS / 'mirror-mode').write_text(mode)
         if corrupt:
             with archive.open('ab') as output:
                 output.write(b'corrupt')
@@ -114,7 +120,16 @@ while [ "$#" -gt 0 ]; do
  *) shift;;
  esac
 done
+printf '%s\\n' "$url" >> /tmp/inputs/downloads.log
+mode=$(cat /tmp/inputs/mirror-mode)
+case "$mode:$url" in
+html-first:https://gh-proxy.org/*) echo '<html>mirror unavailable</html>' > "$output"; exit 0;;
+partial-first:https://gh-proxy.org/*) echo partial > "$output"; exit 28;;
+failed:*) exit 28;;
+no-payload:*.gz) exit 99;;
+esac
 case "$url" in
+*/install-asus.sh) cp /repo/asus/install.sh "$output";;
 */tailscale-asus) cp /repo/asus/tailscale-asus "$output";;
 *.gz.manifest) cp ''' + str(manifest) + ''' "$output";;
 *.gz) cp ''' + str(archive) + ''' "$output";;
@@ -123,9 +138,35 @@ esac
 ''')
         fake_curl.chmod(0o755)
         try:
+            if terminal:
+                pid, fd = pty.fork()
+                if pid == 0:
+                    os.execve(SHELL, [SHELL, str(REPO / 'asus/install.sh')], ENV)
+                output = b''
+                try:
+                    os.write(fd, b'1\n6\n0\n')
+                    deadline = time.monotonic() + 60
+                    while time.monotonic() < deadline:
+                        ready, _, _ = select.select([fd], [], [], 1)
+                        if ready:
+                            try:
+                                chunk = os.read(fd, 65536)
+                            except OSError:
+                                break
+                            if not chunk: break
+                            output += chunk
+                    else:
+                        os.kill(pid, signal.SIGKILL)
+                        self.fail('interactive menu did not exit')
+                    _, status = os.waitpid(pid, 0)
+                    self.assertTrue(os.WIFEXITED(status) and os.WEXITSTATUS(status) == expected, output.decode(errors='replace'))
+                    return output.decode(errors='replace')
+                finally:
+                    os.close(fd)
             result = subprocess.run([SHELL], input=(REPO / 'asus/install.sh').read_text(),
                                     env=ENV, capture_output=True, text=True, timeout=60)
             self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+            return result.stdout + result.stderr
         finally:
             fake_curl.unlink()
 
@@ -487,6 +528,47 @@ esac
         self.bootstrap(merlin=True, corrupt=True, expected=1)
         self.assertEqual((INPUTS / 'scripts-enabled').read_text().strip(), '0')
         self.assertFalse((HOME / 'current').exists())
+
+    def test_21_mirror_html_is_rejected_and_next_source_used(self):
+        output = self.bootstrap(mode='html-first')
+        self.assertIn('invalid or stale mirror metadata', output)
+        self.assertIn('https://ghfast.top', output)
+        self.assertIn('running', command('status'))
+
+    def test_22_partial_download_falls_back(self):
+        output = self.bootstrap(mode='partial-first')
+        self.assertIn('https://ghfast.top', output)
+        self.assertIn('running', command('status'))
+
+    def test_23_repeated_install_keeps_pid_and_skips_payload(self):
+        install()
+        pid = (RUN / 'daemon.pid').read_text()
+        output = self.bootstrap(mode='no-payload')
+        self.assertIn('already installed', output)
+        self.assertEqual(pid, (RUN / 'daemon.pid').read_text())
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        self.assertFalse(any(url.endswith('.gz') for url in urls))
+
+    def test_24_failed_mirrors_preserve_running_service(self):
+        install()
+        pid = (RUN / 'daemon.pid').read_text()
+        self.bootstrap(mode='failed', expected=1)
+        self.assertEqual(pid, (RUN / 'daemon.pid').read_text())
+        self.assertIn('running', command('status'))
+
+    def test_25_menu_status_update_and_exit(self):
+        output = self.bootstrap(mode='no-payload', preinstalled=True, terminal=True)
+        self.assertIn('华硕 Tailscale AWG / QUIC', output)
+        self.assertIn('already installed', output)
+        self.assertEqual(output.count('华硕 Tailscale AWG / QUIC'), 3)
+        self.assertIn('running', command('status'))
+
+    def test_26_reopen_respects_disabled_merlin_boot_scripts(self):
+        install(platform='merlin')
+        pid = (RUN / 'daemon.pid').read_text()
+        self.bootstrap(merlin=True, mode='no-payload')
+        self.assertEqual((INPUTS / 'scripts-enabled').read_text().strip(), '0')
+        self.assertEqual((RUN / 'daemon.pid').read_text(), pid)
 
 
 if __name__ == '__main__':

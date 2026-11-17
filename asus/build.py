@@ -35,6 +35,8 @@ def main():
         p.error("use the application version tag: v1.104.7")
     if f"\nRELEASE={args.release}\n" not in (ROOT / "install.sh").read_text():
         p.error("bootstrap installer must pin the requested release")
+    if f"\nMANAGER_SHA256={digest(ROOT / 'tailscale-asus')}\n" not in (ROOT / "install.sh").read_text():
+        p.error("bootstrap checksum must match the reviewed manager")
     source = args.source.resolve()
     if run(["git", "rev-parse", "HEAD"], cwd=source) != CORE:
         p.error("source must be the qualified v1.104.7 commit")
@@ -75,7 +77,10 @@ def main():
                     go="go1.27.4", build_tags=TAGS, sha256=digest(archive),
                     binary_sha256=digest(binary), binary_bytes=binary.stat().st_size,
                     manager_sha256=digest(ROOT / "tailscale-asus"))
-    archive.with_suffix(".gz.manifest").write_text("".join(f"{k}={v}\n" for k, v in manifest.items()))
+    manifest_path = archive.with_suffix(".gz.manifest")
+    manifest_path.write_text("".join(f"{k}={v}\n" for k, v in manifest.items()))
+    if f"\nMANIFEST_{args.arch.upper()}_SHA256={digest(manifest_path)}\n" not in (ROOT / "install.sh").read_text():
+        raise SystemExit("update the bootstrap's manifest checksum for this architecture")
     print(f"{args.arch}: binary={binary.stat().st_size} gzip={archive.stat().st_size} bytes")
 
 
