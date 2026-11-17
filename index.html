@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Smaller Tailscale-AWG for OpenWrt</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Optimized Tailscale-AWG repository for OpenWrt. Features smaller IPK and next-gen APK packages with UPX compression. Supports all architectures including x86_64, aarch64, and mips. Securely signed and ready for opkg/apk integration.">
+    <meta name="keywords" content="OpenWrt, Tailscale, APK, IPK, OpenWrt 25.12, OpenWrt 24.10, 
+    Tailscale APK, Tailscale IPK, Tailscale Repository, OpenWrt Software Feed, 
+    smaller packages, optimized tailscale, upx compression, VPN for OpenWrt, 
+    tailscale for openwrt, install tailscale on openwrt,
+    Tailscale 官方源, OpenWrt 安装 Tailscale, 轻量版 Tailscale, 
+    tailscale-openwrt, custom tailscale repo, opkg, apk index,
+    latest tailscale, 最新 的 tailscale">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="container">
+        <header>
+                <h1><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg" target="_blank">Smaller Tailscale-AWG Repository For
+                    OpenWrt</a></h1>
+            <button id="toggle-theme" onclick="toggleTheme()">🌙</button>
+            <div class="tab-buttons">
+                <button id="btn-usage" onclick="showSection('usage')">Usage</button>
+                <button id="btn-usage-chinese" onclick="showSection('usage-chinese')">用法</button>
+                <button id="btn-packages" onclick="showSection('packages')">Packages</button>
+                <button id="btn-security-statement" onclick="showSection('security-statement')">Security Statement
+                    安全声明</button>
+            </div>
+        </header>
+
+        <main>
+            <section id="usage">
+                <div class="notice">
+                    <p>
+                    <h3>Note:</h3> These are smaller Tailscale packages for OpenWrt, specifically designed to reduce
+                    storage usage while maintaining essential functionality. </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Optimizations:</p>
+                    <ul>
+                        <li>Combined <code>tailscale</code> and <code>tailscaled</code> into a single binary.</li>
+                        <li>Built with a series of build tags (<a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli, ts_omit_...</a>) to significantly reduce binary size.
+                        </li>
+                        <li>UPX compression applied to binaries (except for mips64, riscv64, loongarch64 architectures)
+                            to further reduce storage usage.</li>
+                    </ul>
+                </div>
+
+                <div class="version-toggle-container">
+                    <span>Select your OpenWrt Version:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.12+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 or older
+                            (OPKG)</button>
+                    </div>
+                </div>
+
+                <section id="v25usage">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the repository public key to trusted keys:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub</pre>
+                            <p>Or manually download the public key file to the <code>/etc/apk/keys/</code> directory on
+                                your OpenWrt device.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>Or manually edit the file <code>/etc/apk/repositories.d/customfeeds.list</code> and add
+                                the following line:</p>
+                            <pre>https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}/packages.adb</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using <code>cat /etc/apk/arch</code>.</p>
+                        </div>
+                    </section>
+
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="v24usage" style="display:none;">
+                    <h2>Repository Setup</h2>
+                    <section class="part">
+                        <p>1. Add the public key for package signature verification:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>Or manually download the public key file to the <code>/tmp/</code> directory on your
+                                OpenWrt device, and add it using the <code>opkg-key add</code> command.</p>
+                        </div>
+                        <p>2. Add the repository to your OpenWrt configuration:</p>
+                        <div class="code-block">
+                            <p>Run the following command on your OpenWrt device:</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>Or manually edit the file <code>/etc/opkg/customfeeds.conf</code> and add the following
+                                line:</p>
+                            <pre>src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{your device architecture}</pre>
+                            <p>Replace <code>{your device architecture}</code> with your device architecture. You can
+                                check it using
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>.
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>Installation Methods</h2>
+                    <section class="part">
+                        <p>Choose your preferred method to install Tailscale on OpenWrt:</p>
+                        <div class="method">
+                            <h4>Command Line:</h4>
+                            <pre>opkg update
+opkg install tailscale</pre>
+                            <h4>Web UI:</h4>
+                            <ol>
+                                <li>Navigate to <strong>System → Software ;</strong></li>
+                                <li>Click <em>Update lists</em> to refresh packages ;</li>
+                                <li>Search for "tailscale" ;</li>
+                                <li>Install the main package and any desired utilities ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <h2>Web UI (LuCI)</h2>
+                <section class="part">
+                    <p>For a graphical interface to manage Tailscale, we recommend installing the LuCI app which
+                        build
+                        by <a href="https://github.com/Tokisaki-Galaxy" target="_blank">@Tokisaki-Galaxy</a> and
+                        open
+                        source on GitHub: <a href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
+                    <p>This provides an easy-to-use web interface to configure and manage Tailscale directly from
+                        OpenWrt's LuCI dashboard.</p>
+                </section>
+
+                <h2>Post-Installation Steps</h2>
+                <section class="part">
+                    <p>After installation, you need to configure Tailscale to connect your device to the Tailscale
+                        network.</p>
+                    <p>Run the following command to start Tailscale and configure it:</p>
+                    <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                    <p>If you're using OpenWrt == 22.03 you will also need to specify
+                        <code>--netfilter-mode=off</code>.
+                        For versions 23+ do NOT include netfilter-mode.
+                    </p>
+
+                    <div class="tips">
+                        <h3>Tips:</h3>
+                        <ul>
+                            <li>Consider adding <code>--hostname=your-router-name</code> for easier identification.
+                            </li>
+                        </ul>
+                    </div>
+                </section>
+
+                <h2>About using</h2>
+                <section class="part">
+                    <h3>About Out Of Memory</h3>
+                    <p>If you encounter any of the following situations: </p>
+                    <ul>
+                        <li>Your device has limited RAM, and during usage, Tailscale consumes an excessive
+                            amount of
+                            memory;</li>
+                        <li>Or Tailscale is killed and restarted by the OOM Killer;</li>
+                        <li>Or you’re not sure why Tailscale keeps restarting unexpectedly;</li>
+                    </ul>
+                    <p>Then you may try trading higher CPU usage for lower memory usage. Here's how:</p>
+                    <ol>
+                        <li>Edit the <code>/etc/init.d/tailscale</code> file:</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>Locate the following line:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>Append <code>GOGC=10</code> to the end of that line so it becomes:</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>This will make Tailscale more aggressive in memory garbage collection.</p>
+                    </ol>
+                </section>
+            </section>
+
+            <section id="usage-chinese">
+                <div class="notice">
+                    <p>
+                    <h3>Note:</h3> 这是为 OpenWrt 精简定制的 Tailscale 软件包，旨在在保持核心功能的同时，尽可能降低存储占用。 </p>
+                    <p>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;优化内容：</p>
+                    <ul>
+                        <li>将 <code>tailscale</code> 和 <code>tailscaled</code> 合并为一个单一的可执行文件。</li>
+                        <li>使用一系列编译参数
+                            <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/package/tailscale/Makefile#L33"
+                                target="_blank">ts_include_cli,ts_omit_...</a>
+                            以显著减小二进制文件体积。
+                        </li>
+                        <li>使用 UPX 对二进制文件进行压缩（mips64、riscv64、loongarch64 架构除外），进一步降低存储占用。</li>
+                    </ul>
+                </div>
+
+                <div class="version-toggle-container">
+                    <span>选择你的 OpenWrt 版本:</span>
+                    <div class="version-buttons">
+                        <button class="v-btn active" data-version="v25" onclick="switchVersion('v25')">OpenWrt 25.12+
+                            (APK)</button>
+                        <button class="v-btn" data-version="v24" onclick="switchVersion('v24')">OpenWrt 24.10 或更早
+                            (OPKG)</button>
+                    </div>
+                </div>
+
+                <section id="v25usage-zh">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加软件源公钥到受信任密钥库：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /etc/apk/keys/liutanglei@github.io.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.rsa.pub</pre>
+                            <p>或者手动下载公钥文件到你的OpenWrt设备的 <code>/etc/apk/keys/</code> 目录下。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(cat /etc/apk/arch)/packages.adb" >> /etc/apk/repositories.d/customfeeds.list</pre>
+                            <p>或者手动编辑 <code>/etc/apk/repositories.d/customfeeds.list</code> 文件添加以下内容：</p>
+                            <pre>https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}/packages.adb</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用 <code>cat /etc/apk/arch</code> 查看设备架构。</p>
+                        </div>
+                    </section>
+
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>apk update
+apk add tailscale</pre>
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <section id="v24usage-zh" style="display:none;">
+                    <h2>软件源设置</h2>
+                    <section class="part">
+                        <p>1、添加用于验证软件包签名的公钥：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>wget -O /tmp/key-build.pub https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/key-build.pub && opkg-key add /tmp/key-build.pub</pre>
+                            <p>或者手动下载公钥文件到你的 OpenWrt 设备的 <code>/tmp/</code> 目录下，并使用 <code>opkg-key add</code> 命令添加。</p>
+                        </div>
+                        <p>2、将软件源添加到你的 OpenWrt 配置中：</p>
+                        <div class="code-block">
+                            <p>在你的 OpenWrt 设备上执行以下命令：</p>
+                            <pre>echo "src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/$(opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1)" >> /etc/opkg/customfeeds.conf</pre>
+                            <p>或者手动编辑 <code>/etc/opkg/customfeeds.conf</code> 文件添加以下内容：</p>
+                            <pre>src/gz openwrt-tailscale-awg https://raw.githubusercontent.com/LiuTangLei/openwrt-tailscale-awg/feed/{你的设备架构}</pre>
+                            <p>请注意替换 <code>{你的设备架构}</code> 为你的设备架构，可使用
+                                <code>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</code>
+                                查看设备架构。
+                            </p>
+                        </div>
+                    </section>
+
+                    <h2>安装方式</h2>
+                    <section class="part">
+                        <p>请选择你喜欢的方式安装 Tailscale：</p>
+                        <div class="method">
+                            <h4>命令行方式：</h4>
+                            <pre>opkg update
+opkg install tailscale</pre>
+                        </div>
+                        <div class="method">
+                            <h4>Web 界面方式：</h4>
+                            <ol>
+                                <li>打开 <strong>系统 → 软件包（System → Software）;</strong></li>
+                                <li>点击 <em>更新列表（Update lists）</em> 以刷新软件包;</li>
+                                <li>搜索 "tailscale" ;</li>
+                                <li>安装主软件包及其他你需要的工具组件 ;</li>
+                            </ol>
+                        </div>
+                    </section>
+                </section>
+
+                <h2>Web UI (LuCI)</h2>
+                <section class="part">
+                    <p>为了获得图形界面来管理 Tailscale，我们建议安装由 <a href="https://github.com/Tokisaki-Galaxy"
+                            target="_blank">@Tokisaki-Galaxy</a> 开发并在 GitHub 上开源的 LuCI 应用：<a
+                            href="https://github.com/Tokisaki-Galaxy/luci-app-tailscale-community"
+                            target="_blank">luci-app-tailscale-community</a></p>
+                    <p>这提供了一个易于使用的 Web 界面，可以直接从 OpenWrt 的 LuCI 仪表板配置和管理 Tailscale。</p>
+                </section>
+                <h2>安装后步骤</h2>
+                <section class="part">
+                    <p>安装完成后，需要配置 Tailscale 以将设备接入 Tailscale 网络。</p>
+                    <p>执行以下命令：</p>
+                    <pre>tailscale up \
+    --accept-dns=false \
+    --advertise-routes=10.0.0.0/24 \
+    --advertise-exit-node</pre>
+                    <p>如果你的OpenWrt版本为22.03，你还需要添加 <code>--netfilter-mode=off</code> 参数， 对于 OpenWrt 23+ 则不应该包含该参数 </p>
+
+                    <div class="tips">
+                        <h3>Tips:</h3>
+                        <ul>
+                            <li>建议添加 <code>--hostname=your-router-name</code> 参数，以便在 Tailscale 网络中更容易识别该设备。</li>
+                        </ul>
+                    </div>
+                </section>
+
+                <h2>关于使用</h2>
+                <section class="part">
+                    <h3>关于内存溢出</h3>
+                    <p>如果你遇到以下情况： </p>
+                    <ul>
+                        <li>设备运行内存有限，在使用过程中出现tailscale占用极高运行内存;</li>
+                        <li>或直接致使tailscale被OOM KILLER杀死并重启;</li>
+                        <li>或你不清楚什么原因导致tailscale异常重启;</li>
+                    </ul>
+                    <p>则，你可以尝试以更高的CPU占用换取较低的内存占用，操作如下：</p>
+                    <ol>
+                        <li>修改 <code>/etc/init.d/tailscale</code> 文件</li>
+                        <pre>vi /etc/init.d/tailscale</pre>
+                        <li>找到以下一行：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode"</pre>
+                        <li>在该行后方加上参数 <code>GOGC=10</code>，使其变为：</li>
+                        <pre>procd_set_param env TS_DEBUG_FIREWALL_MODE="$fw_mode" GOGC=10</pre>
+                        <p>该参数将使 Tailscale 更积极地回收内存。</p>
+                    </ol>
+                </section>
+            </section>
+
+            <section id="security-statement">
+
+                <h1 style="text-align: center;">Feed Security Statement</h1>
+
+                <section class="part">
+                    <p>All .ipk packages in this feed are built automatically via GitHub Actions. The entire process is
+                        open-source, auditable, and reproducible.</p>
+                        <p>Repository: <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
+
+                    <h3>Trustworthiness</h3>
+                    <ul>
+                        <li>Source code is based on <a href="https://github.com/LiuTangLei/tailscale"
+                            target="_blank">LiuTangLei/tailscale</a>, which itself is based on the official Tailscale repository and adds Amnezia WireGuard support.
+                        </li>
+                        <li>Only compiler flags are added, and <a href="https://upx.github.io/" target="_blank">UPX</a>
+                            is optionally used on most architectures to reduce package size.</li>
+                        <li>All build scripts, workflows, compiler flags, and logs are fully public in the repository's
+                            <code>.github/workflows</code> and <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                history</a>.
+                        </li>
+                        <li>No manual uploads, no dynamic backend — all artifacts are generated automatically by CI and
+                            served statically via <a href="https://pages.github.com/" target="_blank">GitHub Pages</a>.
+                        </li>
+                    </ul>
+
+                    <h3>Recommended Verification Steps</h3>
+                    <ul>
+                        <li>Review the repository code and check <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                scripts and build logs</a></li>
+                        <li>Reproduce the build locally following the instructions in README to verify reproducibility
+                        </li>
+                        <li>Verify SHA256 checksums or other signatures (if provided) after downloading</li>
+                    </ul>
+
+                    <h3>Disclaimer</h3>
+                    <p>This feed is provided <a href="https://en.wikipedia.org/wiki/As_is" target="_blank">as-is</a>,
+                        without any warranties, express or implied. Users are solely responsible for reviewing the
+                        source code and build process before use.</p>
+                    <p>For maximum security, prefer official sources or trusted feeds, and keep the repository watched
+                        for updates.</p>
+                </section>
+
+                <!-- <hr> -->
+
+                <h1 style="text-align: center;">软件源安全声明</h1>
+
+                <section class="part">
+                    <p>本 feed 中的所有 .ipk 软件包通过 GitHub Actions 自动化构建，过程完全开源、可审计、可复现。</p>
+                        <p>仓库地址：<a href="https://github.com/LiuTangLei/openwrt-tailscale-awg"
+                            target="_blank">https://github.com/LiuTangLei/openwrt-tailscale-awg</a></p>
+
+                    <h3>可信性</h3>
+                    <ul>
+                        <li>源代码基于 <a href="https://github.com/LiuTangLei/tailscale" target="_blank">LiuTangLei/tailscale</a>，其本身基于 Tailscale 官方源码并加入了 Amnezia WireGuard 支持。</li>
+                        <li>仅添加编译参数，并在大部分架构上使用 <a href="https://upx.github.io/" target="_blank">UPX</a> 进行压缩以减小包体积。</li>
+                        <li>构建脚本、工作流、编译参数、日志全部公开，位于仓库的 <code>.github/workflows</code> 和 <a
+                                href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions" target="_blank">Actions
+                                历史</a> 中。</li>
+                        <li>无人工上传、无动态后端，所有产物由 CI 自动生成并部署到 <a href="https://pages.github.com/" target="_blank">GitHub
+                                Pages</a>。</li>
+                    </ul>
+
+                    <h3>用户验证建议</h3>
+                    <ul>
+                        <li>审查仓库代码，查看 <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/actions"
+                                target="_blank">Actions 脚本与构建日志</a></li>
+                        <li>按照 README 中的说明自行构建，以验证可复现性</li>
+                        <li>下载后校验 SHA256 或其他签名（如有提供）</li>
+                    </ul>
+
+                    <h3>免责声明</h3>
+                    <p>本 feed <a href="https://zh.wikipedia.org/wiki/%E6%8C%89%E5%8E%9F%E6%A0%B7%E6%8F%90%E4%BE%9B"
+                            target="_blank">按原样</a>提供，不附带任何明示或暗示的担保。使用前请自行审查源代码与构建过程，并自行承担风险。</p>
+                    <p>建议始终保持关注仓库更新，并优先从官方或可信渠道获取软件包。</p>
+                </section>
+            </section>
+
+            <section id="packages" style="display: none;">
+                <section class="important">
+                    <p>Please select the correct package for your device architecture.</p>
+                    <p>To check your device architecture on your openwrt 24.10 or earlier device, run</p>
+                    <pre>opkg print-architecture | awk 'NF==3 && $3~/^[0-9]+$/ {print $2}' | tail -1</pre>
+                    <p>To check your device architecture on your openwrt 25.12 or later device, run</p>
+                    <pre>cat /etc/apk/arch</pre>
+                    <p>Use <code>.ipk</code> for OpenWrt 24.10 or earlier, and <code>.apk</code> for OpenWrt 25.12 or later.</p>
+                </section>
+                <!-- arch-section-anchor -->
+<details class="arch-section"><summary>📂 aarch64_cortex-a53</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="aarch64_cortex-a53/Packages">Packages</a></td><td class="size-cell">755 B</td><td class="sha256-cell">921f2814744ed93048042e7e0f753d57cc8f37ce0fef6509957212672c05da17</td></tr><tr><td><a href="aarch64_cortex-a53/Packages.gz">Packages.gz</a></td><td class="size-cell">484 B</td><td class="sha256-cell">0a97df7b41289a23703dbcce9dfcd5db82538746c4c2e63e885efa46abe5cd41</td></tr><tr><td><a href="aarch64_cortex-a53/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">2818dd72b82700918dd3a6150e9ac5f078a0f3103cec248454cf487e8c09c169</td></tr><tr><td><a href="aarch64_cortex-a53/packages.adb">packages.adb</a></td><td class="size-cell">868 B</td><td class="sha256-cell">4f1347bfd678803c27f0b2701f6a3822baae3726e07a8002a46b3239f97dc0f8</td></tr><tr><td><a href="aarch64_cortex-a53/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7811258 B</td><td class="sha256-cell">781a936681d31fc886237553dfe4176bb2ed0cdbdee1a76b9c4dd889d0ddaf92</td></tr><tr><td><a href="aarch64_cortex-a53/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7806735 B</td><td class="sha256-cell">90b093e8f85679f441b0aeb7338e7dc32fc0c3bf458d0f49dd6946b599842138</td></tr><tr><td><a href="aarch64_cortex-a53/tailscaled">tailscaled</a></td><td class="size-cell">7806744 B</td><td class="sha256-cell">4d1904bd0e5351eb783b21364d26586b90ab8888d95a53c8edf6ec56827eb2e9</td></tr></tbody></table></details><details class="arch-section"><summary>📂 aarch64_cortex-a72</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="aarch64_cortex-a72/Packages">Packages</a></td><td class="size-cell">755 B</td><td class="sha256-cell">be42354c8e995931fd247a32ec7c7554c34e472a5d3667d4208ef97774eca90f</td></tr><tr><td><a href="aarch64_cortex-a72/Packages.gz">Packages.gz</a></td><td class="size-cell">483 B</td><td class="sha256-cell">99b987289349d33668c8c61791f5e11a643758ec6de24add0f9fd5be0b938443</td></tr><tr><td><a href="aarch64_cortex-a72/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">4260b960bd78913b4ad6ffe72cd16d27532539fb93b70c9b9016e42a24d51845</td></tr><tr><td><a href="aarch64_cortex-a72/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">298927d0d92dd9633aa3acc08bfdbcc9e7685a641ab99311abd4e2ffe1024ea3</td></tr><tr><td><a href="aarch64_cortex-a72/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7803794 B</td><td class="sha256-cell">a95e17842fe0fb4d5cfaa0cca37c34b9dc5d603613e80c9e40831ad10c4464b8</td></tr><tr><td><a href="aarch64_cortex-a72/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7807073 B</td><td class="sha256-cell">a52ced38dad3f96f74a369b6e86c784f05457f216e7e1bb17b15a6bc0793b3c4</td></tr><tr><td><a href="aarch64_cortex-a72/tailscaled">tailscaled</a></td><td class="size-cell">7799184 B</td><td class="sha256-cell">1db3f2267b3eaffc09b8986c866c8c6e719fdc626d337997e65f2f61887521c9</td></tr></tbody></table></details><details class="arch-section"><summary>📂 aarch64_cortex-a76</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="aarch64_cortex-a76/Packages">Packages</a></td><td class="size-cell">755 B</td><td class="sha256-cell">073f98b1272b202b915d48c419ebbf6f57d882840b9fdb324baf3f6c713b1eca</td></tr><tr><td><a href="aarch64_cortex-a76/Packages.gz">Packages.gz</a></td><td class="size-cell">482 B</td><td class="sha256-cell">6ca41a7e5ed8560b61bad187a5e4fb65e57a985d1433d9c96577b77852341fe4</td></tr><tr><td><a href="aarch64_cortex-a76/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">b98933a42f441393c356fc4d1ada5667c59756c1355bdc605971110f1d446bcd</td></tr><tr><td><a href="aarch64_cortex-a76/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">1aaf56a0103f46800eabe54fd39e15cbe3f2a1552d5327aecabb0a898fcfb40d</td></tr><tr><td><a href="aarch64_cortex-a76/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7760192 B</td><td class="sha256-cell">af707575b9530abf0d51357bf3a304a02840d33ec791efb4a93e3134ca1d900d</td></tr><tr><td><a href="aarch64_cortex-a76/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7807070 B</td><td class="sha256-cell">584d72c19e02c02e8d6b579e3c1a72241abedef6142da7e9fa51469f8ae9e794</td></tr><tr><td><a href="aarch64_cortex-a76/tailscaled">tailscaled</a></td><td class="size-cell">7755572 B</td><td class="sha256-cell">e83f07f0406b029fe5bd849b309a6eb7863b05e356476511271f1d10f29d844c</td></tr></tbody></table></details><details class="arch-section"><summary>📂 aarch64_generic</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="aarch64_generic/Packages">Packages</a></td><td class="size-cell">752 B</td><td class="sha256-cell">e2065102b9fca5ca85dc5652d6cf9d129552d17e2cc1c92533b723894c6cca47</td></tr><tr><td><a href="aarch64_generic/Packages.gz">Packages.gz</a></td><td class="size-cell">478 B</td><td class="sha256-cell">64dd574d0db93a6449d2a45e050bbd967510bd5ad86e3df4270cc68ee8c18de3</td></tr><tr><td><a href="aarch64_generic/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">fe51845ec43dc95e9162e64e7af9ffa3a36e45e4abcb97a25bfbe5513dd6099f</td></tr><tr><td><a href="aarch64_generic/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">535b0c5274b75b8f8de69579eb444cb2f131ab970c76a1f6c8e9cc99a86fce2c</td></tr><tr><td><a href="aarch64_generic/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7809034 B</td><td class="sha256-cell">f9fbc0fa0b3ea8f3db8b85a66e7dc12d631ddc3c3e20c4761ec03d05252e1f8f</td></tr><tr><td><a href="aarch64_generic/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7807070 B</td><td class="sha256-cell">fcf7a4420948a15e97a3fe9dc32fa9d0b0ca8f5347fea67cb08f17da1bab7ada</td></tr><tr><td><a href="aarch64_generic/tailscaled">tailscaled</a></td><td class="size-cell">7804400 B</td><td class="sha256-cell">3f515511dad3ffe84b0ff70dc13e75d5d22a2327ce329ae4801f69d5bd1a819b</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_arm1176jzf-s_vfp</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_arm1176jzf-s_vfp/Packages">Packages</a></td><td class="size-cell">757 B</td><td class="sha256-cell">0796e8526546cc9a96a88bb5a9721df85aaa56a4b460c8b2428388d158953c63</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/Packages.gz">Packages.gz</a></td><td class="size-cell">488 B</td><td class="sha256-cell">60ee843bd4b114b90fb41801ee66d67627fc52cd2db282664ae1e59c65d9e8b1</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">af3be8a4b72214491e102367e42e3170e9113dc8965a00e0254a5cbf3fd25414</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/packages.adb">packages.adb</a></td><td class="size-cell">873 B</td><td class="sha256-cell">0e08b0054276412331a7ea9948ed3d0a806ee57c3406d0efd76ddc50946ef2ce</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7792237 B</td><td class="sha256-cell">7f36f99db81ddc1d6c912626d9e45808d221db1df13d41486448d6854bde0082</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7792553 B</td><td class="sha256-cell">756d5f73f494a7006fe420abc0c76e6878c59ca70baa347d3240853965512db6</td></tr><tr><td><a href="arm_arm1176jzf-s_vfp/tailscaled">tailscaled</a></td><td class="size-cell">7788216 B</td><td class="sha256-cell">073b7f763e299162aefbd0fd82ef7c677096aa03406038c06cd3f9a0de58d15a</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_arm926ej-s</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_arm926ej-s/Packages">Packages</a></td><td class="size-cell">751 B</td><td class="sha256-cell">65ac15f97a12736802bc3d84da5db231277b2689e29139f29b61283e526a26ba</td></tr><tr><td><a href="arm_arm926ej-s/Packages.gz">Packages.gz</a></td><td class="size-cell">483 B</td><td class="sha256-cell">b2988403b7fd55f25ad51239c2d59a29560c09a5766004824859c8467177e24d</td></tr><tr><td><a href="arm_arm926ej-s/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">88b4a083d48b869c8d9e98e11e8af79257fd2630202720f3ed275e65f7bb4577</td></tr><tr><td><a href="arm_arm926ej-s/packages.adb">packages.adb</a></td><td class="size-cell">867 B</td><td class="sha256-cell">44e7806ac0be7c15a0098eed6d8ec2c6cb0162830d8ab78eac9a78183862bbc6</td></tr><tr><td><a href="arm_arm926ej-s/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7798193 B</td><td class="sha256-cell">20a15a5b7408a6b6aa7988c088dbb0308709f4a7da38a0431bc9c5a574c346c9</td></tr><tr><td><a href="arm_arm926ej-s/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7798615 B</td><td class="sha256-cell">49ecfd420141b4faf69f9b180bdfb3359250f40fd699ac632dcddfceb47d8d0a</td></tr><tr><td><a href="arm_arm926ej-s/tailscaled">tailscaled</a></td><td class="size-cell">7794316 B</td><td class="sha256-cell">271391a82d52ea1b9945747a842391eb20aece8353725b8f443c6c463ae83ce7</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a15_neon-vfpv4</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a15_neon-vfpv4/Packages">Packages</a></td><td class="size-cell">762 B</td><td class="sha256-cell">b9509a1e9abe4161fed6895caa6c67edad3b579b1e5ae8413fc8cb3466bb8147</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/Packages.gz">Packages.gz</a></td><td class="size-cell">489 B</td><td class="sha256-cell">631fce47c88e16e741cd05962d381af713659c9ba8cf628799d5801fcf53e870</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">de46e25a351b9d99aedf0c654885c3d9a71af1efde2b6d43ff7fb479f95f6732</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/packages.adb">packages.adb</a></td><td class="size-cell">878 B</td><td class="sha256-cell">2dd80b2ad63c69dd8015bab5f514bce527b98e9cde1fa3ccfbf923639d38c654</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7781209 B</td><td class="sha256-cell">9aca5adeb0aafd6450f6ec0a23323d92a338f420846eded70eb67d6bb7e0e3c2</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7783130 B</td><td class="sha256-cell">f8984cb40257dbed387e3faaedd4c069e5c669deae3278ff3f9ad2fc7b73706b</td></tr><tr><td><a href="arm_cortex-a15_neon-vfpv4/tailscaled">tailscaled</a></td><td class="size-cell">7777352 B</td><td class="sha256-cell">5f62bf5cbc63c073aabb81a37efd20e5208aafc2061661399c17eada8f6aa422</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a5_vfpv4</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a5_vfpv4/Packages">Packages</a></td><td class="size-cell">756 B</td><td class="sha256-cell">9313bffcf10a3ff2508a53f42e6fae41a02efbbad40435a3ca246fa041487bce</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/Packages.gz">Packages.gz</a></td><td class="size-cell">485 B</td><td class="sha256-cell">8de5f6b985c4aae95560d106701d3544bb839408823fd5e1cb5d574a0a83a317</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">af10f9dfdd89973ba2cb28c4c056ff7d587cec127bd6f34e6dda748c20b00e62</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">b3ddf8bf8336ba86f2e8467b3f17ae252716ca4a039a95ef47748e3b6af6f175</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7782390 B</td><td class="sha256-cell">f5e8503fe9d1c4fd6255d6b0bdee3fbf4e9d966660761ccf78e77cf0dca9ac4d</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7782585 B</td><td class="sha256-cell">b443a7c7eb8010d09edc3e9aa8160bb8a8b244f34b35296401bd3faa7fe70e58</td></tr><tr><td><a href="arm_cortex-a5_vfpv4/tailscaled">tailscaled</a></td><td class="size-cell">7778492 B</td><td class="sha256-cell">d358d8ab7e1247b75a4f96780f4e0af421d7553deea469d71331259eb407b013</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a7</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a7/Packages">Packages</a></td><td class="size-cell">750 B</td><td class="sha256-cell">208902d5c16a2f20679279b5d09b65d4897fd63326c793cd6d7883c973a09624</td></tr><tr><td><a href="arm_cortex-a7/Packages.gz">Packages.gz</a></td><td class="size-cell">479 B</td><td class="sha256-cell">6d24be3a696902e9e81725687b1637b0a80b165bc2ba057098dd210b8df48ba9</td></tr><tr><td><a href="arm_cortex-a7/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">d0070a21bf69836616fcf2548dcb2036592769d29e76cb0c011df5e8ef5c49ab</td></tr><tr><td><a href="arm_cortex-a7/packages.adb">packages.adb</a></td><td class="size-cell">865 B</td><td class="sha256-cell">25c4e924823690241ab6fe390457617f28afbba16a868e3f12a33632a637000a</td></tr><tr><td><a href="arm_cortex-a7/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7796947 B</td><td class="sha256-cell">7c249c50f9eeda883a4715657577196b3afe07b7cf84a90beb27e6e9e9573abd</td></tr><tr><td><a href="arm_cortex-a7/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7796755 B</td><td class="sha256-cell">ea541ea0bdd7c031ace99697de334ec49cb3075fe410aff77edca7f553d08e74</td></tr><tr><td><a href="arm_cortex-a7/tailscaled">tailscaled</a></td><td class="size-cell">7793100 B</td><td class="sha256-cell">fd773775f4bb29d9641ef23c8c1e9bb0de84dcb7cb4a0e9e7ed7dc177bbc23ba</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a7_neon-vfpv4</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a7_neon-vfpv4/Packages">Packages</a></td><td class="size-cell">761 B</td><td class="sha256-cell">888cf8f830f96099175285aeaa85748ed9970fcd3980ea0a772842cad862b2da</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/Packages.gz">Packages.gz</a></td><td class="size-cell">489 B</td><td class="sha256-cell">799e57d36bd9ed2402a289f11ae014e403c3f7a8da1aab257613d92b120e6e8d</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">63bad3cb0cfbed1077a481721700b7d912c375237e078280c55b78459b2488cf</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/packages.adb">packages.adb</a></td><td class="size-cell">875 B</td><td class="sha256-cell">b6e01ca4b3c997ad5e2f3a722ee380b2546fc721d3bb53e53c5cceaeae99c136</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7783123 B</td><td class="sha256-cell">b2a120c6a4b62cbf22748a0c4e6c7eab67dc732e986415938c935f3fe210862b</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7783008 B</td><td class="sha256-cell">009b48da142443840560f5951a51447876174f6ae48323905effaa69deee9fc1</td></tr><tr><td><a href="arm_cortex-a7_neon-vfpv4/tailscaled">tailscaled</a></td><td class="size-cell">7779208 B</td><td class="sha256-cell">f504ec907bc37cd0423433c69fad51d2e55faaa7cb0f0c5e1c077281e9407f03</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a7_vfpv4</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a7_vfpv4/Packages">Packages</a></td><td class="size-cell">756 B</td><td class="sha256-cell">374eb740fe0f8855164040187639ee97c28c868fc5e86407cb447a4bd716d39a</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/Packages.gz">Packages.gz</a></td><td class="size-cell">485 B</td><td class="sha256-cell">f69c3d453f0576b5a6778e223a4633fbbdd8295f257f0eba08cbf5f03d5492ff</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">61308c080ff7598a62c7100499a39132ee5b8fb62068eef57adc35992a10a1f3</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/packages.adb">packages.adb</a></td><td class="size-cell">870 B</td><td class="sha256-cell">77c2e87fb3838f5a2b24d7d27e30f824822bda7a119c3f3e2097767a51c54935</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7782667 B</td><td class="sha256-cell">4b9bf05f5b1151719fc1ade339932528bd45cda1578cafe2aba318122c4229b1</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7782822 B</td><td class="sha256-cell">1193fa0acf9b55312d9441dabd483a4c8d68bb9692d25d17fd842c4e1979de4b</td></tr><tr><td><a href="arm_cortex-a7_vfpv4/tailscaled">tailscaled</a></td><td class="size-cell">7778764 B</td><td class="sha256-cell">d884ce676a4b68d8f6118cd122b3ab6a7abc4fc2c5d4ba39035bc3ef50aa271d</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a8_vfpv3</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a8_vfpv3/Packages">Packages</a></td><td class="size-cell">756 B</td><td class="sha256-cell">a442a8becaff3d755c940bcb43c73f5b43974c876ac28814f599dd56bd45e8a2</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/Packages.gz">Packages.gz</a></td><td class="size-cell">485 B</td><td class="sha256-cell">922f2ba163b0356d7786a155b2bf608222d66964cdc049e4345ee838003c48a0</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">dd27fc917eb0caa13280ccfde8df8b792a0311d4f8c406440593dda20c6f060d</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">26c0e428e8505c570593393af7f9a073b6854464fe36fab8f45569f7540242b9</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7781554 B</td><td class="sha256-cell">f491d69238f487afee993541fdd32a0f660d95cd9d47e37395f6a81e88209e4b</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7782384 B</td><td class="sha256-cell">b8956c4878c4f0f4825e716cd57c74195a451a51867e249fcd6b1b0da07c564e</td></tr><tr><td><a href="arm_cortex-a8_vfpv3/tailscaled">tailscaled</a></td><td class="size-cell">7777680 B</td><td class="sha256-cell">805d3dffb7392b0f538d0ba0b62842e6d47272e65398a1eeb3e0ddd7ba8c6caf</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a9</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a9/Packages">Packages</a></td><td class="size-cell">750 B</td><td class="sha256-cell">652ff1dc3f3b673fc4755a3cca39542122ce5c52e69f92172a5197c243ccf1ba</td></tr><tr><td><a href="arm_cortex-a9/Packages.gz">Packages.gz</a></td><td class="size-cell">482 B</td><td class="sha256-cell">f578641ab9b60a2fa0280e2090be7a90348960ebee7302a7f896f321ab69cc7d</td></tr><tr><td><a href="arm_cortex-a9/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">fdebf2bb872f8a275a2dd9acc9cf671dd12a1bcc22dd3be6bb4d42e325cca529</td></tr><tr><td><a href="arm_cortex-a9/packages.adb">packages.adb</a></td><td class="size-cell">867 B</td><td class="sha256-cell">84b59878b8440816be07fbfa1c6c3c3de695f786fff7d51a9dbd9b751f961140</td></tr><tr><td><a href="arm_cortex-a9/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7797046 B</td><td class="sha256-cell">650ffff812c01c0959be4f1c4bf092265e79ceca2fe75ec60e97c8a2355f3c98</td></tr><tr><td><a href="arm_cortex-a9/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7796429 B</td><td class="sha256-cell">1d2b14f8692f5c0350ca22e5cf4881dfe913932948e40f9a5169d1c3f78f81a4</td></tr><tr><td><a href="arm_cortex-a9/tailscaled">tailscaled</a></td><td class="size-cell">7793204 B</td><td class="sha256-cell">9e9ba7888628dcf65eb70c7479595a61af32927992cd635ff83a2687a962ea2c</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a9_neon</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a9_neon/Packages">Packages</a></td><td class="size-cell">755 B</td><td class="sha256-cell">ed0a34f2abca1184273843c2dce014ecaf5b45b37fc1a63028de37e615258547</td></tr><tr><td><a href="arm_cortex-a9_neon/Packages.gz">Packages.gz</a></td><td class="size-cell">481 B</td><td class="sha256-cell">192541527808e66cd03603983e4d1d6ce8429e7bbe24a9afd5b45099b48b9680</td></tr><tr><td><a href="arm_cortex-a9_neon/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">f1105dc65b16fe6b213e84014d02a85f622e0a8642906201ff0b40498c630f35</td></tr><tr><td><a href="arm_cortex-a9_neon/packages.adb">packages.adb</a></td><td class="size-cell">870 B</td><td class="sha256-cell">e8d09073f0ee37a726c64d4cad4e28a4b1022d6fcc86eb0694a7d2efe5763038</td></tr><tr><td><a href="arm_cortex-a9_neon/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7782094 B</td><td class="sha256-cell">cce7a1b7b37bb84f62e8750254cd10f31a253b01b2f99db9d0190433c1362eaa</td></tr><tr><td><a href="arm_cortex-a9_neon/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7782054 B</td><td class="sha256-cell">faf7b671a4a676ad5ca180de9cbd1adbfdddc2a3204d7daf7a1abda6877a50ff</td></tr><tr><td><a href="arm_cortex-a9_neon/tailscaled">tailscaled</a></td><td class="size-cell">7778220 B</td><td class="sha256-cell">ea4eebeb5a56adb0a26444cc9e2b03cec48439771cd25466b2a462c2f28d1409</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_cortex-a9_vfpv3-d16</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_cortex-a9_vfpv3-d16/Packages">Packages</a></td><td class="size-cell">760 B</td><td class="sha256-cell">4c3d6dafa61bc339496ceea3e0140ee433777ad1ec01929ed8375c905acadd4c</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/Packages.gz">Packages.gz</a></td><td class="size-cell">490 B</td><td class="sha256-cell">0459fa8455aa1ea40c8926743d83de43af5c01ae5038b0c411e28a6c7256cc9c</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">4705ce3afbca59cf07ad899fead7e23509d162e1c155c44d1affe33c40f0d075</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/packages.adb">packages.adb</a></td><td class="size-cell">875 B</td><td class="sha256-cell">1cd086327947b407be231ec2597416e13ef6042c1e5ba4534a135ecd8320c2f6</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7782151 B</td><td class="sha256-cell">f4aa912f8325497b1a5166b4e90686f685fbfece538be5c490601ca6896caf53</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7782211 B</td><td class="sha256-cell">8eb2731f04f13f86bd6e7ebec3218fb3bc00d1cc0984415c23882dff5149d705</td></tr><tr><td><a href="arm_cortex-a9_vfpv3-d16/tailscaled">tailscaled</a></td><td class="size-cell">7778260 B</td><td class="sha256-cell">f7f04f59b7af8082603514661655a1c34d85745f37996da8ad90074f98b42fd3</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_fa526</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_fa526/Packages">Packages</a></td><td class="size-cell">746 B</td><td class="sha256-cell">7ebf3b20644798e39462179ceca418162109e8e8554b130c6ce120bebb9fa0f1</td></tr><tr><td><a href="arm_fa526/Packages.gz">Packages.gz</a></td><td class="size-cell">478 B</td><td class="sha256-cell">6c89464435030a8548136262396fc1f8e29d6a6046f51467ab9a3f786eb59eb6</td></tr><tr><td><a href="arm_fa526/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">e101e3714270277fdad6443fe06aca6166e2c80f9286dc966b6f86e760a1a9df</td></tr><tr><td><a href="arm_fa526/packages.adb">packages.adb</a></td><td class="size-cell">859 B</td><td class="sha256-cell">046bd42b33f73c337570d8755a8b2a05cd50bc3c10d86ba73c6052df8aec7442</td></tr><tr><td><a href="arm_fa526/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7797608 B</td><td class="sha256-cell">01e2424d408cc27b9dddda8831a3765a8638790b28a7236a589ccf6f621352c5</td></tr><tr><td><a href="arm_fa526/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7797049 B</td><td class="sha256-cell">85aac2ed3de73dc98017a11677d584e3c90e9bdab55451ec8b41d14fe5460d08</td></tr><tr><td><a href="arm_fa526/tailscaled">tailscaled</a></td><td class="size-cell">7793760 B</td><td class="sha256-cell">f6a44c0f23b9f41c387ee5337bd57a167146580c6bf25ee5cc3e25d5bfb93be4</td></tr></tbody></table></details><details class="arch-section"><summary>📂 arm_xscale</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="arm_xscale/Packages">Packages</a></td><td class="size-cell">747 B</td><td class="sha256-cell">f05c40a2f032b4eddee28f69abba8ad7f2132c0153db2d9a212f3c805b011bca</td></tr><tr><td><a href="arm_xscale/Packages.gz">Packages.gz</a></td><td class="size-cell">475 B</td><td class="sha256-cell">dffe69e78631caf817ac70b957227054c04cd7018394137ebaf1face28eed02a</td></tr><tr><td><a href="arm_xscale/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">61943f107fb8866d9a574eda54fdae55db0283c5ead2ca553830f472be7a2df0</td></tr><tr><td><a href="arm_xscale/packages.adb">packages.adb</a></td><td class="size-cell">860 B</td><td class="sha256-cell">7be18de57a931ef5074504b47e6e46cbaf0ce23b60cfc5f389289b8570adf2d8</td></tr><tr><td><a href="arm_xscale/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7797938 B</td><td class="sha256-cell">182014567f4640faee73e898e0acc981f3b9b7383ce77d18ace3f307b9655bf3</td></tr><tr><td><a href="arm_xscale/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7797209 B</td><td class="sha256-cell">46c479724e0be0a669f519f2dba802274194aedaf140725fb0bfbcdd8ba39e61</td></tr><tr><td><a href="arm_xscale/tailscaled">tailscaled</a></td><td class="size-cell">7794076 B</td><td class="sha256-cell">a977b8a07302678e3d80017ceba8b3299e55ac985d9d3a3da5ffab6b5f60273e</td></tr></tbody></table></details><details class="arch-section"><summary>📂 i386_pentium-mmx</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="i386_pentium-mmx/Packages">Packages</a></td><td class="size-cell">753 B</td><td class="sha256-cell">32ed51335202a72eabd75ebcbe63116cac7d8dd67a0bac16559d293a8c3d664b</td></tr><tr><td><a href="i386_pentium-mmx/Packages.gz">Packages.gz</a></td><td class="size-cell">483 B</td><td class="sha256-cell">2c25af4a226b8e7cf3e094c056122dd7fcc40a1d7f3aa9429540a6461941f710</td></tr><tr><td><a href="i386_pentium-mmx/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">8c0d6afb569ae41cf4aef9ea7aac210dda7f40012772ecc0b87ced27c9cd4f3c</td></tr><tr><td><a href="i386_pentium-mmx/packages.adb">packages.adb</a></td><td class="size-cell">859 B</td><td class="sha256-cell">af169a8f9dd05bc98f16e450b939675fb4487c589ad4d6155babff3c9072b7e1</td></tr><tr><td><a href="i386_pentium-mmx/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">8867942 B</td><td class="sha256-cell">2f00bf8a9c30d4347d1bbb2a0c5d27d83e00eb3170caeb33b3eb257adb13e4e9</td></tr><tr><td><a href="i386_pentium-mmx/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">8867922 B</td><td class="sha256-cell">9d25d20c49377d90bcd7942e53c88982e0ae11618a7076d4b1998b363597b9db</td></tr><tr><td><a href="i386_pentium-mmx/tailscaled">tailscaled</a></td><td class="size-cell">8863016 B</td><td class="sha256-cell">49b34c4e08a072fce544dfc2bf8fc90d86fc04517f00ba081da84b923db37647</td></tr></tbody></table></details><details class="arch-section"><summary>📂 i386_pentium4</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="i386_pentium4/Packages">Packages</a></td><td class="size-cell">750 B</td><td class="sha256-cell">3054a264599f6d8e085752a2dc4c8a819b89d283cd56ab1b5ab1ca06a6ec0d6c</td></tr><tr><td><a href="i386_pentium4/Packages.gz">Packages.gz</a></td><td class="size-cell">476 B</td><td class="sha256-cell">de67056fdb30563b8e16efb44655525ac5571b74fc13582e628708e267fbb8fc</td></tr><tr><td><a href="i386_pentium4/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">a74cdc847ae30abdcd548b44f154fd7282561da255277bcd64b75b84ddcf6a2b</td></tr><tr><td><a href="i386_pentium4/packages.adb">packages.adb</a></td><td class="size-cell">866 B</td><td class="sha256-cell">9e4ab4bf1a558f124a49bbafa5d2f55c2ee4bc29914d37ca0e6e5fad70f6dff2</td></tr><tr><td><a href="i386_pentium4/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">8860731 B</td><td class="sha256-cell">f782d154aa287a6f5add46a33d3b47d01682f9c83737b439b2945caec5da7ce5</td></tr><tr><td><a href="i386_pentium4/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">8860686 B</td><td class="sha256-cell">5e2e020a2835fd40287e0a213fd1101e63a4beb14fedb24e7ef8f30d054407aa</td></tr><tr><td><a href="i386_pentium4/tailscaled">tailscaled</a></td><td class="size-cell">8855876 B</td><td class="sha256-cell">281fdac6ced9054e53fdcbd5ec18a64ad78b6b7ef9036265f2c1d2957d6bcebb</td></tr></tbody></table></details><details class="arch-section"><summary>📂 loongarch64_generic</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="loongarch64_generic/Packages">Packages</a></td><td class="size-cell">758 B</td><td class="sha256-cell">d01662c1243fefc7880a1aad38bc7ed4413ba91bc15374d5dc7aa9a3791017ed</td></tr><tr><td><a href="loongarch64_generic/Packages.gz">Packages.gz</a></td><td class="size-cell">484 B</td><td class="sha256-cell">639ae9aed53e59769d385ad588a72af7af08b722d5300a4d0e0708351509281d</td></tr><tr><td><a href="loongarch64_generic/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">c6c7b1fd3dc1d996c8b5c8a71e9689ec532aae3a4e6e4c719e9ad89ebfec4c95</td></tr><tr><td><a href="loongarch64_generic/packages.adb">packages.adb</a></td><td class="size-cell">871 B</td><td class="sha256-cell">68431a321de1f710e949b9f06791103d0a227e9ac5bfd512e2765884a268dcfd</td></tr><tr><td><a href="loongarch64_generic/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">12197549 B</td><td class="sha256-cell">82a40e30019a7136836f0658c2ad666f0a40de9fdc020d61ffd54f58dad6fa86</td></tr><tr><td><a href="loongarch64_generic/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">12240937 B</td><td class="sha256-cell">4dd5de23ffba0d49173aaa270dcf7f1a0905c41cf56828ff489ae3d6a5259049</td></tr><tr><td><a href="loongarch64_generic/tailscaled">tailscaled</a></td><td class="size-cell">32919328 B</td><td class="sha256-cell">bbfce9a035969178872ccc1b4f7063d9754f28e67f748f91bd89c802e8cc8046</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips64_mips64r2</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips64_mips64r2/Packages">Packages</a></td><td class="size-cell">754 B</td><td class="sha256-cell">7066dbd8bc0353e323d60ff8136ca8d728dd57027e055199b19f323d0a3bc439</td></tr><tr><td><a href="mips64_mips64r2/Packages.gz">Packages.gz</a></td><td class="size-cell">481 B</td><td class="sha256-cell">a1f524743fb472e1f6ae25c11e2ea206e7884e0ffddd55f0dfde31781683b566</td></tr><tr><td><a href="mips64_mips64r2/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">34c0ad64fb2cd55603c45dabaa5012d5e5ddd6533109ed7dccb0fdfb70be56b2</td></tr><tr><td><a href="mips64_mips64r2/packages.adb">packages.adb</a></td><td class="size-cell">863 B</td><td class="sha256-cell">364b9fbf6349a5889bf9a9d4f09ed5134500f687a57b0a6c384362d224f3bc44</td></tr><tr><td><a href="mips64_mips64r2/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">11224887 B</td><td class="sha256-cell">1772ab38157f419d1bf16528402cc90ca0ed82abdd9913bfbd687d7c2d96db68</td></tr><tr><td><a href="mips64_mips64r2/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">11484616 B</td><td class="sha256-cell">4ddb02fca9e8381024023ae9e545a3cb19526a9df55629d425dc8a4e62b580d0</td></tr><tr><td><a href="mips64_mips64r2/tailscaled">tailscaled</a></td><td class="size-cell">36674952 B</td><td class="sha256-cell">763b1cfab2c107d27b63a67149c078ebb5cf5a6646e131aca54940dea4774ca0</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips64_octeonplus</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips64_octeonplus/Packages">Packages</a></td><td class="size-cell">756 B</td><td class="sha256-cell">5bbf2b4a6943fd1af346dc152be17dee1dfbc81f140c00d6bd76984621180de6</td></tr><tr><td><a href="mips64_octeonplus/Packages.gz">Packages.gz</a></td><td class="size-cell">486 B</td><td class="sha256-cell">f32867a6ffe32b024c288115e35c21e1306d8e83aa29f18f955afd25e0edc031</td></tr><tr><td><a href="mips64_octeonplus/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">03defb0d111073a0bf6afd5d9a7ec0b923745be324ec31327a0f43e40aa58bc6</td></tr><tr><td><a href="mips64_octeonplus/packages.adb">packages.adb</a></td><td class="size-cell">870 B</td><td class="sha256-cell">03852d8b5b26e97d58fe08b3ac90df93a238a59fc3ddfe17cde2131ead6b949e</td></tr><tr><td><a href="mips64_octeonplus/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">11224694 B</td><td class="sha256-cell">5e7c7c46faabcb22756c760bfd488d3f38d842c134cddec346c7b4e6dcd7ddc3</td></tr><tr><td><a href="mips64_octeonplus/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">11485746 B</td><td class="sha256-cell">0bf65dc5262076442b2b98389e9fedf1cede67f8a8cc269ea47f459db03c1214</td></tr><tr><td><a href="mips64_octeonplus/tailscaled">tailscaled</a></td><td class="size-cell">36674952 B</td><td class="sha256-cell">d9fef0adcfa1549b8f7d1927bdd26c649fb0e39916b0956101936b6b9e974c72</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips64el_mips64r2</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips64el_mips64r2/Packages">Packages</a></td><td class="size-cell">756 B</td><td class="sha256-cell">abd17c3fb0a0549a829c103c91260c268b3c8def1b5b5859cbed2429187d34ef</td></tr><tr><td><a href="mips64el_mips64r2/Packages.gz">Packages.gz</a></td><td class="size-cell">483 B</td><td class="sha256-cell">a667c0b2084534ee715325347123dff8fd69a9193dbc6fe43d2571b04a043edb</td></tr><tr><td><a href="mips64el_mips64r2/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">537084c91b678dcebfdb740aa32c722ef258a7a6941de7b69c4e99c8ac36c143</td></tr><tr><td><a href="mips64el_mips64r2/packages.adb">packages.adb</a></td><td class="size-cell">866 B</td><td class="sha256-cell">6a765bcaa40c5a5bce1534c31e9cd52f775efd6a5ec59b0fed853509ec9cd89d</td></tr><tr><td><a href="mips64el_mips64r2/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">11125810 B</td><td class="sha256-cell">3a74f2128aca623c0d2b901513161374f1f3f5516fa0972411ffce0bf3866ed5</td></tr><tr><td><a href="mips64el_mips64r2/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">11248256 B</td><td class="sha256-cell">273071fbc5d2e9ccf89b2aec4bbcf084fb1026db75e04d9fc4017a78a3f0d7c8</td></tr><tr><td><a href="mips64el_mips64r2/tailscaled">tailscaled</a></td><td class="size-cell">36674952 B</td><td class="sha256-cell">c530245e17807b254b18c7ede4f0bf47e122a65e420f73f704a27afe21b33de8</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips_24kc</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips_24kc/Packages">Packages</a></td><td class="size-cell">746 B</td><td class="sha256-cell">b2f03cc79b7f1d0935b082b983a0bbb75970ee867dc26919a9e24a621166fc65</td></tr><tr><td><a href="mips_24kc/Packages.gz">Packages.gz</a></td><td class="size-cell">476 B</td><td class="sha256-cell">51c1eb8317aa229395bf0b7045941ac5e900d72c6dd453fec05263a34074d00f</td></tr><tr><td><a href="mips_24kc/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">33b736563d810ce962b9964862237ea1e93f7e7216cd431411b57f7afc6c7523</td></tr><tr><td><a href="mips_24kc/packages.adb">packages.adb</a></td><td class="size-cell">860 B</td><td class="sha256-cell">a7de7efc4d6fa455db140393f742c0569da6802c5e54511a8cc4f60e4aec4054</td></tr><tr><td><a href="mips_24kc/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7433297 B</td><td class="sha256-cell">0f07a6c3cf203b2dd0d1212554d55665b1e566661cfceb510b041e63ef3d790a</td></tr><tr><td><a href="mips_24kc/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7433371 B</td><td class="sha256-cell">9b7db08ed399597ee0db32a3cf9d35914f5efee4f8ed84b185ab77bdc191c17f</td></tr><tr><td><a href="mips_24kc/tailscaled">tailscaled</a></td><td class="size-cell">7428816 B</td><td class="sha256-cell">971b1f7258627c2f3f300534c55e5814aa5a44e33329b928d8f8f40eb0eb500e</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips_4kec</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips_4kec/Packages">Packages</a></td><td class="size-cell">746 B</td><td class="sha256-cell">da6d4474064787888cd84febb23b7822e3db873bee81dd64ed54c4f43e871629</td></tr><tr><td><a href="mips_4kec/Packages.gz">Packages.gz</a></td><td class="size-cell">476 B</td><td class="sha256-cell">089d82eaf4460d0f385e196bc8030d07ec1a5c0abe826cec33e86e5113493d7f</td></tr><tr><td><a href="mips_4kec/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">2a1ebe514f5c0eb016616195c96775ea64324849c7df8fd0ca9d25402b2524fe</td></tr><tr><td><a href="mips_4kec/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7433191 B</td><td class="sha256-cell">5b3f1236a50b2c5e294e39a073d664a6fe7353f911e20c0d7ba3e2523ceabbe0</td></tr><tr><td><a href="mips_4kec/tailscaled">tailscaled</a></td><td class="size-cell">7428656 B</td><td class="sha256-cell">220d4c2a2069406c1eba4c34684407f19f23899a3da9b6156c2a46b34920e74e</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mips_mips32</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mips_mips32/Packages">Packages</a></td><td class="size-cell">748 B</td><td class="sha256-cell">58f2f9d6cf8db0ca725bb1930257a03b612a8154c87d0564863cf6ddec3ca465</td></tr><tr><td><a href="mips_mips32/Packages.gz">Packages.gz</a></td><td class="size-cell">476 B</td><td class="sha256-cell">7e9bcadc5bc6d188440ca9b69ed35fb40ced3e597031606038179545302854f4</td></tr><tr><td><a href="mips_mips32/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">07c4f9936f5a4081760e97dfbdde1a7a7f5681768a76a1ae32e100350e9dc30d</td></tr><tr><td><a href="mips_mips32/packages.adb">packages.adb</a></td><td class="size-cell">860 B</td><td class="sha256-cell">1507f0176246dc7cb279200b4fc3adf03b181efab0ca41617efafe8a8ca87797</td></tr><tr><td><a href="mips_mips32/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7433671 B</td><td class="sha256-cell">fb4ca86cc474a3bbc5d648b0165520bf6f4dafcb13151501efb1e0a3fed45038</td></tr><tr><td><a href="mips_mips32/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7433359 B</td><td class="sha256-cell">f484e0879c35e9c74bb21eef88faa21cc1d0d9f0c4ad0be3327fc350a0b6396c</td></tr><tr><td><a href="mips_mips32/tailscaled">tailscaled</a></td><td class="size-cell">7429220 B</td><td class="sha256-cell">8dddbc95db067b4e5434493ba22d6a6d6cd2543d32974774c86a0c10cb80df4f</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mipsel_24kc</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mipsel_24kc/Packages">Packages</a></td><td class="size-cell">748 B</td><td class="sha256-cell">68f36f9e3b9f52ddd78e06a376a852c3dc8e9c58f142e01c8373c686a0de3266</td></tr><tr><td><a href="mipsel_24kc/Packages.gz">Packages.gz</a></td><td class="size-cell">477 B</td><td class="sha256-cell">00f91179750bc68e7f1895810ce8c193c9292e1814ac3fdb8233e9f9349c1aa2</td></tr><tr><td><a href="mipsel_24kc/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">7682c118ad17ed779360df304af81f2dbdb23a09647c38aea60fd1037b086557</td></tr><tr><td><a href="mipsel_24kc/packages.adb">packages.adb</a></td><td class="size-cell">862 B</td><td class="sha256-cell">1cebae5a4a1edb8f458e922865a0267072b7057f1546ea58c7003c176ef31395</td></tr><tr><td><a href="mipsel_24kc/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7578569 B</td><td class="sha256-cell">f8173554865b57a27ed969b4e34a4bd2639d62bf52c5ed81f8ac39001cdb42da</td></tr><tr><td><a href="mipsel_24kc/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7581338 B</td><td class="sha256-cell">89d0f374668381c3e9af3732131fe6ae2de7624995af67b6fed5b472a8edc63b</td></tr><tr><td><a href="mipsel_24kc/tailscaled">tailscaled</a></td><td class="size-cell">7573980 B</td><td class="sha256-cell">0a4e39c2464d87b88106bbcdc90449cfda83471cd89ea2308a175c92741a5f11</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mipsel_24kc_24kf</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mipsel_24kc_24kf/Packages">Packages</a></td><td class="size-cell">753 B</td><td class="sha256-cell">9085babb6daffc90cdbf6a58e0802d99e91eaf337f04b8660f5765cb8c413ab0</td></tr><tr><td><a href="mipsel_24kc_24kf/Packages.gz">Packages.gz</a></td><td class="size-cell">483 B</td><td class="sha256-cell">871231353300887ee20e55508cfcf682d83c9ce6cef4352d69d71cce33dce561</td></tr><tr><td><a href="mipsel_24kc_24kf/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">f3c07dd88954dba2ecb7a77a6794f2e0872338ddfe4ac332675b2fdf1a553bbe</td></tr><tr><td><a href="mipsel_24kc_24kf/packages.adb">packages.adb</a></td><td class="size-cell">864 B</td><td class="sha256-cell">aeadc319b6255a66e9d80884666aae429f416e57cc376b5f410a4464326f4470</td></tr><tr><td><a href="mipsel_24kc_24kf/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7578386 B</td><td class="sha256-cell">4802c0e2194032e7a54c7f45f1e70dcbbb2d1ab01502667fb6e9b7d55a27b9c8</td></tr><tr><td><a href="mipsel_24kc_24kf/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7579885 B</td><td class="sha256-cell">b5b8eb23cdb5a31c5d0bf34cb277ba7018a71a7703cab69f91f404f03e339f30</td></tr><tr><td><a href="mipsel_24kc_24kf/tailscaled">tailscaled</a></td><td class="size-cell">7573796 B</td><td class="sha256-cell">a4fc9738a91e01b06261d438e4696acc5f73729bb86b623da8a74fa4ea85ec19</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mipsel_74kc</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mipsel_74kc/Packages">Packages</a></td><td class="size-cell">748 B</td><td class="sha256-cell">e56dfb2749fe1bd733b8722341c0f33cb07bc7570968384fdf0f7950187d92f5</td></tr><tr><td><a href="mipsel_74kc/Packages.gz">Packages.gz</a></td><td class="size-cell">477 B</td><td class="sha256-cell">cd7b803f28296864a8c5820660a36a09cfdd8da1429f82a05492d2e22c2fa294</td></tr><tr><td><a href="mipsel_74kc/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">2d5a2c2910850080a90e57d6a8c33f8a16c22c71eb75d29c9f7de5945be63fcf</td></tr><tr><td><a href="mipsel_74kc/packages.adb">packages.adb</a></td><td class="size-cell">861 B</td><td class="sha256-cell">4e96c3e069be6f2315b923fd3046406460c6b650dca4c6321690cb00d7891f24</td></tr><tr><td><a href="mipsel_74kc/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7579762 B</td><td class="sha256-cell">03dea6a10978f5a76e383d96581cc6e292eb01d3166fb6cd327c46fb68627761</td></tr><tr><td><a href="mipsel_74kc/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7579883 B</td><td class="sha256-cell">e64bd0edef3704ee363a8666f2cadc5c9274ea3a1352ca4c6d10ca7b208feb9b</td></tr><tr><td><a href="mipsel_74kc/tailscaled">tailscaled</a></td><td class="size-cell">7575204 B</td><td class="sha256-cell">6bcef0b018d52b6d56817352f31c56803ab7f815403915ddb56e30b43b6a60ea</td></tr></tbody></table></details><details class="arch-section"><summary>📂 mipsel_mips32</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="mipsel_mips32/Packages">Packages</a></td><td class="size-cell">750 B</td><td class="sha256-cell">ca58daec2acb9a5d4cc6d08e724834c210a0fe4911a84f636e2480e00ccb241d</td></tr><tr><td><a href="mipsel_mips32/Packages.gz">Packages.gz</a></td><td class="size-cell">475 B</td><td class="sha256-cell">e0783daf2076da57fe2e4992f73d2241c50e507cddc81a02fd26547e8b33b52a</td></tr><tr><td><a href="mipsel_mips32/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">97f0ac8070e92b2c45bd74e679f2639fd9187d832719482434bebed52f11cfc6</td></tr><tr><td><a href="mipsel_mips32/packages.adb">packages.adb</a></td><td class="size-cell">862 B</td><td class="sha256-cell">5ee6f6ed8f233894aaf248eec619be07a3681af4fda01e184cea9624f0889b92</td></tr><tr><td><a href="mipsel_mips32/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">7579435 B</td><td class="sha256-cell">b381ea6dc7eabc56a2299a970461b03915990e4303741c008185be9dc5b248ce</td></tr><tr><td><a href="mipsel_mips32/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">7580426 B</td><td class="sha256-cell">d3fabb50840a0b1f9412c88a0abfdba2a490a82c285cba6e25cecb5dbfdf3038</td></tr><tr><td><a href="mipsel_mips32/tailscaled">tailscaled</a></td><td class="size-cell">7574864 B</td><td class="sha256-cell">7b7a0f1ce3692ea1a3d6323a9a4cbc22ba1799ec64fad339f79abd2e6df86a23</td></tr></tbody></table></details><details class="arch-section"><summary>📂 riscv64_generic</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="riscv64_generic/packages.adb">packages.adb</a></td><td class="size-cell">869 B</td><td class="sha256-cell">c499d310282839fc6febaca69310f13e391d18b56ed9aecfd76ee5ece8e20f87</td></tr><tr><td><a href="riscv64_generic/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">12160792 B</td><td class="sha256-cell">9f06948f39f32ba65cf3e6e94476d9e8e3f634241a224a509e0dd9ec99c2f452</td></tr><tr><td><a href="riscv64_generic/tailscaled">tailscaled</a></td><td class="size-cell">29818952 B</td><td class="sha256-cell">6e1f9937f7e415a5badd04fd8e2b24538ea732accc9b228655926f5160dc6fcc</td></tr></tbody></table></details><details class="arch-section"><summary>📂 riscv64_riscv64</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="riscv64_riscv64/Packages">Packages</a></td><td class="size-cell">754 B</td><td class="sha256-cell">32f17981d77d41da86ced200f559f0cb89c399ffc5570e84499f4ddc43918397</td></tr><tr><td><a href="riscv64_riscv64/Packages.gz">Packages.gz</a></td><td class="size-cell">480 B</td><td class="sha256-cell">88988d91fd2e7946b435d673c948bb9da51dc2f344c54f315f6e41753e74b15b</td></tr><tr><td><a href="riscv64_riscv64/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">ab1d5730ee28644b2302b4fee3d20b695dc87e481f923cd419e0a676f3fad9ce</td></tr><tr><td><a href="riscv64_riscv64/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">12185669 B</td><td class="sha256-cell">f1d1c09ad0f74cd4d7be94392ed4d06192f63690e288ea31dfa27e5b84cc6164</td></tr><tr><td><a href="riscv64_riscv64/tailscaled">tailscaled</a></td><td class="size-cell">29818920 B</td><td class="sha256-cell">ef573cbd49fb40c0db16b1ec136ef7933044ad92e0ae3d48a16c6d0c848408fd</td></tr></tbody></table></details><details class="arch-section"><summary>📂 x86_64</summary><table><thead><tr><th>File</th><th>Size</th><th>Sha256Sum</th></tr></thead><tbody><tr><td><a href="x86_64/Packages">Packages</a></td><td class="size-cell">743 B</td><td class="sha256-cell">a78e03a3860a15c42a8b1ec65cfdeddd4ff94d1aec632742add94826f7f0d652</td></tr><tr><td><a href="x86_64/Packages.gz">Packages.gz</a></td><td class="size-cell">476 B</td><td class="sha256-cell">1e14c767888e5786c6838135ac1d49001468216cf14f4bb5c84a4102494989db</td></tr><tr><td><a href="x86_64/Packages.sig">Packages.sig</a></td><td class="size-cell">151 B</td><td class="sha256-cell">14412096a1521ebbef33e14b2bfc562f2e11bdfb31f359c6ae3641392e5f7a63</td></tr><tr><td><a href="x86_64/packages.adb">packages.adb</a></td><td class="size-cell">859 B</td><td class="sha256-cell">0eabfdf93f2d5c99e507b2b5300cffde0b60f10cf09adcb3c7bd01abb2ff1c36</td></tr><tr><td><a href="x86_64/tailscale-1.104.7-r1.apk">tailscale-1.104.7-r1.apk</a></td><td class="size-cell">9453997 B</td><td class="sha256-cell">9832c35bca4846ab6586e30ae6412a98cba3890a13d6aa86ce22ececb1c4d126</td></tr><tr><td><a href="x86_64/tailscale-1.104.7-r1.ipk">tailscale-1.104.7-r1.ipk</a></td><td class="size-cell">9453801 B</td><td class="sha256-cell">6f29968c86894fcf5b8825975ba7cc2e86ca05da6170d89cbb8f6f14aa9339b0</td></tr><tr><td><a href="x86_64/tailscaled">tailscaled</a></td><td class="size-cell">9448896 B</td><td class="sha256-cell">79efe519a437e4b57da63334d6b3f17e7e8b80b66548ae5495006577e845ec2b</td></tr></tbody></table></details>
+<!-- end-arch-section-anchor -->
+            </section>
+        </main>
+
+        <footer class="footer">
+            <hr>
+            <p>
+                <span>Built with ❤️ and shared with the community. </span>
+                <span>Open source on <a href="https://github.com/LiuTangLei/openwrt-tailscale-awg">GitHub</a>.</span>
+                <span><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg">⭐Star it!</a></span>
+                <span><a href="https://github.com/LiuTangLei/openwrt-tailscale-awg/blob/main/LICENSE">MIT License</a>.</span>
+                <span>Generated by GitHub Action on:
+                    <!-- date-anchor -->
+                    <span id="date">2026-11-17 07:41:25 UTC</span>
+                    <!-- end-date-anchor -->
+                </span>
+                <span>Version:
+                    <!-- version-anchor -->
+                    <span id="version">1.104.7</span>
+                    <!-- end-version-anchor -->
+                </span>
+            </p>
+            <p>
+                <img src="./banner.png" alt="Tailscale & OpenWrt" style="width: 100%; display: block; margin: 0 auto;">
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function showSection(id) {
+            document.querySelectorAll('main > section').forEach(s => s.style.display = 'none');
+            document.getElementById(id).style.display = 'block';
+
+            const buttons = [
+                { id: 'btn-usage', section: 'usage', label: 'Usage' },
+                { id: 'btn-usage-chinese', section: 'usage-chinese', label: '用法' },
+                { id: 'btn-security-statement', section: 'security-statement', label: 'Security Statement 安全声明' },
+                { id: 'btn-packages', section: 'packages', label: 'Packages' }
+            ];
+
+            buttons.forEach(btn => {
+                const isActive = (id === btn.section);
+                const el = document.getElementById(btn.id);
+                el.classList.toggle('active', isActive);
+                el.classList.toggle('inactive', !isActive);
+                el.disabled = isActive;
+            });
+        }
+
+        function switchVersion(version) {
+            document.getElementById('v25usage').style.display = version === 'v25' ? 'block' : 'none';
+            document.getElementById('v24usage').style.display = version === 'v24' ? 'block' : 'none';
+            const v25zh = document.getElementById('v25usage-zh');
+            const v24zh = document.getElementById('v24usage-zh');
+            if (v25zh) v25zh.style.display = version === 'v25' ? 'block' : 'none';
+            if (v24zh) v24zh.style.display = version === 'v24' ? 'block' : 'none';
+
+            document.querySelectorAll('.v-btn').forEach(btn => {
+                if (btn.dataset.version === version) {
+                    btn.classList.remove('inactive');
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('inactive');
+                }
+            });
+
+            localStorage.setItem('owrt-version', version);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedVersion = localStorage.getItem('owrt-version') || 'v25';
+            switchVersion(savedVersion);
+            document.querySelectorAll("pre").forEach((pre) => {
+                const wrapper = document.createElement("div");
+                wrapper.classList.add("pre-wrapper");
+
+                pre.parentNode.insertBefore(wrapper, pre);
+                wrapper.appendChild(pre);
+
+                const btn = document.createElement("button");
+                btn.className = "copy-btn";
+                btn.textContent = "Copy";
+
+                btn.addEventListener("click", () => {
+                    navigator.clipboard.writeText(pre.textContent).then(() => {
+                        btn.textContent = "Copied!";
+                        btn.classList.add("copied");
+                        setTimeout(() => {
+                            btn.textContent = "Copy";
+                            btn.classList.remove("copied");
+                        }, 2000);
+                    });
+                });
+
+                wrapper.appendChild(btn);
+            });
+        });
+
+        function toggleTheme() {
+            const isDark = document.body.classList.toggle('dark');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('toggle-theme').textContent = isDark ? '☀️' : '🌙';
+        }
+
+        function initTheme() {
+            const hour = new Date().getHours();
+            const saved = localStorage.getItem('theme');
+            const isDark = saved === 'dark' || (!saved && (hour < 6 || hour >= 18));
+            if (isDark) {
+                document.body.classList.add('dark');
+                document.getElementById('toggle-theme').textContent = '☀️';
+            } else {
+                document.getElementById('toggle-theme').textContent = '🌙';
+            }
+        }
+
+        document.getElementById('btn-usage').click();
+        initTheme();
+
+    </script>
+</body>
+
+</html>
