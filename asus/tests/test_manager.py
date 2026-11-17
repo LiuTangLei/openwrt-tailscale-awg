@@ -391,6 +391,39 @@ class ManagerTests(unittest.TestCase):
         self.assertEqual(current(), 'v1.104.8-arm64')
         self.assertEqual(marker.read_text(), 'keep')
 
+    def test_17_merlin_without_sha256sum(self):
+        hidden = []
+        try:
+            for folder in ['/usr/sbin', '/usr/bin', '/sbin', '/bin', '/opt/sbin', '/opt/bin']:
+                path = Path(folder) / 'sha256sum'
+                if os.path.lexists(path):
+                    backup = path.with_name('sha256sum.merlin-test-hidden')
+                    path.rename(backup)
+                    hidden.append((path, backup))
+            self.assertIsNone(shutil.which('sha256sum'))
+            subprocess.run(['openssl', 'version'], check=True, capture_output=True)
+            install(platform='merlin')
+            for line in (HOME / 'hooks.sha256').read_text().splitlines():
+                digest, path = line.split('  ', 1)
+                self.assertEqual(digest, sha(path))
+            old_pid = (RUN / 'daemon.pid').read_text()
+            archive, manifest = make_bundle('v1.104.8')
+            with archive.open('ab') as output:
+                output.write(b'corrupt')
+            install((archive, manifest), platform='merlin', expected=1)
+            self.assertEqual((RUN / 'daemon.pid').read_text(), old_pid)
+            command('stop')
+            subprocess.run([SHELL, '/jffs/scripts/services-start'], check=True)
+            wait_ready()
+            self.assertIn('running', command('status'))
+            command('uninstall')
+            self.assertFalse(Path('/jffs/scripts/services-start').exists())
+        finally:
+            if (HOME / 'current').exists():
+                command('stop')
+            for path, backup in reversed(hidden):
+                backup.rename(path)
+
 
 if __name__ == '__main__':
     if not Path('/.dockerenv').exists() or os.environ.get('TS_ASUS_TEST_CONTAINER') != '1':

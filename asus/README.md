@@ -1,16 +1,19 @@
-# ASUS / Asuswrt-Merlin (preview)
+# ASUS / Asuswrt-Merlin
 
 This is a separate static build of the same AWG/QUIC fork core as OpenWrt.
 It does not install an OpenWrt package, change firmware, resize JFFS, or
 replace Entware's Tailscale package. Core: **v1.104.7**, QUIC
 **v0.65.0-quic.4**, BBRv3/pacing retained. Peer Relay and Taildrop remain.
 Only self-update/appliance management are excluded; updates use this manager.
+Payload and hook checksums use `sha256sum`, or the firmware's OpenSSL SHA-256
+implementation when that BusyBox applet is absent (as on ET8 Gnuton).
 
 ## Hardware and startup
 
 | Firmware | Startup | Requirements |
 | --- | --- | --- |
 | Stock ET12 without USB | Existing fwtool `S45custom-init` dispatcher | ARM64, Linux 4.19, writable JFFS, TUN |
+| ET8 Gnuton Merlin 388.11_1 | Merlin service/firewall scripts | ARMv7, Linux 4.1, writable JFFS, TUN |
 | Other stock firmware | Same custom-init dispatcher, or an already working Entware boot setup | ARM64/ARMv7, Linux >=3.2, TUN |
 | Asuswrt-Merlin | `services-start`, `services-stop`, `firewall-start` | Enable JFFS custom scripts in Administration / System |
 
@@ -21,6 +24,15 @@ and MIPS models are unsupported. A build for an architecture does not prove
 TUN/firewall compatibility on every model.
 
 Merlin hooks follow the [firmware's documented user-script interface](https://github.com/Asuswrt-Merlin/asuswrt-merlin.ng/wiki/User-scripts).
+An AiMesh node may redirect its Web GUI to the main router. Enable custom
+scripts on that node over SSH, as documented by Merlin, after checking the
+existing contents of `/jffs/scripts`:
+
+```sh
+nvram set jffs2_scripts=1
+nvram commit
+```
+
 An existing hook is moved unchanged to `.tailscale-asus.original` and invoked
 as a separate process with its original interpreter. An existing `exit 0`, missing final newline, or symlink
 does not prevent our hook from running. Uninstall restores the original;
@@ -45,7 +57,7 @@ Keep additional room for other applications and growing state. No UBI/JFFS
 resizing is performed. `TS_ASUS_HOME` may select persistent USB storage;
 `TS_ASUS_RUN` must remain under `/tmp`.
 
-## Install a particular preview
+## Install a particular release
 
 Download `tailscale-asus` from the **same release** as the chosen manifest.
 Do not pipe a moving branch directly into a root shell. Example (replace TAG):
@@ -84,6 +96,20 @@ established `ts-input` jump and lets the daemon rebuild it. No blanket firewall
 flush, third-party rule removal, WAN/LAN/DNS/NVRAM change, or global forwarding
 sysctl is performed by the installer.
 
+Use the manager to activate transport changes:
+
+```sh
+M=/jffs/addons/tailscale-awg/tailscale-asus
+$M cli awg set --yes --no-restart quic
+$M restart
+$M cli awg status --json
+```
+
+All communicating peers must use a compatible transport. QUIC selection clears
+the saved AWG camouflage parameters; retain those parameters if you plan to
+return to your existing AWG network. To restore an AWG profile, stage its JSON
+with `cli awg set --yes --no-restart 'JSON'`, then run the manager's `restart`.
+
 ```sh
 M=/jffs/addons/tailscale-awg/tailscale-asus
 $M restart
@@ -95,6 +121,16 @@ Do not delete `state/` unless you intend to permanently remove this device's
 identity. Firmware updates may remove a stock fwtool hook; check that startup
 support remains after a firmware upgrade. Application reboot/traffic acceptance
 is recorded separately from compilation and hook tests.
+
+If an earlier `v1.104.7` ASUS preview is already installed, its manager/manifest
+may differ from the final release. The installer refuses to overwrite a slot
+with different contents. Download the final installer first, run the existing
+manager's `uninstall` (which retains identity), then install the final release.
+This briefly stops Tailscale and preserves the node's existing login state.
+
+Tested on stock ET12 and ET8 Gnuton Merlin, including AWG/QUIC data transfer
+and service recovery. IPv6 follows the firmware's existing setting. Other
+models meeting the requirements above are welcome; report problems in Issues.
 
 ## Build
 

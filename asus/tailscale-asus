@@ -26,7 +26,17 @@ case "$RUN_DIR" in /tmp/*) ;; *) die "runtime must be under /tmp";; esac
 [ "$HOME_DIR" != "$RUN_DIR" ] || die "persistent and runtime paths must differ"
 export TS_ASUS_HOME="$HOME_DIR" TS_ASUS_RUN="$RUN_DIR"
 
-sha() { sha256sum "$1" | awk '{print $1}'; }
+sha() {
+    local digest
+    if type sha256sum >/dev/null 2>&1; then
+        digest=$(sha256sum "$1") || return
+        printf '%s\n' "${digest%% *}"
+    else
+        # ET8 Gnuton firmware has OpenSSL but no SHA-256 BusyBox applet.
+        digest=$(openssl dgst -sha256 "$1") || return
+        printf '%s\n' "${digest##* }"
+    fi
+}
 field() { awk -F= -v key="$2" '$1==key {n++; value=substr($0,index($0,"=")+1)} END {if(n!=1) exit 1; print value}' "$1"; }
 pointer() {
     [ -f "$HOME_DIR/$1" ] || return 0
@@ -253,7 +263,7 @@ hooks_check() {
     done
 }
 hooks_install() {
-    local path backup action
+    local path backup action digest
     : > "$HOME_DIR/hooks.sha256.new"
     for path in $(hook_paths); do
         backup="$path.tailscale-asus.original"
@@ -278,7 +288,8 @@ hooks_install() {
             echo 'exit "$rc"'
         } > "$path.new"
         chmod 755 "$path.new"; mv -f "$path.new" "$path"
-        sha256sum "$path" >> "$HOME_DIR/hooks.sha256.new"
+        digest=$(sha "$path")
+        printf '%s  %s\n' "$digest" "$path" >> "$HOME_DIR/hooks.sha256.new"
     done
     mv -f "$HOME_DIR/hooks.sha256.new" "$HOME_DIR/hooks.sha256"
 }
