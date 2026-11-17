@@ -57,10 +57,25 @@ Keep additional room for other applications and growing state. No UBI/JFFS
 resizing is performed. `TS_ASUS_HOME` may select persistent USB storage;
 `TS_ASUS_RUN` must remain under `/tmp`.
 
+## One-command installation
+
+Run over SSH on either stock firmware or Merlin:
+
+```sh
+curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | sh
+```
+
+The release-pinned installer detects the CPU and firmware, enables Merlin's
+JFFS scripts when necessary, and downloads the matching compressed payload.
+Stock firmware still needs one of the startup hooks listed above; firmware
+flashing and JFFS resizing are not automated. Existing hooks and node identity
+are preserved. An installation failure restores a previously disabled Merlin
+script setting.
+
 ## Install a particular release
 
 Download `tailscale-asus` from the **same release** as the chosen manifest.
-Do not pipe a moving branch directly into a root shell. Example (replace TAG):
+To select a specific version explicitly (replace TAG):
 
 ```sh
 TAG=v1.104.7

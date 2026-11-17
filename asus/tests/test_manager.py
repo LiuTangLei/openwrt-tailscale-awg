@@ -85,6 +85,50 @@ def wait_ready():
 
 
 class ManagerTests(unittest.TestCase):
+    def bootstrap(self, merlin=False, corrupt=False, expected=0):
+        archive, manifest = make_bundle()
+        if corrupt:
+            with archive.open('ab') as output:
+                output.write(b'corrupt')
+        if merlin:
+            Path('/rom/etc/rc3.d/S45custom-init').unlink()
+            Path('/rom/etc/init.d/custom-init.sh').unlink()
+            (INPUTS / 'scripts-enabled').write_text('0\n')
+            Path('/usr/sbin/nvram').write_text('''#!/bin/sh
+case "$1:$2" in
+get:rc_support) echo am_addons;;
+get:jffs2_scripts) cat /tmp/inputs/scripts-enabled;;
+set:jffs2_scripts=*) printf '%s\\n' "${2#*=}" > /tmp/inputs/scripts-enabled;;
+commit:) :;;
+*) exit 1;;
+esac
+''')
+        real_curl = shutil.which('curl')
+        fake_curl = Path('/usr/sbin/curl')
+        fake_curl.write_text('''#!/bin/sh
+case "$*" in *--version*|*--unix-socket*) exec ''' + real_curl + ''' "$@";; esac
+while [ "$#" -gt 0 ]; do
+ case "$1" in
+ -o) output=$2; shift 2;;
+ https://*) url=$1; shift;;
+ *) shift;;
+ esac
+done
+case "$url" in
+*/tailscale-asus) cp /repo/asus/tailscale-asus "$output";;
+*.gz.manifest) cp ''' + str(manifest) + ''' "$output";;
+*.gz) cp ''' + str(archive) + ''' "$output";;
+*) exit 1;;
+esac
+''')
+        fake_curl.chmod(0o755)
+        try:
+            result = subprocess.run([SHELL], input=(REPO / 'asus/install.sh').read_text(),
+                                    env=ENV, capture_output=True, text=True, timeout=60)
+            self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
+        finally:
+            fake_curl.unlink()
+
     def setUp(self):
         # ASUS BusyBox 1.24 is compiled without fractional sleep support.
         sleep = Path('/usr/sbin/sleep')
@@ -423,6 +467,22 @@ class ManagerTests(unittest.TestCase):
                 command('stop')
             for path, backup in reversed(hidden):
                 backup.rename(path)
+
+    def test_18_one_command_stock(self):
+        self.bootstrap()
+        self.assertEqual((HOME / 'platform').read_text().strip(), 'stock')
+        self.assertIn('running', command('status'))
+
+    def test_19_one_command_merlin_enables_scripts(self):
+        self.bootstrap(merlin=True)
+        self.assertEqual((INPUTS / 'scripts-enabled').read_text().strip(), '1')
+        self.assertEqual((HOME / 'platform').read_text().strip(), 'merlin')
+        self.assertIn('running', command('status'))
+
+    def test_20_one_command_failure_restores_script_setting(self):
+        self.bootstrap(merlin=True, corrupt=True, expected=1)
+        self.assertEqual((INPUTS / 'scripts-enabled').read_text().strip(), '0')
+        self.assertFalse((HOME / 'current').exists())
 
 
 if __name__ == '__main__':

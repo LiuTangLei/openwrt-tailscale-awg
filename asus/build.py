@@ -33,6 +33,8 @@ def main():
     args = p.parse_args()
     if not re.fullmatch(re.escape(f"v{VERSION}"), args.release):
         p.error("use the application version tag: v1.104.7")
+    if f"\nRELEASE={args.release}\n" not in (ROOT / "install.sh").read_text():
+        p.error("bootstrap installer must pin the requested release")
     source = args.source.resolve()
     if run(["git", "rev-parse", "HEAD"], cwd=source) != CORE:
         p.error("source must be the qualified v1.104.7 commit")
@@ -65,6 +67,7 @@ def main():
         with gzip.GzipFile(filename="", mode="wb", fileobj=dst, compresslevel=9, mtime=0) as gz:
             shutil.copyfileobj(src, gz)
     shutil.copy2(ROOT / "tailscale-asus", output / "tailscale-asus")
+    shutil.copy2(ROOT / "install.sh", output / "install-asus.sh")
     for name in ("LICENSE", "LICENSE.tailscale", "NOTICE"):
         shutil.copy2(ROOT.parent / name, output / name)
     manifest = dict(format=1, release=args.release, version=VERSION, arch=args.arch,

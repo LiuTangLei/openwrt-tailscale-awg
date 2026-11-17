@@ -35,6 +35,7 @@ jobs:
           name: asus-${{ matrix.arch }}
           path: |
             asus/out/tailscale-asus
+            asus/out/install-asus.sh
             asus/out/*.gz
             asus/out/*.manifest
             asus/out/build-info-*.txt
