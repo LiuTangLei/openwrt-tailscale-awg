@@ -32,7 +32,7 @@ GO_PKG:=tailscale.com/cmd/tailscaled
 GO_PKG_LDFLAGS:=-s -w -X 'tailscale.com/version.longStamp=$(PKG_VERSION)-$(PKG_RELEASE) (OpenWrt-UPX)'
 GO_PKG_LDFLAGS_X:=tailscale.com/version.shortStamp=$(PKG_VERSION) tailscale.com/version.gitCommitStamp=$(PKG_COMMIT)
 # Keep Peer Relay and Taildrop available; updates are managed by OpenWrt.
-GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient,ts_omit_clientupdate
+GO_PKG_TAGS:=ts_include_cli,ts_omit_aws,ts_omit_bird,ts_omit_completion,ts_omit_kube,ts_omit_systray,ts_omit_tap,ts_omit_tpm,ts_omit_capture,ts_omit_syspolicy,ts_omit_debugeventbus,ts_omit_webclient,ts_omit_clientupdate,ts_omit_flashappliance
 
 ifneq ($(filter mips64% riscv64% loongarch64%,$(ARCH)),)
   DISABLE_UPX:=1
@@ -68,11 +68,15 @@ define Package/tailscale/install
 	$(INSTALL_BIN) $(GO_PKG_BUILD_BIN_DIR)/tailscaled $(1)/usr/sbin
 
 ifneq ($(DISABLE_UPX),1)
-	if ! $(TOPDIR)/upx/upx -t $(GO_PKG_BUILD_BIN_DIR)/tailscaled >/dev/null 2>&1; then \
-		echo "==> UPX enabling on ARCH $(ARCH)"; \
-		$(TOPDIR)/upx/upx --best --lzma $(GO_PKG_BUILD_BIN_DIR)/tailscaled; \
+	if [ -f "$(TOPDIR)/upx/upx" ]; then \
+		if ! $(TOPDIR)/upx/upx -t $(GO_PKG_BUILD_BIN_DIR)/tailscaled >/dev/null 2>&1; then \
+			echo "==> UPX enabling on ARCH $(ARCH)"; \
+			$(TOPDIR)/upx/upx --best --lzma $(GO_PKG_BUILD_BIN_DIR)/tailscaled; \
+		else \
+			echo "==> UPX already compressed on ARCH $(ARCH)"; \
+		fi; \
 	else \
-		echo "==> UPX already compressed on ARCH $(ARCH)"; \
+		echo "==> UPX not found, skipping compression on ARCH $(ARCH)"; \
 	fi
 else
 	echo "==> UPX disabled on ARCH $(ARCH)"
