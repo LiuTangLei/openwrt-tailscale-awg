@@ -1,0 +1,40 @@
+name: Build ASUS prerelease artifacts
+on:
+  workflow_dispatch:
+    inputs:
+      release:
+        description: Application tag; set GitHub prerelease separately (v1.104.7)
+        required: true
+        default: v1.104.7
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [arm64, armv7]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: LiuTangLei/tailscale
+          ref: a32d18362c987e5007eab9f76c69118947a7b047
+          path: core
+      - uses: actions/setup-go@v5
+        with:
+          go-version: 1.27.4
+          cache-dependency-path: core/go.sum
+      - name: Build static multicall binary and verified gzip payload
+        env:
+          RELEASE: ${{ inputs.release }}
+          ARCH: ${{ matrix.arch }}
+        run: python3 asus/build.py --source core --release "$RELEASE" --arch "$ARCH" --output asus/out --go "$PWD/core/tool/go"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: asus-${{ matrix.arch }}
+          path: |
+            asus/out/tailscale-asus
+            asus/out/*.gz
+            asus/out/*.manifest
+            asus/out/build-info-*.txt

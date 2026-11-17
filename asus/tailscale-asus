@@ -1,0 +1,431 @@
+#!/bin/sh
+# Tailscale-AWG for ASUS: persistent gzip payloads, RAM execution.
+# No opkg/apk, Entware packages, firmware changes or NVRAM writes.
+# BusyBox ash (including ASUS 1.24) and dash both support local variables.
+# shellcheck disable=SC3043
+set -eu
+umask 077
+PATH=/usr/sbin:/usr/bin:/sbin:/bin:/opt/sbin:/opt/bin
+export PATH
+
+HOME_DIR=${TS_ASUS_HOME:-/jffs/addons/tailscale-awg}
+RUN_DIR=${TS_ASUS_RUN:-/tmp/tailscale-awg}
+REPO=LiuTangLei/openwrt-tailscale-awg
+SELF=$(readlink -f "$0")
+STAGE=
+RECOVER=false
+RECOVER_SLOT=
+RECOVER_CANDIDATE=
+RECOVER_NEW=false
+die() { echo "tailscale-asus: $*" >&2; exit 1; }
+note() { echo "tailscale-asus: $*"; }
+valid_id() { case "$1" in ''|*[!a-zA-Z0-9._-]*|.*) return 1;; esac; }
+safe_path() { case "$1" in /*) ;; *) die "absolute path required: $1";; esac; case "$1" in *[!a-zA-Z0-9/._-]*|/|*/../*|*/..|*/./*) die "unsafe installation path";; esac; }
+safe_path "$HOME_DIR"; safe_path "$RUN_DIR"
+case "$RUN_DIR" in /tmp/*) ;; *) die "runtime must be under /tmp";; esac
+[ "$HOME_DIR" != "$RUN_DIR" ] || die "persistent and runtime paths must differ"
+export TS_ASUS_HOME="$HOME_DIR" TS_ASUS_RUN="$RUN_DIR"
+
+sha() { sha256sum "$1" | awk '{print $1}'; }
+field() { awk -F= -v key="$2" '$1==key {n++; value=substr($0,index($0,"=")+1)} END {if(n!=1) exit 1; print value}' "$1"; }
+pointer() {
+    [ -f "$HOME_DIR/$1" ] || return 0
+    local value
+    value=$(cat "$HOME_DIR/$1")
+    valid_id "$value" || die "invalid $1 pointer"
+    printf '%s\n' "$value"
+}
+put_pointer() { printf '%s\n' "$2" > "$HOME_DIR/$1.new"; mv -f "$HOME_DIR/$1.new" "$HOME_DIR/$1"; }
+cleanup() {
+    if [ "$RECOVER" = true ]; then
+        RECOVER=false
+        stop_service
+        if [ -n "$RECOVER_SLOT" ]; then
+            put_pointer current "$RECOVER_SLOT"
+            start_service || note "recovery needs attention; compressed previous release and identity remain on flash"
+        else rm -f "$HOME_DIR/current"; fi
+        if [ -n "$RECOVER_CANDIDATE" ] && [ "$RECOVER_CANDIDATE" != "$RECOVER_SLOT" ]; then
+            rm -rf "$RUN_DIR/instances/$RECOVER_CANDIDATE"
+            if [ "$RECOVER_NEW" = true ]; then rm -rf "$HOME_DIR/releases/$RECOVER_CANDIDATE"; fi
+        fi
+        rm -f "$HOME_DIR/pending"
+        sync
+    fi
+    [ -z "$STAGE" ] || rm -rf "$STAGE"
+}
+lock() {
+    [ "$(id -u)" = 0 ] || die "run as root"
+    [ ! -L "$RUN_DIR" ] && [ ! -L "$HOME_DIR" ] || die "installation directories must not be symlinks"
+    mkdir -p "$RUN_DIR" "$HOME_DIR"
+    chmod 700 "$RUN_DIR" "$HOME_DIR"
+    exec 9>"$RUN_DIR/lock"
+    flock -n 9 || die "another lifecycle operation is running"
+    trap cleanup EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM HUP
+}
+detect_arch() {
+    case "$(uname -m)" in aarch64|arm64) ARCH=arm64;; armv7l|armv8l) ARCH=armv7;; *) die "supported architectures: ARM64 and ARMv7";; esac
+    local kernel major minor
+    kernel=$(uname -r); major=${kernel%%.*}; kernel=${kernel#*.}; minor=${kernel%%.*}
+    [ "$major" -gt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -ge 2 ]; } || die "Go requires Linux 3.2 or newer (old 2.6 ASUS kernels are unsupported)"
+}
+detect_platform() {
+    if [ "$PLATFORM" = auto ]; then
+        if [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ]; then PLATFORM=stock
+        elif type nvram >/dev/null 2>&1 && nvram get rc_support | grep -qw am_addons; then PLATFORM=merlin
+        elif [ -x /opt/etc/init.d/rc.unslung ]; then PLATFORM=entware
+        else die "no supported boot hook; stock firmware needs the fwtool custom-init hook, or an existing Entware boot setup"; fi
+    fi
+    case "$PLATFORM" in
+        stock) [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ] || die "stock custom-init hook is missing";;
+        merlin) [ "$(nvram get jffs2_scripts)" = 1 ] || die "enable JFFS custom scripts in Merlin's Administration / System first";;
+        entware) [ -x /opt/etc/init.d/rc.unslung ] || die "Entware boot setup is missing";;
+        *) die "platform must be auto, stock, merlin or entware";;
+    esac
+}
+manifest_check() {
+    local manifest=$1
+    [ "$(field "$manifest" format)" = 1 ] || die "unsupported manifest"
+    RELEASE=$(field "$manifest" release); valid_id "$RELEASE" || die "invalid release"
+    [ "$(field "$manifest" arch)" = "$ARCH" ] || die "wrong architecture"
+    CORE_SHA=$(field "$manifest" core)
+    [ "${#CORE_SHA}" = 40 ] || die "invalid core digest"
+    case "$CORE_SHA" in *[!0-9a-f]*) die "invalid core digest";; esac
+    ARCHIVE_SHA=$(field "$manifest" sha256); BINARY_SHA=$(field "$manifest" binary_sha256)
+    MANAGER_SHA=$(field "$manifest" manager_sha256); BINARY_BYTES=$(field "$manifest" binary_bytes)
+    for digest in "$ARCHIVE_SHA" "$BINARY_SHA" "$MANAGER_SHA"; do
+        [ "${#digest}" = 64 ] || die "invalid digest"
+        case "$digest" in *[!0-9a-f]*) die "invalid digest";; esac
+    done
+    case "$BINARY_BYTES" in ''|*[!0-9]*|0*) die "invalid binary size";; esac
+    [ "$BINARY_BYTES" -le 134217728 ] || die "binary exceeds 128 MiB"
+    SLOT="$RELEASE-$ARCH"
+}
+space_check() {
+    local archive=$1 need_kb free_kb available
+    need_kb=$(( (BINARY_BYTES + $(wc -c < "$archive")) / 1024 + 65536 ))
+    free_kb=$(df -k "$RUN_DIR" | awk 'END {print $4}')
+    available=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo)
+    [ -n "$available" ] || available=$(awk '/^MemFree:/ {print $2}' /proc/meminfo)
+    [ "$free_kb" -ge "$need_kb" ] && [ "$available" -ge "$need_kb" ] || die "insufficient RAM: need an additional ${need_kb} KiB including 64 MiB headroom"
+}
+unpack() {
+    local archive=$1 target=$2
+    [ "$(sha "$archive")" = "$ARCHIVE_SHA" ] || die "compressed payload checksum mismatch"
+    space_check "$archive"
+    mkdir -p "$target"
+    gzip -dc "$archive" > "$target/tailscaled.new" || die "decompression failed"
+    [ "$(wc -c < "$target/tailscaled.new" | tr -d ' ')" = "$BINARY_BYTES" ] || die "binary size mismatch"
+    [ "$(sha "$target/tailscaled.new")" = "$BINARY_SHA" ] || die "binary checksum mismatch"
+    chmod 700 "$target/tailscaled.new"
+    "$target/tailscaled.new" --version > "$target/version.txt" || die "binary cannot execute on this kernel/CPU"
+    grep -F "$CORE_SHA" "$target/version.txt" >/dev/null || die "binary core identity mismatch"
+    mv -f "$target/tailscaled.new" "$target/tailscaled"
+    ln -sf tailscaled "$target/tailscale"
+}
+pid_matches() {
+    # A recycled PID or another tailscaled is never a stop target.
+    [ -f "$RUN_DIR/$1.pid" ] || return 1
+    local pid ticks actual
+    read -r pid ticks < "$RUN_DIR/$1.pid"
+    case "$pid:$ticks" in *[!0-9:]*|:*) return 1;; esac
+    [ -r "/proc/$pid/stat" ] || return 1
+    [ "$(awk '{print $22}' "/proc/$pid/stat")" = "$ticks" ] || return 1
+    if [ "$1" = daemon ]; then
+        actual=$(readlink "/proc/$pid/exe")
+        case "$actual" in "$RUN_DIR"/instances/*/tailscaled) ;; *) return 1;; esac
+    else
+        tr '\000' '\n' < "/proc/$pid/cmdline" | grep -Fx "$HOME_DIR/releases/$(pointer current)/manager" >/dev/null || return 1
+    fi
+    PID=$pid
+}
+save_pid() { printf '%s %s\n' "$2" "$(awk '{print $22}' "/proc/$2/stat")" > "$RUN_DIR/$1.pid"; }
+stop_service() {
+    local count=0
+    if pid_matches worker; then kill -TERM "$PID"; fi
+    if pid_matches daemon; then kill -TERM "$PID"; fi
+    while [ "$count" -lt 50 ]; do
+        if ! pid_matches daemon && ! pid_matches worker; then break; fi
+        sleep 0.1; count=$((count+1))
+    done
+    if pid_matches daemon; then kill -KILL "$PID"; fi
+    if pid_matches worker; then kill -KILL "$PID"; fi
+    rm -f "$RUN_DIR/worker.pid" "$RUN_DIR/daemon.pid" "$RUN_DIR/tailscaled.sock"
+}
+load_tun() {
+    if [ ! -c /dev/net/tun ]; then
+        modprobe tun || die "kernel TUN support is unavailable"
+        mkdir -p /dev/net
+        [ -c /dev/net/tun ] || mknod /dev/net/tun c 10 200
+    fi
+}
+start_service() {
+    if pid_matches daemon && [ -S "$RUN_DIR/tailscaled.sock" ]; then return 0; fi
+    local slot bin foreign deadline
+    slot=$(pointer current); [ -n "$slot" ] || die "nothing installed"
+    bin="$RUN_DIR/instances/$slot"
+    for foreign in $(pidof tailscaled 2>/dev/null || true); do
+        case "$(readlink "/proc/$foreign/exe" 2>/dev/null || true)" in "$RUN_DIR"/instances/*/tailscaled) ;; *) die "another tailscaled is running; refusing to replace it";; esac
+    done
+    detect_arch
+    manifest_check "$HOME_DIR/releases/$slot/manifest"
+    curl --version | grep -qw UnixSockets || die "curl with UnixSockets support is required"
+    [ "$(sha "$HOME_DIR/releases/$slot/manager")" = "$MANAGER_SHA" ] || die "stored manager checksum mismatch"
+    if [ ! -x "$bin/tailscaled" ] || [ "$(sha "$bin/tailscaled")" != "$BINARY_SHA" ]; then unpack "$HOME_DIR/releases/$slot/payload.gz" "$bin"; fi
+    load_tun
+    mkdir -p "$HOME_DIR/state"
+    chmod 700 "$HOME_DIR/state"
+    # The worker and daemon must not inherit the lifecycle flock or the SSH tty.
+    # Defer cancellation across fork/PID registration so cleanup can always
+    # identify the child; caught traps reset normally in the new shell.
+    START_CANCEL=''
+    trap 'START_CANCEL=130' INT
+    trap 'START_CANCEL=143' TERM HUP
+    nohup /bin/sh "$HOME_DIR/releases/$slot/manager" _serve "$slot" </dev/null >/dev/null 2>&1 9>&- &
+    save_pid worker "$!"
+    trap 'exit 130' INT
+    trap 'exit 143' TERM HUP
+    [ -z "$START_CANCEL" ] || exit "$START_CANCEL"
+    deadline=$(( $(awk '{print int($1)}' /proc/uptime) + 20 ))
+    while [ "$(awk '{print int($1)}' /proc/uptime)" -lt "$deadline" ]; do
+        if [ -S "$RUN_DIR/tailscaled.sock" ] && pid_matches daemon &&
+            curl --silent --fail --max-time 1 --unix-socket "$RUN_DIR/tailscaled.sock" \
+                http://local-tailscaled.sock/localapi/v0/status >/dev/null 2>&1 9>&-; then
+            note "ready: $slot (binary/logs/socket in RAM; identity in $HOME_DIR/state)"
+            return 0
+        fi
+        sleep 0.1 9>&-
+    done
+    stop_service
+    return 1
+}
+serve() {
+    local slot=$1 bin child='' logger='' fifo="$RUN_DIR/log.pipe" expected4=false expected6=false family
+    bin="$RUN_DIR/instances/$slot"
+    trap 'if pid_matches daemon; then kill -TERM "$PID" 2>/dev/null || true; fi; exit 0' TERM INT HUP
+    rm -f "$fifo"; mknod "$fifo" p; chmod 600 "$fifo"
+    # Never write daemon logs to JFFS. Truncate at 256 KiB, even during log storms.
+    awk -v logfile="$RUN_DIR/daemon.log" ' {line=substr($0,1,16384); if(size+length(line)+1>262144){close(logfile);size=0} print line > logfile; size+=length(line)+1; fflush(logfile)}' < "$fifo" &
+    logger=$!
+    "$bin/tailscaled" --statedir="$HOME_DIR/state" --socket="$RUN_DIR/tailscaled.sock" --tun=tailscale0 --port=41641 > "$fifo" 2>&1 &
+    child=$!; save_pid daemon "$child"
+    while kill -0 "$child" 2>/dev/null; do
+        sleep 3
+        # Stock firmware can flush netfilter without invoking a user hook.
+        # Only observe Tailscale's own established jumps; let the daemon rebuild.
+        for family in 4 6; do
+            if [ "$family" = 4 ]; then tool=iptables; expected=$expected4; else tool=ip6tables; expected=$expected6; fi
+            if "$tool" -C INPUT -j ts-input >/dev/null 2>&1; then
+                if [ "$family" = 4 ]; then expected4=true; else expected6=true; fi
+            elif [ "$expected" = true ]; then
+                kill -TERM "$child" 2>/dev/null || true
+                wait "$child" || true
+                wait "$logger" || true
+                rm -f "$RUN_DIR/daemon.pid" "$RUN_DIR/worker.pid" "$fifo"
+                exec "$HOME_DIR/tailscale-asus" start
+            fi
+        done
+    done
+    wait "$child" || true
+    wait "$logger" || true
+    rm -f "$RUN_DIR/daemon.pid" "$RUN_DIR/worker.pid" "$fifo"
+    sleep 3
+    exec "$HOME_DIR/tailscale-asus" start
+}
+hook_paths() {
+    case "$PLATFORM" in
+        stock) echo /jffs/scripts/custom-init/tailscale-awg;;
+        merlin) printf '%s\n' /jffs/scripts/services-start /jffs/scripts/services-stop /jffs/scripts/firewall-start;;
+        entware) echo /opt/etc/init.d/S98tailscale-awg;;
+    esac
+}
+hooks_check() {
+    local path recorded
+    for path in $(hook_paths); do
+        if [ -f "$HOME_DIR/hooks.sha256" ] && grep -F "  $path" "$HOME_DIR/hooks.sha256" >/dev/null; then
+            recorded=$(awk -v path="$path" '$2==path {print $1}' "$HOME_DIR/hooks.sha256")
+            [ -f "$path" ] && [ "$(sha "$path")" = "$recorded" ] || die "managed hook was changed: $path; preserve it and resolve manually"
+        elif [ "$PLATFORM" != merlin ] && { [ -e "$path" ] || [ -L "$path" ]; }; then die "hook already exists: $path"
+        elif [ -e "$path.tailscale-asus.original" ] || [ -L "$path.tailscale-asus.original" ]; then die "hook backup already exists: $path.tailscale-asus.original"; fi
+    done
+}
+hooks_install() {
+    local path backup action
+    : > "$HOME_DIR/hooks.sha256.new"
+    for path in $(hook_paths); do
+        backup="$path.tailscale-asus.original"
+        mkdir -p "$(dirname "$path")"
+        if [ "$PLATFORM" = merlin ] && ! { [ -f "$HOME_DIR/hooks.sha256" ] && grep -F "  $path" "$HOME_DIR/hooks.sha256" >/dev/null; }; then
+            # Copy first: a power cut before the wrapper rename leaves the
+            # original hook in place. -P preserves relative symlinks as links.
+            if [ -e "$path" ] || [ -L "$path" ]; then cp -pP "$path" "$backup"; fi
+        fi
+        case "$path" in */services-stop) action=stop;; */firewall-start) action=restart;; */services-start) action=boot;; *) action='${1:-start}';; esac
+        {
+            echo '#!/bin/sh'
+            echo '# tailscale-asus managed hook v1; preserve the original interpreter.'
+            echo "export TS_ASUS_HOME='$HOME_DIR' TS_ASUS_RUN='$RUN_DIR'"
+            if [ "$PLATFORM" = merlin ] && [ "$action" != stop ] && [ -x "$backup" ]; then printf '%s "$@"\nrc=$?\n' "'$backup'"; else echo 'rc=0'; fi
+            if [ "$action" = stop ]; then
+                printf '"%s/tailscale-asus" stop >/dev/null 2>&1\n' "$HOME_DIR"
+            elif [ "$action" = '${1:-start}' ]; then
+                printf 'case "${1:-start}" in\nstop) "%s/tailscale-asus" stop >/dev/null 2>&1;;\nstart|restart) "%s/tailscale-asus" "${1:-start}" >/dev/null 2>&1 & ;;\nesac\n' "$HOME_DIR" "$HOME_DIR"
+            else printf '"%s/tailscale-asus" %s >/dev/null 2>&1 &\n' "$HOME_DIR" "$action"; fi
+            if [ "$PLATFORM" = merlin ] && [ "$action" = stop ] && [ -x "$backup" ]; then printf '%s "$@"\nrc=$?\n' "'$backup'"; fi
+            echo 'exit "$rc"'
+        } > "$path.new"
+        chmod 755 "$path.new"; mv -f "$path.new" "$path"
+        sha256sum "$path" >> "$HOME_DIR/hooks.sha256.new"
+    done
+    mv -f "$HOME_DIR/hooks.sha256.new" "$HOME_DIR/hooks.sha256"
+}
+download() { curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 15 --max-time 300 --retry 2 "$1" -o "$2" || die "download failed"; }
+recover_pending() {
+    [ -f "$HOME_DIR/pending" ] || return 0
+    local previous
+    previous=$(pointer pending)
+    # pending is durable before activation. A crash never commits a release
+    # whose readiness/hook installation was not completed.
+    if [ "$previous" != none ]; then
+        stop_service
+        put_pointer current "$previous"
+        start_service || die "interrupted update restored previous payload, but daemon needs attention"
+        note "recovered interrupted update to $previous"
+    fi
+    rm -f "$HOME_DIR/pending"
+    sync
+}
+install_release() {
+    recover_pending
+    detect_arch
+    detect_platform
+    [ ! -f "$HOME_DIR/platform" ] || [ "$(cat "$HOME_DIR/platform")" = "$PLATFORM" ] || die "use the original platform when updating"
+    hooks_check
+    STAGE="$RUN_DIR/install.$$"
+    mkdir "$STAGE" || die "cannot create RAM staging directory"
+    if [ -z "$BUNDLE" ]; then
+        valid_id "$REQUESTED" || die "install requires an explicit --release"
+        local base="https://github.com/$REPO/releases/download/$REQUESTED" asset="tailscale-asus-$REQUESTED-$ARCH.gz"
+        download "$base/$asset.manifest" "$STAGE/manifest"
+        download "$base/$asset" "$STAGE/payload.gz"
+    else cp "$MANIFEST" "$STAGE/manifest"; cp "$BUNDLE" "$STAGE/payload.gz"; fi
+    manifest_check "$STAGE/manifest"
+    [ "$CORE_SHA" = a32d18362c987e5007eab9f76c69118947a7b047 ] || die "unexpected core"
+    [ "$(field "$STAGE/manifest" core_tag)" = v1.104.7 ] || die "unexpected core tag"
+    [ "$(field "$STAGE/manifest" quic)" = v0.65.0-quic.4 ] || die "unexpected QUIC version"
+    [ -z "$REQUESTED" ] || [ "$REQUESTED" = "$RELEASE" ] || die "release mismatch"
+    [ "$(sha "$SELF")" = "$MANAGER_SHA" ] || die "installer/manifest mismatch; download the installer from the same release"
+    cp "$SELF" "$STAGE/manager"; chmod 700 "$STAGE/manager"
+    unpack "$STAGE/payload.gz" "$STAGE/bin"
+    local old previous free_kb need_kb reclaim=0 destination="$HOME_DIR/releases/$SLOT"
+    old=$(pointer current); previous=$(pointer previous)
+    for entry in "$HOME_DIR"/releases/.incoming-*; do [ ! -d "$entry" ] || rm -rf "$entry"; done
+    if [ -d "$destination" ]; then
+        [ "$(sha "$destination/manifest")" = "$(sha "$STAGE/manifest")" ] && [ "$(sha "$destination/payload.gz")" = "$ARCHIVE_SHA" ] || die "release already exists with different content"
+    else
+        need_kb=$(( $(du -k "$STAGE/payload.gz" | awk '{print $1}') + 4096 ))
+        free_kb=$(df -k "$HOME_DIR" | awk 'END {print $4}')
+        if [ -n "$previous" ] && [ "$previous" != "$old" ] && [ -d "$HOME_DIR/releases/$previous" ]; then reclaim=$(du -sk "$HOME_DIR/releases/$previous" | awk '{print $1}'); fi
+        [ $((free_kb+reclaim)) -ge "$need_kb" ] || die "insufficient flash for active + candidate compressed payloads and 4 MiB reserve; active release is untouched"
+        # Only the older rollback slot may be pruned. Keep the active payload
+        # persistent throughout, including power loss during a failed update.
+        if [ "$free_kb" -lt "$need_kb" ] && [ "$reclaim" -gt 0 ]; then rm -rf "$HOME_DIR/releases/$previous"; rm -f "$HOME_DIR/previous"; fi
+        mkdir -p "$HOME_DIR/releases/.incoming-$SLOT"
+        cp "$STAGE/payload.gz" "$STAGE/manifest" "$STAGE/manager" "$HOME_DIR/releases/.incoming-$SLOT/"
+        [ "$(sha "$HOME_DIR/releases/.incoming-$SLOT/payload.gz")" = "$ARCHIVE_SHA" ] || die "flash copy verification failed"
+        [ "$(sha "$HOME_DIR/releases/.incoming-$SLOT/manager")" = "$MANAGER_SHA" ] || die "flash manager verification failed"
+        cmp "$STAGE/manifest" "$HOME_DIR/releases/.incoming-$SLOT/manifest" || die "flash manifest verification failed"
+        sync
+        mv "$HOME_DIR/releases/.incoming-$SLOT" "$destination"
+        RECOVER_NEW=true
+    fi
+    mkdir -p "$RUN_DIR/instances"
+    if [ "$old" != "$SLOT" ]; then
+        [ ! -d "$RUN_DIR/instances/$SLOT" ] || rm -rf "$RUN_DIR/instances/$SLOT"
+        mv "$STAGE/bin" "$RUN_DIR/instances/$SLOT"
+    elif [ ! -d "$RUN_DIR/instances/$SLOT" ]; then mv "$STAGE/bin" "$RUN_DIR/instances/$SLOT"; fi
+    put_pointer pending "${old:-none}"
+    sync
+    RECOVER_SLOT=$old; RECOVER_CANDIDATE=$SLOT; RECOVER=true
+    stop_service
+    [ -z "$old" ] || [ "$old" = "$SLOT" ] || put_pointer previous "$old"
+    put_pointer current "$SLOT"
+    # This stable launcher contains no release-specific code or binary.
+    cat > "$HOME_DIR/tailscale-asus.new" <<EOF
+#!/bin/sh
+set -eu
+export TS_ASUS_HOME='$HOME_DIR' TS_ASUS_RUN='$RUN_DIR'
+read -r slot < '$HOME_DIR/current'
+case "\$slot" in ''|*[!a-zA-Z0-9._-]*|.*) exit 1;; esac
+exec /bin/sh '$HOME_DIR/releases/'"\$slot"'/manager' "\$@"
+EOF
+    chmod 700 "$HOME_DIR/tailscale-asus.new"; mv -f "$HOME_DIR/tailscale-asus.new" "$HOME_DIR/tailscale-asus"
+    if ! start_service; then
+        die "candidate startup failed; restoring previous active release when available"
+    fi
+    printf '%s\n' "$PLATFORM" > "$HOME_DIR/platform"
+    hooks_install
+    sync
+    rm -f "$HOME_DIR/pending"
+    sync
+    RECOVER=false
+    # Only current and rollback payloads are retained; never touch state.
+    previous=$(pointer previous)
+    for entry in "$HOME_DIR"/releases/*; do
+        [ -d "$entry" ] || continue
+        case "${entry##*/}" in "$SLOT"|"$previous") ;; *) rm -rf "$entry";; esac
+    done
+    note "installed $RELEASE ($PLATFORM). Login explicitly with: $HOME_DIR/tailscale-asus cli up --accept-dns=false --accept-routes=false"
+}
+uninstall() {
+    [ -f "$HOME_DIR/platform" ] || die "nothing installed"
+    PLATFORM=$(cat "$HOME_DIR/platform"); hooks_check
+    stop_service
+    local path
+    for path in $(hook_paths); do
+        rm -f "$path"
+        if [ -e "$path.tailscale-asus.original" ] || [ -L "$path.tailscale-asus.original" ]; then mv "$path.tailscale-asus.original" "$path"; fi
+    done
+    rm -rf "$HOME_DIR/releases" "$RUN_DIR/instances"
+    rm -f "$HOME_DIR/current" "$HOME_DIR/previous" "$HOME_DIR/pending" "$HOME_DIR/platform" "$HOME_DIR/hooks.sha256" "$HOME_DIR/tailscale-asus"
+    note "removed program/hooks; identity state retained in $HOME_DIR/state"
+}
+usage() {
+    cat <<'EOF'
+Tailscale-AWG ASUS manager (stock custom-init, Merlin or existing Entware)
+  install --release TAG [--platform auto|stock|merlin|entware]
+  install --bundle FILE.gz --manifest FILE.manifest [--platform ...]
+  start | stop | restart | status | rollback | uninstall
+  cli [tailscale arguments...]
+Compressed releases and state: /jffs/addons/tailscale-awg
+Unpacked binary, bounded log and socket: /tmp/tailscale-awg
+TS_ASUS_HOME selects other persistent storage; TS_ASUS_RUN must be under /tmp.
+Uninstall keeps identity. No automatic upgrades or firmware/NVRAM changes.
+EOF
+}
+COMMAND=${1:-help}; [ $# -eq 0 ] || shift
+case "$COMMAND" in
+    help|--help|-h) usage;;
+    _serve) serve "$@";;
+    cli) slot=$(pointer current); [ -n "$slot" ] || die "nothing installed"; exec "$RUN_DIR/instances/$slot/tailscale" --socket="$RUN_DIR/tailscaled.sock" "$@";;
+    status) slot=$(pointer current); note "release=${slot:-none}"; if pid_matches daemon; then note "running pid=$PID"; else note stopped; exit 1; fi; df -k "$HOME_DIR" "$RUN_DIR";;
+    install)
+        REQUESTED='' BUNDLE='' MANIFEST='' PLATFORM=auto
+        while [ $# -gt 0 ]; do
+            [ $# -ge 2 ] || die "missing option value"
+            case "$1" in --release) REQUESTED=$2;; --bundle) BUNDLE=$2;; --manifest) MANIFEST=$2;; --platform) PLATFORM=$2;; *) die "unknown option: $1";; esac
+            shift 2
+        done
+        { [ -z "$BUNDLE" ] && [ -z "$MANIFEST" ]; } || { [ -f "$BUNDLE" ] && [ -f "$MANIFEST" ]; } || die "both bundle and manifest are required"
+        lock; install_release;;
+    start|boot) lock; recover_pending; start_service;;
+    stop) lock; stop_service;;
+    restart) lock; stop_service; start_service;;
+    rollback)
+        lock; old=$(pointer current); previous=$(pointer previous); [ -n "$previous" ] && [ -d "$HOME_DIR/releases/$previous" ] || die "no rollback release"
+        stop_service; put_pointer current "$previous"
+        if start_service; then put_pointer previous "$old"; sync; else put_pointer current "$old"; start_service || true; die "rollback failed; restored active release"; fi;;
+    uninstall) lock; uninstall;;
+    *) usage >&2; exit 1;;
+esac

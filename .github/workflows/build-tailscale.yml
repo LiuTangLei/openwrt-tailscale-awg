@@ -1,7 +1,13 @@
 name: Smaller Tailscale-AWG Build Pipeline
 
 on:
-  workflow_dispatch: 
+  workflow_dispatch:
+    inputs:
+      prerelease:
+        description: Publish a preview without changing the production feed
+        required: true
+        type: boolean
+        default: false
   repository_dispatch:
     types: [ build-tailscale ]
 
@@ -364,6 +370,7 @@ jobs:
 
   deploy:
     name: Deploy Feed
+    if: ${{ !inputs.prerelease }}
     needs: [build]
     runs-on: ubuntu-latest
     permissions:
@@ -625,6 +632,9 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.RELEASE_TAG }}
+          target_commitish: ${{ github.sha }}
+          prerelease: ${{ inputs.prerelease || false }}
+          append_body: true
           name: "${{ env.RELEASE_TAG }}"
           body: ${{ steps.generate_release_markdown.outputs.release_body }}
           files: |
