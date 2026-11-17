@@ -145,8 +145,8 @@ jobs:
           fi
           echo "Fork: $FORK_VERSION; package: $PACKAGE_VERSION; build: $should_build"
           echo "should_build=$should_build" >> "$GITHUB_OUTPUT"
-          # Platforms keep the numeric release; their core uses an immutable r1 tag.
-          echo "selected_version=${FORK_VERSION}-r1" >> "$GITHUB_OUTPUT"
+          # Application and dependency tags use the same bare version.
+          echo "selected_version=${FORK_VERSION}" >> "$GITHUB_OUTPUT"
           echo "check_method=$CHECK_METHOD" >> "$GITHUB_OUTPUT"
 
 
@@ -181,7 +181,7 @@ jobs:
           set -euo pipefail
           RAW_VER="${{ steps.get_commit.outputs.version }}"
           NEW_VER=$(echo "$RAW_VER" | sed 's/^v//')
-          PACKAGE_VER="${NEW_VER%-r1}"
+          PACKAGE_VER="$NEW_VER"
           NEW_COMMIT="${{ steps.get_commit.outputs.commit }}"
           
           SOURCE_URL="https://codeload.github.com/LiuTangLei/tailscale/tar.gz/v${NEW_VER}?"

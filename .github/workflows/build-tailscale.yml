@@ -71,7 +71,7 @@ jobs:
       - name: Use Qualified Go Version
         id: check_go
         run: |
-          GO_TAG=go1.27.3
+          GO_TAG=go1.27.4
           echo "GO_TAG=$GO_TAG" >> "$GITHUB_ENV"
 
           GO_VER="${GO_TAG#go}"
