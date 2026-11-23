@@ -27,6 +27,10 @@ Set `TS_ASUS_BASELINE_BUNDLE` to the 1.104.6 ARM64 gzip fixture for the actual
 cross-core update/rollback case. This baseline is test data, never uploaded as
 a 1.104.7 asset. Without it that single test is explicitly skipped.
 
+Set `TS_ASUS_PREVIOUS_RELEASE_DIR` to a read-only fixture directory with the
+published `v1.104.7` manager, ARM64 gzip and manifest to exercise the bootstrap
+upgrade and rollback across the real release boundary.
+
 Contracts covered: offline boot from persistent gzip, real TUN daemon startup,
 identity preservation, two release slots, corrupt manifest/payload rejection,
 flash exhaustion before stopping the active daemon, startup rollback, original

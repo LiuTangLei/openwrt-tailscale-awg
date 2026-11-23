@@ -1,11 +1,11 @@
-name: Build ASUS prerelease artifacts
+name: Build ASUS release artifacts
 on:
   workflow_dispatch:
     inputs:
       release:
-        description: Application tag; set GitHub prerelease separately (v1.104.7)
+        description: Release tag, v<core> or rebuild v<core>-rN; set GitHub prerelease separately (v1.104.7-r1)
         required: true
-        default: v1.104.7
+        default: v1.104.7-r1
 permissions:
   contents: read
 jobs:
@@ -17,6 +17,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/checkout@v4
+        if: ${{ !contains(inputs.release, '-r') }}
         with:
           repository: LiuTangLei/tailscale
           ref: a32d18362c987e5007eab9f76c69118947a7b047
@@ -24,12 +25,25 @@ jobs:
       - uses: actions/setup-go@v5
         with:
           go-version: 1.27.4
+          cache: ${{ !contains(inputs.release, '-r') }}
           cache-dependency-path: core/go.sum
-      - name: Build static multicall binary and verified gzip payload
+      - name: Build or repackage the verified ASUS payload
         env:
           RELEASE: ${{ inputs.release }}
           ARCH: ${{ matrix.arch }}
-        run: python3 asus/build.py --source core --release "$RELEASE" --arch "$ARCH" --output asus/out --go "$PWD/core/tool/go"
+        run: |
+          case "$RELEASE" in
+            *-r*)
+              core=${RELEASE%-r*}
+              payload="$RUNNER_TEMP/asus-payload.gz"
+              curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+                --retry 2 --max-time 120 "https://github.com/$GITHUB_REPOSITORY/releases/download/$core/tailscale-asus-$core-$ARCH.gz" -o "$payload"
+              python3 asus/build.py --payload "$payload" --release "$RELEASE" --arch "$ARCH" --output asus/out
+              ;;
+            *)
+              python3 asus/build.py --source core --release "$RELEASE" --arch "$ARCH" --output asus/out --go "$PWD/core/tool/go"
+              ;;
+          esac
       - uses: actions/upload-artifact@v4
         with:
           name: asus-${{ matrix.arch }}

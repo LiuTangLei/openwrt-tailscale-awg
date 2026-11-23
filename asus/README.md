@@ -59,44 +59,43 @@ resizing is performed. `TS_ASUS_HOME` may select persistent USB storage;
 
 ## One-command installation
 
-Run over SSH on either stock firmware or Merlin:
+Run over SSH on either stock firmware or Merlin (always invoke `/bin/sh`, because ASUS stock firmware may ship a vendor utility named `/usr/sbin/sh` ahead of `/bin/sh` in `PATH`):
 
 ```sh
-curl -fsSL https://gh-proxy.org/https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh | /bin/sh
+curl -fsSL https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh -o /tmp/install-asus.sh && /bin/sh /tmp/install-asus.sh
 ```
 
-The release-pinned installer detects the CPU and firmware, enables Merlin's
-JFFS scripts when necessary, and downloads the matching compressed payload.
-It tries the upstream mirror services `gh-proxy.org`, `ghfast.top`, then GitHub
-directly. Scripts and manifests are checked against pinned SHA256 values;
-payload checksums remain mandatory. Invalid mirror pages and partial downloads
-are rejected before changing the active installation.
-Stock firmware still needs one of the startup hooks listed above; firmware
-flashing and JFFS resizing are not automated. Existing hooks and node identity
-are preserved. An installation failure restores a previously disabled Merlin
-script setting.
+The release-pinned installer verifies CPU architecture, Linux >= 3.2, `curl` UnixSockets support, a supported startup hook, and available RAM/JFFS space **before** downloading the compressed payload. It enables Merlin's JFFS scripts when necessary and tries the upstream mirror services `gh-proxy.org`, `ghfast.top`, then GitHub directly (pass `--mirror https://<your-mirror>` or set `TS_ASUS_MIRROR` to prefer a custom mirror). The manager and manifest are checked against SHA256 values pinned in the installer, and the payload against the verified manifest, separately for every source; an invalid page, partial download or checksum failure moves on to the next source before the active installation is changed. Mirrors only deliver these pinned artifacts.
+Stock firmware still needs one of the startup hooks listed above; firmware flashing and JFFS resizing are not automated. Existing hooks and node identity are preserved. An installation failure restores a previously disabled Merlin script setting.
 
-On an interactive SSH terminal it then opens a Chinese management menu for
-login/Headscale, AWG/QUIC configuration, restart, logs, updates, rollback and
-uninstall. Run the same command again to reopen it: an identical installed
-version skips the payload download and retains the running daemon. Add
-`--no-menu` when invoking the downloaded installer in automation.
+On an interactive SSH terminal it then opens the local Chinese management menu for login/Headscale, AWG/QUIC configuration, restart, logs, updates, rollback and uninstall. After installation, reopen the menu offline anytime with:
+
+```sh
+/jffs/addons/tailscale-awg/tailscale-asus menu
+```
+
+Rerunning the installer when the same version is already installed skips the payload download and retains the running daemon. Pass `--no-menu` for automation (for example `/bin/sh /tmp/install-asus.sh --no-menu`).
+
+The menu downloads `install-asus.sh` directly from GitHub before running it as root. A custom mirror supplies checksum-pinned artifacts only. If the router cannot reach GitHub, download the official script on a computer, transfer it to the router, and run it with `/bin/sh`.
 
 ## Install a particular release
 
 Download `tailscale-asus` from the **same release** as the chosen manifest.
-To select a specific version explicitly (replace TAG):
+Each manager verifies the pinned release manifest before downloading the
+payload and checks the payload against that manifest. To select a specific version
+explicitly (replace TAG; from `v1.104.7-r1`, add `--mirror https://<mirror>`
+if GitHub is slow):
 
 ```sh
-TAG=v1.104.7
-curl -fL "https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/download/$TAG/tailscale-asus" -o /tmp/tailscale-asus
-sh /tmp/tailscale-asus install --release "$TAG" --platform auto
+TAG=v1.104.7-r1
+curl -fsSL "https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/download/$TAG/tailscale-asus" -o /tmp/tailscale-asus
+/bin/sh /tmp/tailscale-asus install --release "$TAG" --platform auto
 /jffs/addons/tailscale-awg/tailscale-asus status
 ```
 
 Release manifests bind the compressed payload, decompressed binary and
-installer SHA256. They are fetched over verified HTTPS from a version-specific
-GitHub release; SHA256 detects corruption, not compromise of the release account.
+manager SHA256. The manager verifies a pinned digest of the manifest with its
+own digest field blanked, then checks that field against the running manager.
 For offline installation, transfer the installer, architecture-specific gzip
 and manifest, then use `install --bundle FILE.gz --manifest FILE.gz.manifest`.
 
@@ -147,11 +146,9 @@ identity. Firmware updates may remove a stock fwtool hook; check that startup
 support remains after a firmware upgrade. Application reboot/traffic acceptance
 is recorded separately from compilation and hook tests.
 
-If an earlier `v1.104.7` ASUS preview is already installed, its manager/manifest
-may differ from the final release. The installer refuses to overwrite a slot
-with different contents. Download the final installer first, run the existing
-manager's `uninstall` (which retains identity), then install the final release.
-This briefly stops Tailscale and preserves the node's existing login state.
+Run the `v1.104.7-r1` installer to upgrade an existing `v1.104.7` installation.
+It installs into a new slot, retains the node identity and keeps the previous
+version available for rollback.
 
 Tested on stock ET12 and ET8 Gnuton Merlin, including AWG/QUIC data transfer
 and service recovery. IPv6 follows the firmware's existing setting. Other
@@ -160,12 +157,19 @@ models meeting the requirements above are welcome; report problems in Issues.
 ## Build
 
 ```sh
-python3 asus/build.py --source /path/to/clean/fork \
-  --release v1.104.7 --arch arm64 --output asus/out --go /path/to/go1.27.4
-# Repeat with --arch armv7 for supported ARMv7 routers.
+python3 asus/build.py --payload /path/to/tailscale-asus-v1.104.7-arm64.gz \
+  --release v1.104.7-r1 --arch arm64 --output asus/out --go /path/to/go1.27.4
+# Repeat with the published ARMv7 gzip and --arch armv7.
 ```
 
-The builder refuses an unqualified/dirty core, embeds the exact commit,
-disables CGO, verifies dependency identities and emits deterministic gzip
-payloads. The ASUS workflow only builds artifacts; it does not move a stable
-release or automatically publish an untested preview.
+Package revisions reuse the published core gzip byte for byte. For a new core,
+`--source` builds from the qualified clean commit with CGO disabled. The builder
+checks the binary's dependency identities and commit in both cases. The ASUS
+workflow prepares artifacts for manual release.
+
+Release tags are `v<core>` or a package rebuild `v<core>-rN` (the version
+checker strips `-rN`, so a rebuild never retriggers the core build). Before a
+release, `tailscale-asus` must pin both `MANIFEST_*_CONTENT_SHA256` values,
+`install.sh` must pin `RELEASE`, `MANAGER_SHA256` and both `MANIFEST_*_SHA256`;
+`build.py` stops with the exact value to pin when any of them differ. Publish
+the complete asset set under a new tag: an existing slot is never overwritten.

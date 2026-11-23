@@ -6,12 +6,12 @@ set -eu
 umask 077
 PATH=/usr/sbin:/usr/bin:/sbin:/bin:/opt/sbin:/opt/bin
 export PATH
-RELEASE=v1.104.7
-MANAGER_SHA256=9136ddbcd0dd9a031765193be067bddf3eb2d38e78843001131ba3736cb75792
-MANIFEST_ARM64_SHA256=1ec3d4745b135433b42c5766f548a1694cb3bb08badb63742689e4e3335ace48
-MANIFEST_ARMV7_SHA256=f00d8856f88264cc826787f66197d85632c97b5db359c186feb5e7441a8a5eef
+RELEASE=v1.104.7-r1
+MANAGER_SHA256=82c6cfec128b0b31266ef471c63491218244edd25c50039a35c713041c542a8e
+MANIFEST_ARM64_SHA256=b79baf17f61aada5d281572c8636e0abe607d2ecfc82a1cfae98a2700ee4e665
+MANIFEST_ARMV7_SHA256=13f9bcafe39ef80da9733d9bc4dcd42cbd3a32ef5d40ea34c984dafce9e264a0
 REPO=LiuTangLei/openwrt-tailscale-awg
-MIRRORS='https://gh-proxy.org https://ghfast.top direct'
+DEFAULT_MIRRORS='https://gh-proxy.org https://ghfast.top direct'
 HOME_DIR=${TS_ASUS_HOME:-/jffs/addons/tailscale-awg}
 RUN_DIR=${TS_ASUS_RUN:-/tmp/tailscale-awg}
 M=$HOME_DIR/tailscale-asus
@@ -19,6 +19,7 @@ work=/tmp/tailscale-asus-install.$$
 enabled_scripts=false
 installed=false
 show_menu=true
+custom_mirror=''
 
 die() { echo "ASUS Tailscale: $*" >&2; exit 1; }
 cleanup() {
@@ -50,55 +51,57 @@ fetch() {
     fi
 }
 prefix_for() { case "$1" in direct) prefix='' ;; *) prefix=$1/ ;; esac; }
-confirm() { printf '%s [y/N]: ' "$1"; read -r reply || return 1; case "$reply" in y|Y|yes|YES) return 0;; *) return 1;; esac; }
-menu() {
-    local choice server fetched
-    while :; do
-        printf '\n华硕 Tailscale AWG / QUIC\n1) 状态\n2) 登录 / 控制服务器\n3) 配置 AWG / QUIC\n4) 重启服务\n5) 日志\n6) 检查更新\n7) 回滚\n8) 卸载（保留身份）\n0) 退出\n请选择: '
-        read -r choice || return 0
-        case "$choice" in
-            1) "$M" status || true; "$M" cli status || true;;
-            2)
-                printf '控制服务器 HTTPS 地址（留空使用官方 Tailscale）: '
-                read -r server || return 0
-                case "$server" in
-                    '') "$M" cli up --accept-dns=false --accept-routes=false || true;;
-                    https://*) "$M" cli up --login-server="$server" --accept-dns=false --accept-routes=false || true;;
-                    *) echo '请输入 https:// 开头的地址';;
-                esac;;
-            3)
-                if "$M" cli awg set --no-restart; then
-                    if confirm '重启服务以应用配置？'; then "$M" restart || true; fi
-                fi;;
-            4) "$M" restart || true;;
-            5) if [ -f "$RUN_DIR/daemon.log" ]; then tail -n 60 "$RUN_DIR/daemon.log"; else echo '暂无日志'; fi;;
-            6)
-                fetched=false
-                for mirror in $MIRRORS; do
-                    prefix_for "$mirror"
-                    if fetch "${prefix}https://github.com/$REPO/releases/latest/download/install-asus.sh" "$work/update.sh" 30 &&
-                       [ "$(head -n 1 "$work/update.sh")" = '#!/bin/sh' ] && /bin/sh -n "$work/update.sh"; then
-                        fetched=true
-                        /bin/sh "$work/update.sh" --no-menu || echo '更新未完成，请查看上方错误'
-                        break
-                    fi
-                done
-                [ "$fetched" = true ] || echo '无法下载更新，当前服务未改动';;
-            7) if confirm '回滚到上一个已安装版本？'; then "$M" rollback || true; fi;;
-            8) if confirm '卸载程序，保留节点身份？'; then "$M" uninstall && return 0; fi;;
-            0|q|Q) return 0;;
-            *) echo '请选择 0–8';;
-        esac
-    done
+set_mirror() {
+    case "$1" in
+        https://*[!a-zA-Z0-9./:_~-]*) die '--mirror requires an HTTPS prefix';;
+        https://?*) custom_mirror=${1%/};;
+        *) die '--mirror requires an HTTPS prefix';;
+    esac
+}
+preflight_space() {
+    local binary_bytes need_ram_kb probe_run tmp_free_kb mem_avail_kb probe_home flash_free_kb reclaim=0 old previous
+    binary_bytes=$(field "$1" binary_bytes)
+    case "$binary_bytes" in ''|*[!0-9]*|0*) die 'invalid binary size in manifest';; esac
+    need_ram_kb=$(( binary_bytes / 1024 + 65536 ))
+    probe_run=$RUN_DIR
+    while [ ! -e "$probe_run" ] && [ "$probe_run" != / ]; do probe_run=$(dirname "$probe_run"); done
+    tmp_free_kb=$(df -k "$probe_run" | awk 'END {print $4}')
+    mem_avail_kb=$(awk '/^MemAvailable:/ {print $2}' /proc/meminfo)
+    [ -n "$mem_avail_kb" ] || mem_avail_kb=$(awk '/^MemFree:/ {print $2}' /proc/meminfo)
+    [ "$tmp_free_kb" -ge "$need_ram_kb" ] && [ "$mem_avail_kb" -ge "$need_ram_kb" ] ||
+        die "insufficient RAM: need at least ${need_ram_kb} KiB free before downloading payload"
+    if [ ! -d "$HOME_DIR/releases/$slot" ]; then
+        probe_home=$HOME_DIR
+        while [ ! -e "$probe_home" ] && [ "$probe_home" != / ]; do probe_home=$(dirname "$probe_home"); done
+        flash_free_kb=$(df -k "$probe_home" | awk 'END {print $4}')
+        old=$(cat "$HOME_DIR/current" 2>/dev/null || true)
+        previous=$(cat "$HOME_DIR/previous" 2>/dev/null || true)
+        case "$previous" in ''|*[!a-zA-Z0-9._-]*|.*) previous='';; esac
+        if [ -n "$previous" ] && [ "$previous" != "$old" ] && [ -d "$HOME_DIR/releases/$previous" ]; then
+            reclaim=$(du -sk "$HOME_DIR/releases/$previous" | awk '{print $1}')
+        fi
+        # Conservative lower bound before downloading the ~15 MiB gzip; tailscale-asus checks exact size + 4 MiB reserve.
+        [ $((flash_free_kb + reclaim)) -ge 16384 ] ||
+            die 'insufficient flash for active + candidate compressed payloads and 4 MiB reserve; active release is untouched'
+    fi
 }
 
-for option in "$@"; do
-    case "$option" in
-        --no-menu) show_menu=false;;
-        --help|-h) echo 'ASUS stock/Merlin installer; --no-menu installs without opening the interactive menu'; exit 0;;
-        *) die "unknown option: $option";;
+while [ $# -gt 0 ]; do
+    case "$1" in
+        --no-menu) show_menu=false; shift;;
+        --mirror) [ $# -ge 2 ] || die '--mirror requires an HTTPS prefix'; set_mirror "$2"; shift 2;;
+        --help|-h)
+            echo 'Usage: /bin/sh install-asus.sh [--no-menu] [--mirror PREFIX]'
+            echo 'ASUS stock/Merlin installer; --no-menu skips the interactive menu.'
+            echo '--mirror (or TS_ASUS_MIRROR) prefers an HTTPS proxy for checksum-pinned downloads.'
+            exit 0;;
+        *) die "unknown option: $1";;
     esac
 done
+[ -n "$custom_mirror" ] || [ -z "${TS_ASUS_MIRROR:-}" ] || set_mirror "$TS_ASUS_MIRROR"
+MIRRORS=$DEFAULT_MIRRORS
+[ -z "$custom_mirror" ] || MIRRORS="$custom_mirror $MIRRORS"
+
 [ "$(awk '/^Uid:/ {print $3}' /proc/self/status)" = 0 ] || die 'run this command as root'
 [ -d /jffs ] && type nvram >/dev/null 2>&1 || die 'this installer is for ASUS firmware'
 case "$(uname -m)" in
@@ -106,6 +109,24 @@ case "$(uname -m)" in
     armv7l|armv8l) ARCH=armv7; MANIFEST_SHA256=$MANIFEST_ARMV7_SHA256;;
     *) die 'supported CPUs: ARM64 and ARMv7';;
 esac
+kernel=$(uname -r); major=${kernel%%.*}; kernel=${kernel#*.}; minor=${kernel%%.*}
+[ "$major" -gt 3 ] || { [ "$major" -eq 3 ] && [ "$minor" -ge 2 ]; } ||
+    die 'Go requires Linux 3.2 or newer (old 2.6 ASUS kernels are unsupported)'
+type curl >/dev/null 2>&1 || die 'curl is required'
+curl --version | grep -qw UnixSockets || die 'curl with UnixSockets support is required'
+if [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ]; then
+    detected_platform=stock
+elif nvram get rc_support | grep -qw am_addons; then
+    detected_platform=merlin
+elif [ -x /opt/etc/init.d/rc.unslung ]; then
+    detected_platform=entware
+else
+    die 'no supported boot hook (checked /rom/etc/init.d/custom-init.sh + /rom/etc/rc3.d/S45custom-init, Merlin am_addons, and /opt/etc/init.d/rc.unslung); stock firmware needs an existing fwtool custom-init or Entware startup hook'
+fi
+if [ -f "$HOME_DIR/platform" ] && [ "$(cat "$HOME_DIR/platform")" != "$detected_platform" ]; then
+    die "use the original platform when updating ($(cat "$HOME_DIR/platform") != $detected_platform)"
+fi
+
 mkdir "$work" || die 'cannot create temporary directory'
 trap cleanup EXIT
 trap 'exit 130' INT
@@ -116,6 +137,7 @@ slot=$RELEASE-$ARCH
 base=https://github.com/$REPO/releases/download/$RELEASE
 selected=''
 already_current=false
+space_checked=false
 for mirror in $MIRRORS; do
     prefix_for "$mirror"
     echo "ASUS Tailscale: checking $mirror"
@@ -131,6 +153,10 @@ for mirror in $MIRRORS; do
        cmp -s "$work/tailscale-asus" "$HOME_DIR/releases/$slot/manager"; then
         selected=$mirror; already_current=true; break
     fi
+    if [ "$space_checked" = false ]; then
+        preflight_space "$work/manifest"
+        space_checked=true
+    fi
     if fetch "$prefix$base/$asset" "$work/payload.gz" 300 &&
        [ "$(sha "$work/payload.gz")" = "$(field "$work/manifest" sha256)" ]; then
         selected=$mirror; break
@@ -139,9 +165,7 @@ for mirror in $MIRRORS; do
 done
 [ -n "$selected" ] || die 'no verified download source is available; current installation is unchanged'
 
-if [ "$already_current" = false ] &&
-    ! { [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ]; } &&
-    nvram get rc_support | grep -qw am_addons; then
+if [ "$already_current" = false ] && [ "$detected_platform" = merlin ]; then
     if [ "$(nvram get jffs2_scripts)" = 0 ]; then
         echo 'ASUS Tailscale: enabling Merlin JFFS custom scripts'
         enabled_scripts=true
@@ -159,7 +183,13 @@ fi
 installed=true
 echo "ASUS Tailscale: ready ($RELEASE, $selected)"
 if [ "$show_menu" = true ] && ( : </dev/tty ) 2>/dev/null; then
-    menu </dev/tty >/dev/tty 2>&1
+    if [ -n "$custom_mirror" ]; then
+        "$M" menu --mirror "$custom_mirror" </dev/tty >/dev/tty 2>&1
+    else
+        "$M" menu </dev/tty >/dev/tty 2>&1
+    fi
+    [ ! -x "$M" ] || echo "ASUS Tailscale: reopen menu offline anytime with: $M menu"
 else
+    echo "Menu:  $M menu"
     echo "Login: $M cli up --accept-dns=false --accept-routes=false"
 fi

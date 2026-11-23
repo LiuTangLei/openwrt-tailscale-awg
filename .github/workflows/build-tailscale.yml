@@ -628,6 +628,38 @@ jobs:
 
       # PUBLISH RELEASE
 
+      - name: Check whether the release already exists
+        id: existing_release
+        if: ${{ !inputs.prerelease }}
+        uses: actions/github-script@v8
+        with:
+          script: |
+            try {
+              await github.rest.repos.getReleaseByTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: process.env.RELEASE_TAG
+              });
+              core.setOutput('exists', 'true');
+            } catch (error) {
+              if (error.status !== 404) throw error;
+              core.setOutput('exists', 'false');
+            }
+
+      - name: Carry forward the ASUS installer for the latest link
+        id: asus_installer
+        if: steps.existing_release.outputs.exists == 'false'
+        run: |
+          set -eu
+          path="$RUNNER_TEMP/install-asus.sh"
+          # The bootstrap embeds the tag and digests of its own ASUS release.
+          # Carry only this asset; the immutable payloads remain at that tag.
+          curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' \
+            --retry 2 --max-time 60 "https://github.com/$REPO_SMALL/releases/latest/download/install-asus.sh" -o "$path"
+          test "$(head -n 1 "$path")" = '#!/bin/sh'
+          /bin/sh -n "$path"
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+
       - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
@@ -640,6 +672,7 @@ jobs:
           files: |
             ${{ env.ARTIFACT_DIR }}/**/*.ipk
             ${{ env.ARTIFACT_DIR }}/**/*.apk
+            ${{ steps.asus_installer.outputs.path }}
 
       # SYNC REPO
 

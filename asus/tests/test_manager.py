@@ -10,6 +10,7 @@ import hashlib
 import json
 import os
 import pty
+import re
 from pathlib import Path
 import shutil
 import signal
@@ -27,6 +28,8 @@ INPUTS = Path('/tmp/inputs')
 ENV = dict(os.environ, TS_ASUS_HOME=str(HOME), TS_ASUS_RUN=str(RUN))
 SHELL = os.environ.get('TEST_SHELL', '/bin/sh')
 CORE = 'a32d18362c987e5007eab9f76c69118947a7b047'
+# The bootstrap pins this release; its gzip bytes match every rebuild tag.
+RELEASE = re.search(r'^RELEASE=(\S+)$', (REPO / 'asus/install.sh').read_text(), re.M).group(1)
 
 
 def sha(path):
@@ -45,7 +48,9 @@ def make_bundle(release='v1.104.7', binary=None, **changes):
     INPUTS.mkdir(exist_ok=True)
     archive = INPUTS / f'{release}.gz'
     if binary is None:
-        source = REPO / 'asus/out/tailscale-asus-v1.104.7-arm64.gz'
+        source = REPO / f'asus/out/tailscale-asus-{RELEASE}-arm64.gz'
+        if not source.exists():
+            source = REPO / 'asus/out/tailscale-asus-v1.104.7-arm64.gz'
         shutil.copyfile(source, archive)
         raw = gzip.decompress(source.read_bytes())
     else:
@@ -88,10 +93,10 @@ def wait_ready():
 
 
 class ManagerTests(unittest.TestCase):
-    def bootstrap(self, merlin=False, corrupt=False, expected=0, mode='', preinstalled=False, terminal=False):
+    def bootstrap(self, merlin=False, corrupt=False, expected=0, mode='', preinstalled=False, terminal=False, args=(), argv=None):
         if preinstalled:
-            install()
-        archive, manifest = make_bundle()
+            install(make_bundle(RELEASE))
+        archive, manifest = make_bundle(RELEASE)
         (INPUTS / 'mirror-mode').write_text(mode)
         if corrupt:
             with archive.open('ab') as output:
@@ -124,6 +129,11 @@ printf '%s\\n' "$url" >> /tmp/inputs/downloads.log
 mode=$(cat /tmp/inputs/mirror-mode)
 case "$mode:$url" in
 html-first:https://gh-proxy.org/*) echo '<html>mirror unavailable</html>' > "$output"; exit 0;;
+html-payload-first:https://gh-proxy.org/*.gz) echo '<html>mirror unavailable</html>' > "$output"; exit 0;;
+damaged-metadata-first:https://gh-proxy.org/*.gz.manifest) sed '/^quic=/d' ''' + str(manifest) + ''' > "$output"; exit 0;;
+forged-first:https://gh-proxy.org/*.gz.manifest) cp /tmp/inputs/forged.manifest "$output"; exit 0;;
+forged-first:https://gh-proxy.org/*.gz) cp /tmp/inputs/forged.gz "$output"; exit 0;;
+direct-fails:https://github.com/*) exit 28;;
 partial-first:https://gh-proxy.org/*) echo partial > "$output"; exit 28;;
 failed:*) exit 28;;
 no-payload:*.gz) exit 99;;
@@ -141,7 +151,7 @@ esac
             if terminal:
                 pid, fd = pty.fork()
                 if pid == 0:
-                    os.execve(SHELL, [SHELL, str(REPO / 'asus/install.sh')], ENV)
+                    os.execve(SHELL, [SHELL, str(REPO / 'asus/install.sh'), *args], ENV)
                 output = b''
                 try:
                     os.write(fd, b'1\n6\n0\n')
@@ -163,8 +173,14 @@ esac
                     return output.decode(errors='replace')
                 finally:
                     os.close(fd)
-            result = subprocess.run([SHELL], input=(REPO / 'asus/install.sh').read_text(),
-                                    env=ENV, capture_output=True, text=True, timeout=60)
+            if argv:
+                result = subprocess.run([SHELL, *argv], env=ENV, capture_output=True, text=True, timeout=60)
+            elif args:
+                result = subprocess.run([SHELL, str(REPO / 'asus/install.sh'), *args],
+                                        env=ENV, capture_output=True, text=True, timeout=60)
+            else:
+                result = subprocess.run([SHELL], input=(REPO / 'asus/install.sh').read_text(),
+                                        env=ENV, capture_output=True, text=True, timeout=60)
             self.assertEqual(result.returncode, expected, result.stdout + result.stderr)
             return result.stdout + result.stderr
         finally:
@@ -541,7 +557,7 @@ esac
         self.assertIn('running', command('status'))
 
     def test_23_repeated_install_keeps_pid_and_skips_payload(self):
-        install()
+        install(make_bundle(RELEASE))
         pid = (RUN / 'daemon.pid').read_text()
         output = self.bootstrap(mode='no-payload')
         self.assertIn('already installed', output)
@@ -561,14 +577,140 @@ esac
         self.assertIn('华硕 Tailscale AWG / QUIC', output)
         self.assertIn('already installed', output)
         self.assertEqual(output.count('华硕 Tailscale AWG / QUIC'), 3)
+        self.assertIn('已是最新版本', output)
         self.assertIn('running', command('status'))
+        # The root update script comes from GitHub directly, never a mirror.
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        scripts = [url for url in urls if url.endswith('/install-asus.sh')]
+        self.assertEqual(scripts, ['https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh'])
 
     def test_26_reopen_respects_disabled_merlin_boot_scripts(self):
-        install(platform='merlin')
+        install(make_bundle(RELEASE), platform='merlin')
         pid = (RUN / 'daemon.pid').read_text()
         self.bootstrap(merlin=True, mode='no-payload')
         self.assertEqual((INPUTS / 'scripts-enabled').read_text().strip(), '0')
         self.assertEqual((RUN / 'daemon.pid').read_text(), pid)
+
+    def test_27_one_command_custom_mirror_preferred(self):
+        output = self.bootstrap(args=('--no-menu', '--mirror', 'https://custom.example/'))
+        self.assertIn('https://custom.example', output)
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        self.assertTrue(urls[0].startswith('https://custom.example/https://github.com/'))
+        self.assertIn('running', command('status'))
+
+    def test_28_preflight_missing_boot_hook_aborts_before_download(self):
+        Path('/rom/etc/rc3.d/S45custom-init').unlink()
+        Path('/rom/etc/init.d/custom-init.sh').unlink()
+        Path('/usr/sbin/nvram').write_text('#!/bin/sh\ncase "$2" in rc_support) echo mssid;; esac\n')
+        Path('/usr/sbin/nvram').chmod(0o755)
+        output = self.bootstrap(expected=1, args=('--no-menu',))
+        self.assertIn('no supported boot hook', output)
+        self.assertFalse((INPUTS / 'downloads.log').exists())
+
+    def test_29_preflight_low_flash_aborts_before_payload_download(self):
+        free = shutil.disk_usage('/jffs').free
+        with Path('/jffs/space-reservation').open('wb') as f:
+            chunk = b'x' * (1024 * 1024)
+            for _ in range(max(0, free // len(chunk) - 10)):
+                f.write(chunk)
+        output = self.bootstrap(expected=1, mode='no-payload', args=('--no-menu',))
+        self.assertIn('insufficient flash', output)
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        self.assertFalse(any(url.endswith('.gz') for url in urls))
+
+    def test_30_local_menu_runs_offline(self):
+        install()
+        pid, fd = pty.fork()
+        if pid == 0:
+            os.execve(SHELL, [SHELL, str(HOME / 'tailscale-asus'), 'menu'], ENV)
+        output = b''
+        try:
+            os.write(fd, b'1\n5\n0\n')
+            deadline = time.monotonic() + 30
+            while time.monotonic() < deadline:
+                ready, _, _ = select.select([fd], [], [], 1)
+                if ready:
+                    try:
+                        chunk = os.read(fd, 65536)
+                    except OSError:
+                        break
+                    if not chunk:
+                        break
+                    output += chunk
+            else:
+                os.kill(pid, signal.SIGKILL)
+                self.fail('offline local menu did not exit')
+            _, status = os.waitpid(pid, 0)
+            text = output.decode(errors='replace')
+            self.assertTrue(os.WIFEXITED(status) and os.WEXITSTATUS(status) == 0, text)
+            self.assertIn('华硕 Tailscale AWG / QUIC', text)
+            self.assertIn('running pid=', text)
+            self.assertFalse((INPUTS / 'downloads.log').exists())
+        finally:
+            os.close(fd)
+
+    def release_argv(self):
+        return [str(MANAGER), 'install', '--release', RELEASE, '--platform', 'stock']
+
+    def test_31_release_mirror_html_payload_falls_back(self):
+        output = self.bootstrap(mode='html-payload-first', argv=self.release_argv())
+        self.assertIn('payload download or checksum failed from https://gh-proxy.org', output)
+        self.assertEqual(current(), f'{RELEASE}-arm64')
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        self.assertTrue(any(url.startswith('https://ghfast.top/') and url.endswith('.gz') for url in urls))
+        self.assertIn('running', command('status'))
+
+    def test_32_release_mirror_cannot_substitute_payload(self):
+        INPUTS.mkdir(exist_ok=True)
+        raw = b'forged ' + CORE.encode()
+        (INPUTS / 'forged.gz').write_bytes(gzip.compress(raw, mtime=0))
+        data = dict(format='1', release=RELEASE, version='1.104.7', arch='arm64', core=CORE,
+                    core_tag='v1.104.7', quic='v0.65.0-quic.4', sha256=sha(INPUTS / 'forged.gz'),
+                    binary_sha256=hashlib.sha256(raw).hexdigest(), binary_bytes=str(len(raw)),
+                    manager_sha256=sha(MANAGER))
+        (INPUTS / 'forged.manifest').write_text(''.join(f'{k}={v}\n' for k, v in data.items()))
+        output = self.bootstrap(mode='forged-first', argv=self.release_argv())
+        self.assertIn('invalid or stale manifest from https://gh-proxy.org', output)
+        installed_sha = sha(HOME / 'releases' / f'{RELEASE}-arm64' / 'payload.gz')
+        self.assertEqual(installed_sha, sha(INPUTS / f'{RELEASE}.gz'))
+        self.assertNotEqual(installed_sha, data['sha256'])
+
+    def test_33_menu_update_never_runs_mirror_script(self):
+        output = self.bootstrap(mode='direct-fails', preinstalled=True, terminal=True)
+        self.assertIn('无法直接从 GitHub 下载更新脚本，当前服务未改动', output)
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        scripts = [url for url in urls if url.endswith('/install-asus.sh')]
+        self.assertEqual(scripts, ['https://github.com/LiuTangLei/openwrt-tailscale-awg/releases/latest/download/install-asus.sh'])
+        self.assertIn('running', command('status'))
+
+    def test_34_release_mirror_damaged_manifest_falls_back(self):
+        output = self.bootstrap(mode='damaged-metadata-first', argv=self.release_argv())
+        self.assertIn('invalid or stale manifest from https://gh-proxy.org', output)
+        urls = (INPUTS / 'downloads.log').read_text().splitlines()
+        self.assertFalse(any(url.startswith('https://gh-proxy.org/') and url.endswith('.gz') for url in urls))
+        self.assertEqual(current(), f'{RELEASE}-arm64')
+        self.assertIn('running', command('status'))
+
+    def test_35_bootstrap_upgrades_and_rolls_back_published_release(self):
+        fixture = os.environ.get('TS_ASUS_PREVIOUS_RELEASE_DIR')
+        if not fixture:
+            self.skipTest('set TS_ASUS_PREVIOUS_RELEASE_DIR to the published v1.104.7 ARM64 assets')
+        fixture = Path(fixture)
+        archive = fixture / 'tailscale-asus-v1.104.7-arm64.gz'
+        subprocess.run([SHELL, str(fixture / 'tailscale-asus'), 'install', '--platform', 'stock',
+                        '--bundle', str(archive), '--manifest', str(archive.with_suffix('.gz.manifest'))],
+                       env=ENV, capture_output=True, check=True, timeout=60)
+        previous = current()
+        self.assertEqual(previous, 'v1.104.7-arm64')
+        identity = sha(HOME / 'state/tailscaled.state')
+        self.bootstrap(args=('--no-menu',))
+        self.assertEqual(current(), f'{RELEASE}-arm64')
+        self.assertEqual((HOME / 'previous').read_text().strip(), previous)
+        self.assertIn('running', command('status'))
+        command('rollback')
+        self.assertEqual(current(), previous)
+        self.assertEqual(sha(HOME / 'state/tailscaled.state'), identity)
+        self.assertIn('running', command('status'))
 
 
 if __name__ == '__main__':

@@ -11,6 +11,12 @@ export PATH
 HOME_DIR=${TS_ASUS_HOME:-/jffs/addons/tailscale-awg}
 RUN_DIR=${TS_ASUS_RUN:-/tmp/tailscale-awg}
 REPO=LiuTangLei/openwrt-tailscale-awg
+# build.py pins the full manifest with the self digest blanked out. The
+# downloaded self digest and the payload are verified separately.
+MANIFEST_ARM64_CONTENT_SHA256=dae5924287f9cf224d16f0b33a4a6866c726b56e21ee51d296df1f04a4fd4722
+MANIFEST_ARMV7_CONTENT_SHA256=365301161411beb42e71672c5afcb59490d1e2f1aeae0d3d3cd593f2af194719
+DEFAULT_MIRRORS='https://gh-proxy.org https://ghfast.top direct'
+CUSTOM_MIRROR=''
 SELF=$(readlink -f "$0")
 STAGE=
 RECOVER=false
@@ -85,12 +91,12 @@ detect_platform() {
         if [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ]; then PLATFORM=stock
         elif type nvram >/dev/null 2>&1 && nvram get rc_support | grep -qw am_addons; then PLATFORM=merlin
         elif [ -x /opt/etc/init.d/rc.unslung ]; then PLATFORM=entware
-        else die "no supported boot hook; stock firmware needs the fwtool custom-init hook, or an existing Entware boot setup"; fi
+        else die "no supported boot hook (checked /rom/etc/init.d/custom-init.sh + /rom/etc/rc3.d/S45custom-init, Merlin am_addons, and /opt/etc/init.d/rc.unslung); stock firmware needs an existing fwtool custom-init or Entware startup hook"; fi
     fi
     case "$PLATFORM" in
-        stock) [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ] || die "stock custom-init hook is missing";;
+        stock) [ -x /rom/etc/init.d/custom-init.sh ] && [ -e /rom/etc/rc3.d/S45custom-init ] || die "stock custom-init hook is missing (/rom/etc/init.d/custom-init.sh or /rom/etc/rc3.d/S45custom-init)";;
         merlin) [ "$(nvram get jffs2_scripts)" = 1 ] || die "enable JFFS custom scripts in Merlin's Administration / System first";;
-        entware) [ -x /opt/etc/init.d/rc.unslung ] || die "Entware boot setup is missing";;
+        entware) [ -x /opt/etc/init.d/rc.unslung ] || die "Entware boot setup is missing (/opt/etc/init.d/rc.unslung)";;
         *) die "platform must be auto, stock, merlin or entware";;
     esac
 }
@@ -293,7 +299,116 @@ hooks_install() {
     done
     mv -f "$HOME_DIR/hooks.sha256.new" "$HOME_DIR/hooks.sha256"
 }
-download() { curl --fail --location --proto '=https' --tlsv1.2 --connect-timeout 15 --max-time 300 --retry 2 "$1" -o "$2" || die "download failed"; }
+set_mirror() {
+    case "$1" in
+        https://*[!a-zA-Z0-9./:_~-]*) die "mirror requires an HTTPS prefix: $1";;
+        https://?*) CUSTOM_MIRROR=${1%/};;
+        *) die "mirror requires an HTTPS prefix: $1";;
+    esac
+}
+fetch_url() {
+    rm -f "$2.part"
+    if curl --fail --silent --show-error --location --proto '=https' --proto-redir '=https' --tlsv1.2 \
+        --connect-timeout "$3" --max-time "$4" "$1" -o "$2.part"; then
+        mv -f "$2.part" "$2"
+    else
+        rm -f "$2.part"
+        return 1
+    fi
+}
+download_release() {
+    local base="https://github.com/$REPO/releases/download/$REQUESTED" asset="tailscale-asus-$REQUESTED-$ARCH.gz"
+    local mirrors=$DEFAULT_MIRRORS mirror prefix pinned self_sha
+    case "$ARCH" in arm64) pinned=$MANIFEST_ARM64_CONTENT_SHA256;; *) pinned=$MANIFEST_ARMV7_CONTENT_SHA256;; esac
+    self_sha=$(sha "$SELF")
+    [ -z "$CUSTOM_MIRROR" ] || mirrors="$CUSTOM_MIRROR $mirrors"
+    # Every source must deliver a complete, verified pair; any failure tries
+    # the next source instead of committing to the first HTTP 200 response.
+    for mirror in $mirrors; do
+        case "$mirror" in direct) prefix='';; *) prefix=$mirror/;; esac
+        rm -f "$STAGE/manifest" "$STAGE/payload.gz"
+        note "checking $mirror"
+        if ! fetch_url "$prefix$base/$asset.manifest" "$STAGE/manifest" 10 30; then continue; fi
+        sed 's/^manager_sha256=.*/manager_sha256=/' "$STAGE/manifest" > "$STAGE/manifest.content"
+        if [ "$(sha "$STAGE/manifest.content")" != "$pinned" ] ||
+           [ "$(field "$STAGE/manifest" manager_sha256 2>/dev/null || true)" != "$self_sha" ] ||
+           [ "$(field "$STAGE/manifest" release 2>/dev/null || true)" != "$REQUESTED" ]; then
+            note "invalid or stale manifest from $mirror; trying another source"
+            continue
+        fi
+        if fetch_url "$prefix$base/$asset" "$STAGE/payload.gz" 15 300 &&
+           [ "$(sha "$STAGE/payload.gz")" = "$(field "$STAGE/manifest" sha256)" ]; then
+            return 0
+        fi
+        note "payload download or checksum failed from $mirror; trying another source"
+    done
+    rm -f "$STAGE/manifest" "$STAGE/payload.gz"
+    die "no verified source for $REQUESTED; use tailscale-asus from that same release (active release is untouched)"
+}
+confirm() { local reply; printf '%s [y/N]: ' "$1"; read -r reply || return 1; case "$reply" in y|Y|yes|YES) return 0;; *) return 1;; esac; }
+run_menu() {
+    [ "$(awk '/^Uid:/ {print $3}' /proc/self/status)" = 0 ] || die "run as root"
+    [ -x "$HOME_DIR/tailscale-asus" ] && [ -n "$(pointer current)" ] || die "nothing installed"
+    local launcher="$HOME_DIR/tailscale-asus" choice server first_line before
+    STAGE="/tmp/tailscale-asus-update.$$"
+    trap '[ -z "$STAGE" ] || rm -rf "$STAGE"' EXIT
+    trap 'exit 130' INT
+    trap 'exit 143' TERM HUP
+    while :; do
+        printf '\n华硕 Tailscale AWG / QUIC\n1) 状态\n2) 登录 / 控制服务器\n3) 配置 AWG / QUIC\n4) 重启服务\n5) 日志\n6) 检查更新\n7) 回滚\n8) 卸载（保留身份）\n0) 退出\n请选择: '
+        read -r choice || return 0
+        case "$choice" in
+            1) "$launcher" status || true; "$launcher" cli status || true;;
+            2)
+                printf '控制服务器 HTTPS 地址（留空使用官方 Tailscale）: '
+                read -r server || return 0
+                case "$server" in
+                    '') "$launcher" cli up --accept-dns=false --accept-routes=false || true;;
+                    https://*) "$launcher" cli up --login-server="$server" --accept-dns=false --accept-routes=false || true;;
+                    *) echo '请输入 https:// 开头的地址';;
+                esac;;
+            3)
+                if "$launcher" cli awg set --no-restart; then
+                    if confirm '重启服务以应用配置？'; then "$launcher" restart || true; fi
+                fi;;
+            4) "$launcher" restart || true;;
+            5) if [ -f "$RUN_DIR/daemon.log" ]; then tail -n 60 "$RUN_DIR/daemon.log"; else echo '暂无日志'; fi;;
+            6)
+                # The update script runs as root, so only GitHub's TLS origin may
+                # supply it. The custom mirror is forwarded for the payloads that
+                # script verifies against pinned digests; old scripts ignore it.
+                rm -rf "$STAGE"
+                if mkdir "$STAGE" && fetch_url "https://github.com/$REPO/releases/latest/download/install-asus.sh" "$STAGE/update.sh" 5 30; then
+                    first_line=''
+                    IFS= read -r first_line <"$STAGE/update.sh" || true
+                    if [ "$first_line" = '#!/bin/sh' ] && /bin/sh -n "$STAGE/update.sh"; then
+                        before=$(pointer current)
+                        if TS_ASUS_MIRROR="$CUSTOM_MIRROR" /bin/sh "$STAGE/update.sh" --no-menu; then
+                            if [ "$(pointer current)" != "$before" ]; then
+                                rm -rf "$STAGE"
+                                echo "已更新到 $(pointer current)；请重新打开菜单：$launcher menu"
+                                return 0
+                            fi
+                            echo '已是最新版本'
+                        else
+                            echo '更新未完成，请查看上方错误'
+                        fi
+                    else
+                        echo 'GitHub 返回的更新脚本无效，当前服务未改动'
+                    fi
+                else
+                    echo '无法直接从 GitHub 下载更新脚本，当前服务未改动。'
+                    echo '请在能访问 GitHub 的电脑上下载官方安装脚本，再传到路由器运行。'
+                    echo "  https://github.com/$REPO/releases/latest/download/install-asus.sh"
+                fi
+                rm -rf "$STAGE";;
+            7) if confirm '回滚到上一个已安装版本？'; then "$launcher" rollback || true; fi;;
+            8) if confirm '卸载程序，保留节点身份？'; then "$launcher" uninstall && return 0; fi;;
+            0|q|Q) return 0;;
+            *) echo '请选择 0–8';;
+        esac
+    done
+}
 recover_pending() {
     [ -f "$HOME_DIR/pending" ] || return 0
     local previous
@@ -319,9 +434,7 @@ install_release() {
     mkdir "$STAGE" || die "cannot create RAM staging directory"
     if [ -z "$BUNDLE" ]; then
         valid_id "$REQUESTED" || die "install requires an explicit --release"
-        local base="https://github.com/$REPO/releases/download/$REQUESTED" asset="tailscale-asus-$REQUESTED-$ARCH.gz"
-        download "$base/$asset.manifest" "$STAGE/manifest"
-        download "$base/$asset" "$STAGE/payload.gz"
+        download_release
     else cp "$MANIFEST" "$STAGE/manifest"; cp "$BUNDLE" "$STAGE/payload.gz"; fi
     manifest_check "$STAGE/manifest"
     [ "$CORE_SHA" = a32d18362c987e5007eab9f76c69118947a7b047 ] || die "unexpected core"
@@ -413,13 +526,17 @@ uninstall() {
 usage() {
     cat <<'EOF'
 Tailscale-AWG ASUS manager (stock custom-init, Merlin or existing Entware)
-  install --release TAG [--platform auto|stock|merlin|entware]
+  install --release TAG [--platform auto|stock|merlin|entware] [--mirror PREFIX]
   install --bundle FILE.gz --manifest FILE.manifest [--platform ...]
+  menu [--mirror PREFIX]
   start | stop | restart | status | rollback | uninstall
   cli [tailscale arguments...]
 Compressed releases and state: /jffs/addons/tailscale-awg
 Unpacked binary, bounded log and socket: /tmp/tailscale-awg
 TS_ASUS_HOME selects other persistent storage; TS_ASUS_RUN must be under /tmp.
+TS_ASUS_MIRROR sets a preferred HTTPS mirror for checksum-pinned downloads only;
+menu updates fetch the root installer script from GitHub directly.
+`install --release` validates the manifest and payload pinned to this manager.
 Uninstall keeps identity. No automatic upgrades or firmware/NVRAM changes.
 EOF
 }
@@ -427,15 +544,34 @@ COMMAND=${1:-help}; [ $# -eq 0 ] || shift
 case "$COMMAND" in
     help|--help|-h) usage;;
     _serve) serve "$@";;
+    menu)
+        CUSTOM_MIRROR=''
+        while [ $# -gt 0 ]; do
+            case "$1" in
+                --mirror) [ $# -ge 2 ] || die "missing option value"; set_mirror "$2"; shift 2;;
+                --help|-h) echo 'Usage: tailscale-asus menu [--mirror PREFIX]'; exit 0;;
+                *) die "unknown option: $1";;
+            esac
+        done
+        [ -n "$CUSTOM_MIRROR" ] || [ -z "${TS_ASUS_MIRROR:-}" ] || set_mirror "$TS_ASUS_MIRROR"
+        run_menu;;
     cli) slot=$(pointer current); [ -n "$slot" ] || die "nothing installed"; exec "$RUN_DIR/instances/$slot/tailscale" --socket="$RUN_DIR/tailscaled.sock" "$@";;
     status) slot=$(pointer current); note "release=${slot:-none}"; if pid_matches daemon; then note "running pid=$PID"; else note stopped; exit 1; fi; df -k "$HOME_DIR" "$RUN_DIR";;
     install)
-        REQUESTED='' BUNDLE='' MANIFEST='' PLATFORM=auto
+        REQUESTED='' BUNDLE='' MANIFEST='' PLATFORM=auto CUSTOM_MIRROR=''
         while [ $# -gt 0 ]; do
             [ $# -ge 2 ] || die "missing option value"
-            case "$1" in --release) REQUESTED=$2;; --bundle) BUNDLE=$2;; --manifest) MANIFEST=$2;; --platform) PLATFORM=$2;; *) die "unknown option: $1";; esac
+            case "$1" in
+                --release) REQUESTED=$2;;
+                --bundle) BUNDLE=$2;;
+                --manifest) MANIFEST=$2;;
+                --platform) PLATFORM=$2;;
+                --mirror) set_mirror "$2";;
+                *) die "unknown option: $1";;
+            esac
             shift 2
         done
+        [ -n "$CUSTOM_MIRROR" ] || [ -z "${TS_ASUS_MIRROR:-}" ] || set_mirror "$TS_ASUS_MIRROR"
         { [ -z "$BUNDLE" ] && [ -z "$MANIFEST" ]; } || { [ -f "$BUNDLE" ] && [ -f "$MANIFEST" ]; } || die "both bundle and manifest are required"
         lock; install_release;;
     start|boot) lock; recover_pending; start_service;;
